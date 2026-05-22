@@ -1,0 +1,16 @@
+BIOFIT PRO - CLOUD BUG REPORTS
+==============================
+
+[2026-04-06T07:06:09.693Z] Nik: the ai that listens to you when you sleep dosent work or it dosent give output. and when smart alarm goues alarming on closed phone it dosent open the window for alarm the pop up eindow were you can dimis or snooz and also the alarm uses the androids main volume soind and not the alarms volume on android because you know on android you have 3 different vilumes so main notifications and alarm so make sure it will use alarms volume on android
+[2026-04-05T13:40:40.810Z] Nik: also calories burned in the diet window should rise after workout based on weight moved
+[2026-04-05T13:39:38.377Z] Nik: the steps counter in the diet window is not working
+[2026-04-04T07:53:10.243Z] Nik: Now the sleep wuality always shows 32% insted of actualy using ai that listens to you while you sleep, and also this ai I dont know if its working because it again dont show the data like rem sleep deep sleep...
+[2026-04-03T08:35:48.345Z] Nik: for the 5 boxes in the main nenue when you click to look at the graf and when you gold on a dot to view data it looks ugly because some of the data is like this 57.9000068765kg  insted of having just three numbers like 57.9kg  so can you fix this
+[2026-04-03T08:33:29.603Z] Nik: in cros domain preformace in the analitics window the gains graf goes sometimes to the 0 probeably if you dont train few days so make it so that it never goes to zero also if you dont train for 20 days
+[2026-04-03T08:28:55.118Z] Nik: can you make the brightnes of the whole app 20% brighter
+[2026-04-03T08:28:10.604Z] Nik: in gains evolution where we have our photos the nu.bers for muscles are all at 0% also if you do improve so fix this 
+[2026-04-03T08:10:36Z] Nik: when you click on a smart alarm window you could add that in the window is togle on and of button for smart allarm
+[2026-04-01T20:41:32.642Z] Nik: wela wela ragazo
+[2026-04-01T20:41:21.010Z] Nik: ma kosa mona
+[2026-04-01T08:19:48.740Z] Nik: The alarm for smart alarm uses regular sound valume on android and not the alarm volume
+[2026-03-27T21:51:26.833Z] user_1774647911401_470: test on pixel phone report a bug

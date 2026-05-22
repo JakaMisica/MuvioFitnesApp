@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      display: block;
+    }
+
+    #status {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      color: rgba(255, 255, 255, 0.1);
+      font-size: 8px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="renderCanvas"></canvas>
+  <div id="status">INIT</div>
+
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
+  <script>
+    'use strict';
+    const canvas = document.getElementById('renderCanvas');
+    const status = document.getElementById('status');
+
+    // Unified bridge helper
+    function bridgeSend(type, payload) {
+      const msg = payload ? type + ":" + payload : type;
+
+      // Windows (webview_windows)
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage(msg);
+      }
+      // Mobile (webview_flutter Channels)
+      if (type === "ready" && window.OnReady) window.OnReady.postMessage("");
+      if (type === "meshes" && window.OnMeshes) window.OnMeshes.postMessage(payload);
+      if (type === "log" && window.OnLog) window.OnLog.postMessage(payload);
+    }
+
+    function log(msg) {
+      status.innerText = msg;
+      console.log("[JS] " + msg);
+      bridgeSend("log", msg);
+    }
+
+    const engine = new BABYLON.Engine(canvas, true, { alpha: true });
+    const scene = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+
+    const camera = new BABYLON.ArcRotateCamera('cam', -Math.PI / 2, Math.PI / 2.8, 3.5, new BABYLON.Vector3(0, 0.9, 0), scene);
+    camera.attachControl(canvas, true);
+
+    // Zoom constraints
+    camera.lowerRadiusLimit = 3.5;
+    camera.upperRadiusLimit = 3.5;
+    camera.inputs.removeByType("ArcRotateCameraPointersInput"); // We'll replace with custom to block zoom
+
+    // Custom pointer input to allow ONLY rotation
+    const pointers = new BABYLON.ArcRotateCameraPointersInput();
+    pointers.buttons = [0]; // Left click only
+    pointers.angularSensibilityX = 1000;
+    pointers.angularSensibilityY = 1000;
+    camera.inputs.add(pointers);
+
+    // Lock vertical rotation (Beta)
+    camera.lowerBetaLimit = camera.beta;
+    camera.upperBetaLimit = camera.beta;
+
+    new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0, 1, 0), scene).intensity = 0.8;
+    const dirLight = new BABYLON.DirectionalLight('dir', new BABYLON.Vector3(-0.5, -1, -0.5), scene);
+    dirLight.intensity = 0.5;
+
+    window.muscleMeshes = {};
+    window.originalColors = {};
+    let characterLoaded = false;
+    let animGroup = null;
+
+    function base64ToArrayBuffer(b64) {
+      const bin = atob(b64);
+      const buf = new ArrayBuffer(bin.length);
+      const u8 = new Uint8Array(buf);
+      for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      return buf;
+    }
+
+    window.loadCharacter = function (b64) {
+      log("Loading Character...");
+      const blob = new Blob([base64ToArrayBuffer(b64)], { type: 'model/gltf-binary' });
+      const url = URL.createObjectURL(blob);
+
+      BABYLON.SceneLoader.ImportMeshAsync('', '', url, scene, null, '.glb').then(res => {
+        log("Character Mesh Loaded");
+        const root = res.meshes[0];
+        const bb = root.getHierarchyBoundingVectors(true);
+        const height = bb.max.y - bb.min.y;
+        camera.target = new BABYLON.Vector3(0, height * 0.5, 0);
+
+        const names = [];
+        res.meshes.forEach(m => {
+          if (!m.name || m.name === '__root__') return;
+          window.muscleMeshes[m.name] = m;
+          names.push(m.name);
+          log("Found mesh: " + m.name); // Explicit log for each mesh
+
+          if (m.material) {
+            // Make material unique for each mesh to prevent shared coloring (fatigue)
+            m.material = m.material.clone(m.name + "_material");
+
+            const c = m.material.albedoColor || m.material.diffuseColor;
+            window.originalColors[m.name] = c ? c.clone() : new BABYLON.Color3(0.7, 0.6, 0.5);
+          }
+        });
+
+        bridgeSend("meshes", names.join(','));
+        characterLoaded = true;
+        _checkReady();
+      }).catch(e => log("Error: " + e));
+    };
+
+    window.loadAnimation = function (b64) {
+      log("Loading Animation...");
+      const blob = new Blob([base64ToArrayBuffer(b64)], { type: 'model/gltf-binary' });
+      const url = URL.createObjectURL(blob);
+
+      BABYLON.SceneLoader.ImportAnimationsAsync('', url, scene).then(() => {
+        log("Animation Loaded");
+        animGroup = scene.animationGroups[scene.animationGroups.length - 1];
+        _checkReady();
+      }).catch(e => log("Anim Error: " + e));
+    };
+
+    function _checkReady() {
+      if (characterLoaded) {
+        log("System Ready");
+        if (animGroup) {
+          animGroup.targetedAnimations.forEach(ta => ta.animation.loopMode = BABYLON.Animation.ANIMATIONLOOPMODE_YOYO);
+          animGroup.play(true);
+        }
+        bridgeSend("ready");
+      }
+    }
+
+    window.setMuscleFatigue = function (fatigueMap) {
+      for (let name in fatigueMap) {
+        const f = fatigueMap[name];
+        const m = window.muscleMeshes[name];
+        if (!m || !m.material) continue;
+        const o = window.originalColors[name] || new BABYLON.Color3(0.7, 0.6, 0.5);
+        const color = new BABYLON.Color3(o.r + (1 - o.r) * f, o.g * (1 - f), o.b * (1 - f));
+        if (m.material.albedoColor) m.material.albedoColor = color;
+        if (m.material.diffuseColor) m.material.diffuseColor = color;
+      }
+    };
+
+    engine.runRenderLoop(() => scene.render());
+    window.addEventListener('resize', () => engine.resize());
+
+    log("Engine Started");
+  </script>
+</body>
+
+</html>
