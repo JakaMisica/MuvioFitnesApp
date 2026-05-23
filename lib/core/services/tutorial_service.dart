@@ -38,7 +38,7 @@ enum TutorialStep {
   squadDetailsIcon,
   workoutPlanButton,
   swipeToFinish,
-  completed
+  completed,
 }
 
 class TutorialService {
@@ -85,7 +85,7 @@ class TutorialService {
 
   void next() {
     if (_currentStep == null) return;
-    
+
     final nextIndex = _currentStep!.index + 1;
     if (nextIndex < TutorialStep.values.length) {
       _currentStep = TutorialStep.values[nextIndex];

@@ -133,22 +133,36 @@ class _AddExperimentDialogState extends State<AddExperimentDialog> {
                   ),
                   const SizedBox(height: 12),
 
-                    _buildSection(
-                      'Core Performance',
-                      AnalyticsMetricType.values
-                          .where((e) =>
+                  _buildSection(
+                    'Core Performance',
+                    AnalyticsMetricType.values
+                        .where(
+                          (e) =>
                               !e.name.contains('measurement') &&
-                              e != AnalyticsMetricType.fatigueIndex)
-                          .map((e) => e.name)
-                          .toList(),
-                      Icons.bolt,
-                    ),
+                              e != AnalyticsMetricType.fatigueIndex,
+                        )
+                        .map((e) => e.name)
+                        .toList(),
+                    Icons.bolt,
+                  ),
                   if (_availableFatigue.isNotEmpty)
-                    _buildSection('Fatigue Improvements', _availableFatigue, Icons.battery_alert_rounded),
+                    _buildSection(
+                      'Fatigue Improvements',
+                      _availableFatigue,
+                      Icons.battery_alert_rounded,
+                    ),
                   if (_availableTasks.isNotEmpty)
-                    _buildSection('Behaviors & Habits', _availableTasks, Icons.task_alt),
+                    _buildSection(
+                      'Behaviors & Habits',
+                      _availableTasks,
+                      Icons.task_alt,
+                    ),
                   if (_availableSupps.isNotEmpty)
-                    _buildSection('Bio-Active Inputs', _availableSupps, Icons.science),
+                    _buildSection(
+                      'Bio-Active Inputs',
+                      _availableSupps,
+                      Icons.science,
+                    ),
                 ],
               ),
             ),
@@ -203,7 +217,7 @@ class _AddExperimentDialogState extends State<AddExperimentDialog> {
             children: keys.map((key) {
               final isSelected = _selectedMetricKeys.contains(key);
               String label = _keyToLabel[key] ?? key.formatMetricKey;
-    
+
               return FilterChip(
                 visualDensity: VisualDensity.compact,
                 label: Text(

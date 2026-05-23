@@ -15,7 +15,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import '../../../core/services/workout_foreground_service.dart';
 
-
 part 'sleep_state.dart';
 
 class SleepCubit extends Cubit<SleepState> {
@@ -40,40 +39,60 @@ class SleepCubit extends Cubit<SleepState> {
     final latest = await _repository.getLatestSession();
 
     // 2. Initial state emission (Unblocks 'Auto Track' button)
-    emit(state.copyWith(
-      settings: settings,
-      latestSession: latest,
-      smartAlarmStart: settings.smartAlarmStart,
-      smartAlarmEnd: settings.smartAlarmEnd,
-    ));
+    emit(
+      state.copyWith(
+        settings: settings,
+        latestSession: latest,
+        smartAlarmStart: settings.smartAlarmStart,
+        smartAlarmEnd: settings.smartAlarmEnd,
+      ),
+    );
 
     // 3. Normalize alarms and sync with system in background
     DateTime? start = settings.smartAlarmStart;
     DateTime? end = settings.smartAlarmEnd;
-    
+
     // Set default ringtone if not set
     if (settings.alarmSoundPath == null) {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       final assets = manifest.listAssets();
-      final alarms = assets.where((key) {
-        final nk = key.toLowerCase();
-        final isAlarm = nk.contains('alarms/') &&
-            (nk.endsWith('.mp3') || nk.endsWith('.wav') || nk.endsWith('.ogg'));
-        
-        if (!isAlarm) return false;
-        
-        // Filter to only 1-5
-        final filename = nk.split('/').last.toLowerCase();
-        return filename.contains('alarm-1') || 
-               filename.contains('alarm-2') || 
-               filename.contains('alarm-3') || 
-               filename.contains('alarm-4') || 
-               filename.contains('alarm-5');
-      }).toList()..sort((a, b) {
-        final aNum = int.tryParse(RegExp(r'alarm-(\d+)').firstMatch(a.toLowerCase())?.group(1) ?? '0') ?? 0;
-        final bNum = int.tryParse(RegExp(r'alarm-(\d+)').firstMatch(b.toLowerCase())?.group(1) ?? '0') ?? 0;
-        return aNum.compareTo(bNum);
-      });
+      final alarms =
+          assets.where((key) {
+            final nk = key.toLowerCase();
+            final isAlarm =
+                nk.contains('alarms/') &&
+                (nk.endsWith('.mp3') ||
+                    nk.endsWith('.wav') ||
+                    nk.endsWith('.ogg'));
+
+            if (!isAlarm) return false;
+
+            // Filter to only 1-5
+            final filename = nk.split('/').last.toLowerCase();
+            return filename.contains('alarm-1') ||
+                filename.contains('alarm-2') ||
+                filename.contains('alarm-3') ||
+                filename.contains('alarm-4') ||
+                filename.contains('alarm-5');
+          }).toList()..sort((a, b) {
+            final aNum =
+                int.tryParse(
+                  RegExp(
+                        r'alarm-(\d+)',
+                      ).firstMatch(a.toLowerCase())?.group(1) ??
+                      '0',
+                ) ??
+                0;
+            final bNum =
+                int.tryParse(
+                  RegExp(
+                        r'alarm-(\d+)',
+                      ).firstMatch(b.toLowerCase())?.group(1) ??
+                      '0',
+                ) ??
+                0;
+            return aNum.compareTo(bNum);
+          });
       if (alarms.length >= 3) {
         settings.alarmSoundPath = alarms[2]; // Ringtone 3
         await _repository.saveSettings(settings);
@@ -82,17 +101,29 @@ class SleepCubit extends Cubit<SleepState> {
 
     if (start != null && end != null) {
       final now = DateTime.now();
-      DateTime normalizedStart = DateTime(now.year, now.month, now.day, start.hour, start.minute);
-      DateTime normalizedEnd = DateTime(now.year, now.month, now.day, end.hour, end.minute);
-      
+      DateTime normalizedStart = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        start.hour,
+        start.minute,
+      );
+      DateTime normalizedEnd = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        end.hour,
+        end.minute,
+      );
+
       if (normalizedEnd.isBefore(now)) {
         normalizedStart = normalizedStart.add(const Duration(days: 1));
         normalizedEnd = normalizedEnd.add(const Duration(days: 1));
       }
-      
+
       start = normalizedStart;
       end = normalizedEnd;
-      
+
       settings.smartAlarmStart = start;
       settings.smartAlarmEnd = end;
       await _repository.saveSettings(settings);
@@ -112,50 +143,58 @@ class SleepCubit extends Cubit<SleepState> {
       isRingingResult = await Alarm.isRinging(1001);
     }
 
-    emit(state.copyWith(
-      smartAlarmStart: start,
-      smartAlarmEnd: end,
-      isAiReady: _analysisService.isReady,
-      snoozeDurationMinutes: settings.lastSnoozeDurationMinutes ?? 15,
-      isSmartAlarmEnabled: settings.isSmartAlarmEnabled,
-      smartAlarmWindowMinutes: settings.smartAlarmWindowMinutes,
-      // If alarm is already ringing when app opens (e.g. phone was locked),
-      // immediately show the stop/snooze screen.
-      alarmTriggered: isRingingResult,
-    ));
+    emit(
+      state.copyWith(
+        smartAlarmStart: start,
+        smartAlarmEnd: end,
+        isAiReady: _analysisService.isReady,
+        snoozeDurationMinutes: settings.lastSnoozeDurationMinutes ?? 15,
+        isSmartAlarmEnabled: settings.isSmartAlarmEnabled,
+        smartAlarmWindowMinutes: settings.smartAlarmWindowMinutes,
+        // If alarm is already ringing when app opens (e.g. phone was locked),
+        // immediately show the stop/snooze screen.
+        alarmTriggered: isRingingResult,
+      ),
+    );
 
     // If alarm was already ringing when cubit started, trigger UI
     if (isRingingResult) {
       _alarmTriggered = true;
-      debugPrint("SleepCubit: Alarm was already ringing on init — showing screen.");
+      debugPrint(
+        "SleepCubit: Alarm was already ringing on init — showing screen.",
+      );
     }
 
     _startAutoCheckTimer();
-    
+
     // Listen for real-time alarm triggers from the alarm package.
     // This fires BOTH in foreground and when app is resumed from background.
     if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       // Set audio context to use Alarm channel on Android
       if (Platform.isAndroid) {
-        AudioPlayer.global.setAudioContext(AudioContext(
-          android: AudioContextAndroid(
-            usageType: AndroidUsageType.alarm,
-            contentType: AndroidContentType.sonification,
-            audioFocus: AndroidAudioFocus.gainTransient,
+        AudioPlayer.global.setAudioContext(
+          AudioContext(
+            android: AudioContextAndroid(
+              usageType: AndroidUsageType.alarm,
+              contentType: AndroidContentType.sonification,
+              audioFocus: AndroidAudioFocus.gainTransient,
+            ),
+            iOS: AudioContextIOS(
+              category: AVAudioSessionCategory.playback,
+              options: {
+                AVAudioSessionOptions.duckOthers,
+                AVAudioSessionOptions.defaultToSpeaker,
+              },
+            ),
           ),
-          iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.playback,
-            options: {
-              AVAudioSessionOptions.duckOthers,
-              AVAudioSessionOptions.defaultToSpeaker,
-            },
-          ),
-        ));
+        );
       }
 
       Alarm.ringing.listen((alarmSet) {
         if (alarmSet.alarms.any((a) => a.id == 1001)) {
-          debugPrint("SleepCubit: Alarm.ringing event received — forcing UI state.");
+          debugPrint(
+            "SleepCubit: Alarm.ringing event received — forcing UI state.",
+          );
           _triggerAlarm(fromSystem: true);
         }
       });
@@ -164,11 +203,13 @@ class SleepCubit extends Cubit<SleepState> {
     // 6. Recovery Logic
     if (latest != null && latest.endTime == null) {
       debugPrint("SleepCubit: Recovering unfinished sleep session.");
-      emit(state.copyWith(
-        isTracking: true,
-        currentSession: latest,
-        detectedEventsCount: latest.events.length,
-      ));
+      emit(
+        state.copyWith(
+          isTracking: true,
+          currentSession: latest,
+          detectedEventsCount: latest.events.length,
+        ),
+      );
       _resumeMonitoring(latest);
     }
   }
@@ -188,10 +229,12 @@ class SleepCubit extends Cubit<SleepState> {
         updatedSession.events.add(event);
         _estimateStage(updatedSession, event);
 
-        emit(state.copyWith(
-          currentSession: updatedSession,
-          detectedEventsCount: state.detectedEventsCount + 1,
-        ));
+        emit(
+          state.copyWith(
+            currentSession: updatedSession,
+            detectedEventsCount: state.detectedEventsCount + 1,
+          ),
+        );
         _updateSleepForeground();
       }
     });
@@ -203,7 +246,9 @@ class SleepCubit extends Cubit<SleepState> {
     // 1. Handle notification button actions (Strings)
     if (data is String) {
       if (data == 'stop_sleep' || data.startsWith('stop_sleep')) {
-        debugPrint('SleepCubit: Stop tracking requested from background notification.');
+        debugPrint(
+          'SleepCubit: Stop tracking requested from background notification.',
+        );
         stopTracking();
       }
       return;
@@ -216,10 +261,12 @@ class SleepCubit extends Cubit<SleepState> {
         // Refresh local state because isolate updated Isar
         final latest = await _repository.getLatestSession();
         if (latest != null && latest.endTime == null) {
-          emit(state.copyWith(
-            currentSession: latest,
-            detectedEventsCount: latest.events.length,
-          ));
+          emit(
+            state.copyWith(
+              currentSession: latest,
+              detectedEventsCount: latest.events.length,
+            ),
+          );
         }
       }
     }
@@ -228,9 +275,9 @@ class SleepCubit extends Cubit<SleepState> {
   void testAlarm() async {
     // 5-second preview logic
     _previewTimer?.cancel();
-    
+
     final soundPath = state.settings?.alarmSoundPath ?? 'assets/audio/ding.mp3';
-    
+
     try {
       await _audioPlayer.setVolume(1.0);
       if (soundPath.startsWith('assets/')) {
@@ -241,7 +288,7 @@ class SleepCubit extends Cubit<SleepState> {
         await _audioPlayer.setReleaseMode(ReleaseMode.loop);
         await _audioPlayer.play(DeviceFileSource(soundPath));
       }
-      
+
       _previewTimer = Timer(const Duration(seconds: 5), () {
         _audioPlayer.stop();
         _previewTimer = null;
@@ -263,7 +310,7 @@ class SleepCubit extends Cubit<SleepState> {
     if (state.settings == null || !state.settings!.autoTrackEnabled) return;
 
     final now = DateTime.now();
-    
+
     // Check both today's and yesterday's schedule (in case yesterday's crosses midnight)
     bool shouldBeTracking = false;
 
@@ -291,7 +338,7 @@ class SleepCubit extends Cubit<SleepState> {
     if (shouldBeTracking) {
       if (!state.isTracking) {
         // LOCKOUT: If we manually stopped within the last 4 hours, don't auto-restart
-        if (_lastManualStop != null && 
+        if (_lastManualStop != null &&
             DateTime.now().difference(_lastManualStop!).inHours < 4) {
           return;
         }
@@ -303,7 +350,9 @@ class SleepCubit extends Cubit<SleepState> {
       if (state.isTracking) {
         // If it was auto-started (started by schedule), we can stop it.
         // For simplicity: if it's currently outside all schedules, stop it if it's tracking.
-        debugPrint("SleepCubit: Outside schedule windows, stopping auto-track.");
+        debugPrint(
+          "SleepCubit: Outside schedule windows, stopping auto-track.",
+        );
         stopTracking();
       }
     }
@@ -316,7 +365,8 @@ class SleepCubit extends Cubit<SleepState> {
     if (!state.isSmartAlarmEnabled) return; // Respect the toggle
 
     final session = state.currentSession!;
-    if (session.smartAlarmStart == null || session.smartAlarmEnd == null) return;
+    if (session.smartAlarmStart == null || session.smartAlarmEnd == null)
+      return;
 
     final now = DateTime.now();
 
@@ -335,7 +385,9 @@ class SleepCubit extends Cubit<SleepState> {
     if (now.isAfter(windowStart) && now.isBefore(session.smartAlarmEnd!)) {
       if (session.stages.isNotEmpty &&
           session.stages.last.stage == SleepStage.light) {
-        debugPrint("SleepCubit: Smart Alarm triggered by Light Sleep detection.");
+        debugPrint(
+          "SleepCubit: Smart Alarm triggered by Light Sleep detection.",
+        );
         _triggerAlarm();
       }
     }
@@ -343,7 +395,7 @@ class SleepCubit extends Cubit<SleepState> {
 
   void _triggerAlarm({bool fromSystem = false}) async {
     if (_alarmTriggered) return;
-    
+
     // Check if it's already ringing to avoid redundant triggers causing flickers
     bool isActuallyRinging = false;
     if (!kIsWeb) {
@@ -351,17 +403,18 @@ class SleepCubit extends Cubit<SleepState> {
     }
 
     _alarmTriggered = true;
-    
+
     // Trigger the actual system alarm ONLY if it wasn't already triggered by system schedule
     if (!fromSystem && !isActuallyRinging && !kIsWeb) {
       final alarmSettings = AlarmSettings(
         id: 1001,
         dateTime: DateTime.now().add(const Duration(milliseconds: 500)),
-        assetAudioPath: state.settings?.alarmSoundPath ?? 'assets/audio/ding.mp3',
+        assetAudioPath:
+            state.settings?.alarmSoundPath ?? 'assets/audio/ding.mp3',
         volumeSettings: const VolumeSettings.fixed(),
         notificationSettings: const NotificationSettings(
           title: 'Wake Up!',
-          body: 'Tap to open BioFit Pro',
+          body: 'Tap to open Muvio',
         ),
         loopAudio: true,
         vibrate: true,
@@ -372,7 +425,7 @@ class SleepCubit extends Cubit<SleepState> {
     }
 
     emit(state.copyWith(alarmTriggered: true));
-    
+
     // Critical: Ensure UI callback is fired to pop app to front
     // This is called regardless of where the trigger came from
     onAlarmFired?.call();
@@ -389,16 +442,18 @@ class SleepCubit extends Cubit<SleepState> {
     if (!kIsWeb) {
       await Alarm.stop(1001);
     }
-    
+
     _alarmTriggered = false;
-    
+
     final snoozeTime = now.add(Duration(minutes: minutes));
-    
-    emit(state.copyWith(
-      alarmTriggered: false,
-      snoozeDurationMinutes: minutes,
-      smartAlarmEnd: snoozeTime,
-    ));
+
+    emit(
+      state.copyWith(
+        alarmTriggered: false,
+        snoozeDurationMinutes: minutes,
+        smartAlarmEnd: snoozeTime,
+      ),
+    );
 
     // Reschedule alarm
     _scheduleSystemAlarm();
@@ -446,12 +501,12 @@ class SleepCubit extends Cubit<SleepState> {
   void updateDaySchedule(int dayIndex, String schedule) async {
     if (state.settings == null) return;
     final updated = state.settings!;
-    
+
     // Synchronize all days to the same schedule
     for (int i = 0; i < 7; i++) {
       updated.daySchedules[i] = schedule;
     }
-    
+
     await _repository.saveSettings(updated);
     emit(state.copyWith(settings: updated));
     _checkSchedule();
@@ -462,10 +517,7 @@ class SleepCubit extends Cubit<SleepState> {
     final updated = state.settings!;
     updated.isSmartAlarmEnabled = val;
     await _repository.saveSettings(updated);
-    emit(state.copyWith(
-      settings: updated,
-      isSmartAlarmEnabled: val,
-    ));
+    emit(state.copyWith(settings: updated, isSmartAlarmEnabled: val));
   }
 
   void updateSmartAlarmWindow(int minutes) async {
@@ -473,10 +525,7 @@ class SleepCubit extends Cubit<SleepState> {
     final updated = state.settings!;
     updated.smartAlarmWindowMinutes = minutes;
     await _repository.saveSettings(updated);
-    emit(state.copyWith(
-      settings: updated,
-      smartAlarmWindowMinutes: minutes,
-    ));
+    emit(state.copyWith(settings: updated, smartAlarmWindowMinutes: minutes));
   }
 
   void startTracking() async {
@@ -497,11 +546,13 @@ class SleepCubit extends Cubit<SleepState> {
       ..smartAlarmStart = state.smartAlarmStart
       ..smartAlarmEnd = state.smartAlarmEnd;
 
-    emit(state.copyWith(
-      isTracking: true, 
-      currentSession: session,
-      detectedEventsCount: 0,
-    ));
+    emit(
+      state.copyWith(
+        isTracking: true,
+        currentSession: session,
+        detectedEventsCount: 0,
+      ),
+    );
 
     await _analysisService.startMonitoring();
     _analysisService.sensitivity = state.sensitivity;
@@ -521,11 +572,13 @@ class SleepCubit extends Cubit<SleepState> {
 
         _estimateStage(updatedSession, event);
 
-        emit(state.copyWith(
-          currentSession: updatedSession,
-          detectedEventsCount: state.detectedEventsCount + 1,
-        ));
-        
+        emit(
+          state.copyWith(
+            currentSession: updatedSession,
+            detectedEventsCount: state.detectedEventsCount + 1,
+          ),
+        );
+
         // Update foreground service with progress
         _updateSleepForeground();
       }
@@ -536,20 +589,20 @@ class SleepCubit extends Cubit<SleepState> {
 
   void _updateSleepForeground() {
     if (!state.isTracking) return;
-    
+
     final session = state.currentSession;
     if (session == null) return;
 
     final elapsed = DateTime.now().difference(session.startTime);
     final hours = elapsed.inHours;
     final minutes = elapsed.inMinutes % 60;
-    
+
     String status = "Monitoring... ($hours h ${minutes} m)";
     if (session.stages.isNotEmpty) {
       status += " | Last: ${session.stages.last.stage.name.toUpperCase()}";
     }
 
-    BioFitForegroundService.startService(
+    MuvioForegroundService.startService(
       title: "Sleeping AI Active",
       notificationText: status,
       isSleepActive: true,
@@ -622,27 +675,29 @@ class SleepCubit extends Cubit<SleepState> {
   void stopTracking() async {
     // ALWAYS try to stop services even if session object is missing (to fix "unstoppable" bugs)
     debugPrint("SleepCubit: Force-stopping all tracking services...");
-    
+
     try {
       _analysisService.stopMonitoring();
       await _eventSub?.cancel();
       _eventSub = null;
-      
+
       if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
         await Alarm.stop(1001);
         FlutterForegroundTask.sendDataToTask({'sleep_active': false});
       }
       await NotificationService.cancelSleepAlarm();
-      await BioFitForegroundService.stopService();
+      await MuvioForegroundService.stopService();
     } catch (e) {
       debugPrint("SleepCubit: Error during service shutdown: $e");
     }
-    
+
     _lastManualStop = DateTime.now();
 
     final sessionToStop = state.currentSession ?? state.latestSession;
     if (sessionToStop == null || !state.isTracking) {
-      debugPrint("SleepCubit: No active session to save or already stopped. Ensuring UI state is reset.");
+      debugPrint(
+        "SleepCubit: No active session to save or already stopped. Ensuring UI state is reset.",
+      );
       emit(state.copyWith(isTracking: false, currentSession: null));
       return;
     }
@@ -653,9 +708,11 @@ class SleepCubit extends Cubit<SleepState> {
     // Final quality score calculation — multi-factor, realistic scoring
     final totalEvents = finalSession.events.length;
     final badEvents = finalSession.events
-        .where((e) =>
-            e.type == SleepEventType.movement ||
-            e.type == SleepEventType.snoring)
+        .where(
+          (e) =>
+              e.type == SleepEventType.movement ||
+              e.type == SleepEventType.snoring,
+        )
         .length;
     final totalStages = finalSession.stages.length;
 
@@ -665,7 +722,7 @@ class SleepCubit extends Cubit<SleepState> {
       final badRatio = badEvents / totalEvents;
       eventScore = (40.0 * (1.0 - badRatio)).clamp(0.0, 40.0);
     } else {
-      // No events at all = we have no data; 
+      // No events at all = we have no data;
       // Give a score based on duration alone (up to 20 points)
       eventScore = 0.0;
     }
@@ -674,9 +731,11 @@ class SleepCubit extends Cubit<SleepState> {
     double stageScore = 0.0;
     if (totalStages > 0) {
       final deepCount = finalSession.stages
-          .where((s) => s.stage == SleepStage.deep).length;
+          .where((s) => s.stage == SleepStage.deep)
+          .length;
       final remCount = finalSession.stages
-          .where((s) => s.stage == SleepStage.rem).length;
+          .where((s) => s.stage == SleepStage.rem)
+          .length;
       final goodRatio = (deepCount + remCount) / totalStages;
       stageScore = (40.0 * goodRatio).clamp(0.0, 40.0);
     } else {
@@ -684,7 +743,9 @@ class SleepCubit extends Cubit<SleepState> {
     }
 
     // Factor 3: Duration bonus (max 20 points) — ideal = 7-9h
-    final durationHours = finalSession.endTime!.difference(finalSession.startTime).inMinutes / 60.0;
+    final durationHours =
+        finalSession.endTime!.difference(finalSession.startTime).inMinutes /
+        60.0;
     double durationScore = 0.0;
     if (durationHours >= 7.0 && durationHours <= 9.0) {
       durationScore = 20.0;
@@ -701,13 +762,17 @@ class SleepCubit extends Cubit<SleepState> {
     double finalRawScore = 0.0;
     if (totalEvents == 0 && totalStages == 0) {
       finalRawScore = (durationScore * 2.0).clamp(5.0, 40.0);
-      debugPrint("SleepCubit: No event data detected. Blind duration score awarded: $finalRawScore");
+      debugPrint(
+        "SleepCubit: No event data detected. Blind duration score awarded: $finalRawScore",
+      );
     } else {
       finalRawScore = eventScore + stageScore + durationScore;
     }
 
     final score = (finalRawScore / 100.0).clamp(0.05, 0.99);
-    debugPrint("SleepCubit: Final Quality Score: ${(score * 100).toStringAsFixed(1)}% (Events: $totalEvents, Stages: $totalStages, Duration: ${durationHours.toStringAsFixed(1)}h)");
+    debugPrint(
+      "SleepCubit: Final Quality Score: ${(score * 100).toStringAsFixed(1)}% (Events: $totalEvents, Stages: $totalStages, Duration: ${durationHours.toStringAsFixed(1)}h)",
+    );
 
     finalSession.qualityScore = score;
 
@@ -747,25 +812,30 @@ class SleepCubit extends Cubit<SleepState> {
 
     if (state.settings == null) {
       final newSettings = SleepSettings()
-        ..id = 0 // Explicitly set singleton ID
+        ..id =
+            0 // Explicitly set singleton ID
         ..smartAlarmStart = finalStart
         ..smartAlarmEnd = finalEnd;
       await _repository.saveSettings(newSettings);
-      emit(state.copyWith(
-        settings: newSettings,
-        smartAlarmStart: finalStart,
-        smartAlarmEnd: finalEnd,
-      ));
+      emit(
+        state.copyWith(
+          settings: newSettings,
+          smartAlarmStart: finalStart,
+          smartAlarmEnd: finalEnd,
+        ),
+      );
     } else {
       final updated = state.settings!;
       updated.smartAlarmStart = finalStart;
       updated.smartAlarmEnd = finalEnd;
       await _repository.saveSettings(updated);
-      emit(state.copyWith(
-        settings: updated,
-        smartAlarmStart: finalStart,
-        smartAlarmEnd: finalEnd,
-      ));
+      emit(
+        state.copyWith(
+          settings: updated,
+          smartAlarmStart: finalStart,
+          smartAlarmEnd: finalEnd,
+        ),
+      );
     }
 
     if (state.currentSession != null) {
@@ -784,13 +854,12 @@ class SleepCubit extends Cubit<SleepState> {
     updated.alarmSoundPath = soundPath;
     await _repository.saveSettings(updated);
     emit(state.copyWith(settings: updated));
-    
+
     // Reschedule if we have an active alarm
     if (state.smartAlarmEnd != null) {
       _scheduleSystemAlarm();
     }
   }
-
 
   Future<void> _scheduleSystemAlarm() async {
     if (state.smartAlarmEnd == null) return;
@@ -800,11 +869,12 @@ class SleepCubit extends Cubit<SleepState> {
       final alarmSettings = AlarmSettings(
         id: 1001, // Sleep alarm ID
         dateTime: state.smartAlarmEnd!,
-        assetAudioPath: state.settings?.alarmSoundPath ?? 'assets/audio/ding.mp3',
+        assetAudioPath:
+            state.settings?.alarmSoundPath ?? 'assets/audio/ding.mp3',
         volumeSettings: const VolumeSettings.fixed(),
         notificationSettings: const NotificationSettings(
           title: 'Wake Up!',
-          body: 'Tap to open BioFit Pro',
+          body: 'Tap to open Muvio',
         ),
         loopAudio: true,
         vibrate: true,
@@ -812,7 +882,9 @@ class SleepCubit extends Cubit<SleepState> {
       );
 
       await Alarm.set(alarmSettings: alarmSettings);
-      debugPrint("SleepCubit: Scheduled system alarm at ${state.smartAlarmEnd}");
+      debugPrint(
+        "SleepCubit: Scheduled system alarm at ${state.smartAlarmEnd}",
+      );
     }
   }
 

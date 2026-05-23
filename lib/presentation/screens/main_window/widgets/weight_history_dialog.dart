@@ -28,10 +28,10 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
     final end = DateTime.now();
     final start = _getStartTime(end);
     context.read<EvolutionCubit>().loadMeasurementHistory(
-          start: start,
-          end: end,
-          field: 'weight',
-        );
+      start: start,
+      end: end,
+      field: 'weight',
+    );
   }
 
   DateTime _getStartTime(DateTime end) {
@@ -94,7 +94,7 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Timeframe Selector
                 Container(
                   padding: const EdgeInsets.all(4),
@@ -114,7 +114,9 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             decoration: BoxDecoration(
-                              color: isSelected ? Colors.cyanAccent : Colors.transparent,
+                              color: isSelected
+                                  ? Colors.cyanAccent
+                                  : Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -132,7 +134,7 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
                     }).toList(),
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
 
                 // THE GRAPH
@@ -140,20 +142,25 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
                   height: 250,
                   child: state.isLoading
                       ? const Center(
-                          child: CircularProgressIndicator(color: Colors.cyanAccent),
+                          child: CircularProgressIndicator(
+                            color: Colors.cyanAccent,
+                          ),
                         )
                       : state.measurementChartHistory.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No weight data for this period',
-                                style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
-                              ),
-                            )
-                          : LineChart(_mainData(state.measurementChartHistory)),
+                      ? Center(
+                          child: Text(
+                            'No weight data for this period',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )
+                      : LineChart(_mainData(state.measurementChartHistory)),
                 ),
 
                 const SizedBox(height: 32),
-                
+
                 // Add Weight Button
                 Center(
                   child: ElevatedButton.icon(
@@ -163,9 +170,17 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.cyanAccent,
                       foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -181,7 +196,8 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
     final cubit = context.read<EvolutionCubit>();
     final result = await showDialog<double>(
       context: context,
-      builder: (_) => WeightInputDialog(initialWeight: cubit.state.latestMetric?.weight),
+      builder: (_) =>
+          WeightInputDialog(initialWeight: cubit.state.latestMetric?.weight),
     );
     if (result != null) {
       await cubit.saveWeight(result);
@@ -191,10 +207,10 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
 
   LineChartData _mainData(List<MapEntry<DateTime, double>> history) {
     if (history.isEmpty) return LineChartData();
-    
+
     double minVal = history.map((e) => e.value).reduce(math.min);
     double maxVal = history.map((e) => e.value).reduce(math.max);
-    
+
     double padding = (maxVal - minVal) * 0.15;
     if (padding == 0) padding = 2.0;
 
@@ -205,7 +221,11 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
             return touchedSpots.map((spot) {
               return LineTooltipItem(
                 '${spot.y.toStringAsFixed(1)}kg',
-                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
               );
             }).toList();
           },
@@ -220,7 +240,9 @@ class _WeightHistoryDialogState extends State<WeightHistoryDialog> {
       ),
       titlesData: FlTitlesData(
         show: true,
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(

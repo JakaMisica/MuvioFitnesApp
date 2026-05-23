@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'package:biofit_pro/presentation/widgets/reward_animation_overlay.dart';
-import 'package:biofit_pro/presentation/widgets/tutorial_overlay.dart';
+import 'package:muvio/presentation/widgets/reward_animation_overlay.dart';
+import 'package:muvio/presentation/widgets/tutorial_overlay.dart';
 import 'dart:isolate';
 import 'dart:ui' show IsolateNameServer;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:biofit_pro/locator.dart';
-import 'package:biofit_pro/presentation/navigation/main_page_view.dart';
-import 'package:biofit_pro/logic/cubit/tasks/task_cubit.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_cubit.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/core/services/notification_service.dart';
-import 'package:biofit_pro/core/services/workout_foreground_service.dart';
-import 'package:biofit_pro/core/services/step_tracker_service.dart';
+import 'package:muvio/locator.dart';
+import 'package:muvio/presentation/navigation/main_page_view.dart';
+import 'package:muvio/logic/cubit/tasks/task_cubit.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_cubit.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/core/services/notification_service.dart';
+import 'package:muvio/core/services/workout_foreground_service.dart';
+import 'package:muvio/core/services/step_tracker_service.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'logic/cubit/workout/workout_cubit.dart';
 import 'logic/cubit/ai/ai_cubit.dart';
@@ -139,7 +139,7 @@ void main() async {
   await NotificationService.requestPermissions();
 
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-    BioFitForegroundService.init();
+    MuvioForegroundService.init();
     // Set up our own ReceivePort BEFORE runApp so the task isolate can
     // always find it via IsolateNameServer immediately on button press.
     _setupDirectIsolatePort();
@@ -172,18 +172,17 @@ void main() async {
     _popAppToFront();
   };
 
-  runApp(const BioFitProApp());
+  runApp(const MuvioProApp());
 }
 
-class BioFitProApp extends StatefulWidget {
-  const BioFitProApp({super.key});
+class MuvioProApp extends StatefulWidget {
+  const MuvioProApp({super.key});
 
   @override
-  State<BioFitProApp> createState() => _BioFitProAppState();
+  State<MuvioProApp> createState() => _MuvioProAppState();
 }
 
-class _BioFitProAppState extends State<BioFitProApp>
-    with WidgetsBindingObserver {
+class _MuvioProAppState extends State<MuvioProApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();

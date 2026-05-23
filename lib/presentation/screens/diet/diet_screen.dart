@@ -1,5 +1,5 @@
-import 'package:biofit_pro/core/services/step_tracker_service.dart';
-import 'package:biofit_pro/locator.dart';
+import 'package:muvio/core/services/step_tracker_service.dart';
+import 'package:muvio/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -110,8 +110,11 @@ class _DietContent extends StatelessWidget {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.directions_walk,
-                              color: Colors.greenAccent, size: 24),
+                          const Icon(
+                            Icons.directions_walk,
+                            color: Colors.greenAccent,
+                            size: 24,
+                          ),
                           Text(
                             steps.toString(),
                             style: const TextStyle(
@@ -139,8 +142,11 @@ class _DietContent extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.chevron_left,
-                          color: Colors.white54, size: 24),
+                      icon: const Icon(
+                        Icons.chevron_left,
+                        color: Colors.white54,
+                        size: 24,
+                      ),
                       onPressed: () => context.read<DietCubit>().loadDate(
                         state.selectedDate.subtract(const Duration(days: 1)),
                       ),
@@ -160,7 +166,9 @@ class _DietContent extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            DateFormat('EEEE').format(state.selectedDate).toUpperCase(),
+                            DateFormat(
+                              'EEEE',
+                            ).format(state.selectedDate).toUpperCase(),
                             style: const TextStyle(
                               color: Colors.cyanAccent,
                               fontSize: 10,
@@ -199,8 +207,11 @@ class _DietContent extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.local_fire_department,
-                          color: Colors.orangeAccent, size: 24),
+                      const Icon(
+                        Icons.local_fire_department,
+                        color: Colors.orangeAccent,
+                        size: 24,
+                      ),
                       const Text(
                         "0",
                         style: TextStyle(
@@ -284,7 +295,9 @@ class _DietContent extends StatelessWidget {
                               value: progress,
                               strokeWidth: 12,
                               backgroundColor: Colors.white10,
-                              valueColor: const AlwaysStoppedAnimation(Colors.greenAccent),
+                              valueColor: const AlwaysStoppedAnimation(
+                                Colors.greenAccent,
+                              ),
                             ),
                           ),
                           Column(
@@ -320,7 +333,10 @@ class _DietContent extends StatelessWidget {
                       ),
                       Text(
                         '${(service.currentDistance / 1000).toStringAsFixed(2)} km',
-                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
                       ),
                     ],
                   );
@@ -351,7 +367,10 @@ class _DietContent extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.local_fire_department, color: Colors.orangeAccent),
+                  const Icon(
+                    Icons.local_fire_department,
+                    color: Colors.orangeAccent,
+                  ),
                   const SizedBox(width: 12),
                   const Text(
                     'CALORIES BURNED',
@@ -369,7 +388,11 @@ class _DietContent extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 32),
-              const Icon(Icons.bolt_rounded, color: Colors.orangeAccent, size: 64),
+              const Icon(
+                Icons.bolt_rounded,
+                color: Colors.orangeAccent,
+                size: 64,
+              ),
               const SizedBox(height: 16),
               const Text(
                 'ACTIVE BURNED',
@@ -382,7 +405,11 @@ class _DietContent extends StatelessWidget {
               ),
               const Text(
                 '0 kcal',
-                style: TextStyle( color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 48,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
               const SizedBox(height: 32),
               Container(
@@ -394,7 +421,10 @@ class _DietContent extends StatelessWidget {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('BMR Estimate', style: TextStyle(color: Colors.white38)),
+                    Text(
+                      'BMR Estimate',
+                      style: TextStyle(color: Colors.white38),
+                    ),
                     Text('1,850 kcal', style: TextStyle(color: Colors.white)),
                   ],
                 ),

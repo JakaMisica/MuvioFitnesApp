@@ -42,8 +42,9 @@ class SleepAnalysisService {
       _isReady = true;
       debugPrint('SleepAnalysisService: TFLite initialized.');
     } catch (e) {
-      _isReady = true; // Still mark as ready so UI doesn't hang, but in fallback mode
-      _interpreter = null; 
+      _isReady =
+          true; // Still mark as ready so UI doesn't hang, but in fallback mode
+      _interpreter = null;
       debugPrint(
         'SleepAnalysisService: TFLite model missing or failed to load ($e). Fallback mode active.',
       );
@@ -87,7 +88,7 @@ class SleepAnalysisService {
 
   Future<void> _performAnalysisWindow() async {
     if (!_isMonitoring) return;
-    
+
     try {
       if (await _audioRecorder.hasPermission()) {
         const config = RecordConfig(
@@ -117,33 +118,48 @@ class SleepAnalysisService {
         await subscription.cancel();
 
         if (_isMonitoring && audioData.isNotEmpty) {
-          debugPrint("SleepAnalysisService: Analyzing ${audioData.length} bytes of audio.");
+          debugPrint(
+            "SleepAnalysisService: Analyzing ${audioData.length} bytes of audio.",
+          );
           _analyzeAudio(Uint8List.fromList(audioData));
         }
       }
     } catch (e) {
       debugPrint("SleepAnalysisService: Error in analysis window: $e");
       // Attempt to clean up
-      try { await _audioRecorder.stop(); } catch (_) {}
+      try {
+        await _audioRecorder.stop();
+      } catch (_) {}
     }
   }
 
   void _analyzeAudio(Uint8List rawPcm) {
     if (rawPcm.isEmpty) return;
-    
+
     // Fallback if AI model missing
     if (!_isReady || _interpreter == null) {
-      debugPrint("SleepAnalysisService: AI Fallback - Using simulated events (model not loaded).");
-      
+      debugPrint(
+        "SleepAnalysisService: AI Fallback - Using simulated events (model not loaded).",
+      );
+
       // Simulate at least one breathing event per window for "baseline" sleep
-      _emitEvent(SleepEventType.breathing, 0.8 + (math.Random().nextDouble() * 0.1));
-      
+      _emitEvent(
+        SleepEventType.breathing,
+        0.8 + (math.Random().nextDouble() * 0.1),
+      );
+
       // Randomly simulate other events
       final rand = math.Random().nextDouble();
       if (rand < 0.1) {
-        _emitEvent(SleepEventType.snoring, 0.4 + (math.Random().nextDouble() * 0.3));
+        _emitEvent(
+          SleepEventType.snoring,
+          0.4 + (math.Random().nextDouble() * 0.3),
+        );
       } else if (rand < 0.2) {
-        _emitEvent(SleepEventType.movement, 0.5 + (math.Random().nextDouble() * 0.4));
+        _emitEvent(
+          SleepEventType.movement,
+          0.5 + (math.Random().nextDouble() * 0.4),
+        );
       }
       return;
     }
@@ -152,10 +168,10 @@ class SleepAnalysisService {
     final Int16List int16Data = rawPcm.buffer.asInt16List();
     final Float32List float32Data = Float32List(int16Data.length);
     for (int i = 0; i < int16Data.length; i++) {
-        float32Data[i] = int16Data[i] / 32768.0;
+      float32Data[i] = int16Data[i] / 32768.0;
     }
 
-    const int chunkSize = 15600; 
+    const int chunkSize = 15600;
     int chunksRun = 0;
     final interpreter = _interpreter!; // Safe as we checked null above
     for (int i = 0; i < float32Data.length - chunkSize; i += chunkSize) {
@@ -170,15 +186,19 @@ class SleepAnalysisService {
         debugPrint("SleepAnalysisService: TFLite run error: $e");
       }
     }
-    debugPrint("SleepAnalysisService: Finished processing $chunksRun AI chunks.");
+    debugPrint(
+      "SleepAnalysisService: Finished processing $chunksRun AI chunks.",
+    );
   }
 
   void _processScores(List<double> scores) {
     final threshold = 0.5 * (1.1 - sensitivity);
-    
+
     // Log significant detections for debugging
     if (scores[indexSnoring] > 0.1 || scores[indexMovement] > 0.1) {
-       debugPrint("SleepAnalysisService: SNR: ${scores[indexSnoring].toStringAsFixed(2)} | MOV: ${scores[indexMovement].toStringAsFixed(2)} | BRE: ${scores[indexBreathing].toStringAsFixed(2)}");
+      debugPrint(
+        "SleepAnalysisService: SNR: ${scores[indexSnoring].toStringAsFixed(2)} | MOV: ${scores[indexMovement].toStringAsFixed(2)} | BRE: ${scores[indexBreathing].toStringAsFixed(2)}",
+      );
     }
 
     if (scores[indexSnoring] > threshold) {

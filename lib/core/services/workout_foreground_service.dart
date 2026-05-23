@@ -10,20 +10,20 @@ import '../../data/datasources/isar_service.dart';
 import '../../data/models/sleep_models.dart';
 import 'package:isar/isar.dart';
 
-const String _kBioFitActionPort = 'biofit_notification_action';
+const String _kMuvioActionPort = 'muvio_notification_action';
 
 @pragma('vm:entry-point')
 void startCallback() {
   DartPluginRegistrant.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterForegroundTask.setTaskHandler(BioFitTaskHandler());
+  FlutterForegroundTask.setTaskHandler(MuvioTaskHandler());
 }
 
 // Top-level helper so IsolateNameServer resolves without class scope ambiguity
-SendPort? _lookupBioFitPort() =>
-    IsolateNameServer.lookupPortByName(_kBioFitActionPort);
+SendPort? _lookupMuvioPort() =>
+    IsolateNameServer.lookupPortByName(_kMuvioActionPort);
 
-class BioFitTaskHandler extends TaskHandler {
+class MuvioTaskHandler extends TaskHandler {
   SleepAnalysisService? _sleepService;
   IsarService? _isarService;
   bool _isSleepActive = false;
@@ -40,7 +40,7 @@ class BioFitTaskHandler extends TaskHandler {
       if (data.containsKey('sleep_active')) {
         _isSleepActive = data['sleep_active'] == true;
         _sensitivity = data['sensitivity'] ?? 0.5;
-        
+
         if (_isSleepActive) {
           _startSleepTracking();
         } else {
@@ -53,17 +53,20 @@ class BioFitTaskHandler extends TaskHandler {
   Future<void> _startSleepTracking() async {
     if (_sleepService != null) return;
     debugPrint('[FOREGROUND] Starting Background Sleep Analysis...');
-    
+
     _sleepService = SleepAnalysisService();
     _isarService = IsarService(); // Dedicated instance for isolate
-    
+
     await _sleepService!.init();
     _sleepService!.sensitivity = _sensitivity;
-    
+
     _sleepService!.eventStream.listen((event) async {
       final isar = await _isarService!.db;
       // Find active session
-      final session = await isar.sleepSessions.filter().endTimeIsNull().findFirst();
+      final session = await isar.sleepSessions
+          .filter()
+          .endTimeIsNull()
+          .findFirst();
       if (session != null) {
         await isar.writeTxn(() async {
           session.events.add(event);
@@ -71,9 +74,9 @@ class BioFitTaskHandler extends TaskHandler {
           _estimateStageForBackground(session, event);
           await isar.sleepSessions.put(session);
         });
-        
+
         // Notify main isolate if active
-        final port = _lookupBioFitPort();
+        final port = _lookupMuvioPort();
         port?.send({'type': 'sleep_event', 'event': 'detected'});
       }
     });
@@ -84,12 +87,24 @@ class BioFitTaskHandler extends TaskHandler {
   void _estimateStageForBackground(SleepSession session, SleepEvent event) {
     // Simple logic inherited from SleepCubit to keep DB consistent
     if (event.type == SleepEventType.movement) {
-      session.stages.add(SleepStageData()..timestamp = DateTime.now()..stage = SleepStage.awake);
+      session.stages.add(
+        SleepStageData()
+          ..timestamp = DateTime.now()
+          ..stage = SleepStage.awake,
+      );
     } else if (event.type == SleepEventType.breathing) {
       // If we see breathing and no movement, might be deep
-      session.stages.add(SleepStageData()..timestamp = DateTime.now()..stage = SleepStage.deep);
+      session.stages.add(
+        SleepStageData()
+          ..timestamp = DateTime.now()
+          ..stage = SleepStage.deep,
+      );
     } else {
-      session.stages.add(SleepStageData()..timestamp = DateTime.now()..stage = SleepStage.light);
+      session.stages.add(
+        SleepStageData()
+          ..timestamp = DateTime.now()
+          ..stage = SleepStage.light,
+      );
     }
   }
 
@@ -113,12 +128,14 @@ class BioFitTaskHandler extends TaskHandler {
     debugPrint('[FOREGROUND] Button Clicked: $id');
 
     // PRIMARY: send via our own named ReceivePort in the main isolate
-    final sendPort = _lookupBioFitPort();
+    final sendPort = _lookupMuvioPort();
     if (sendPort != null) {
       sendPort.send(id);
       debugPrint('[FOREGROUND] Sent via direct port: $id');
     } else {
-      debugPrint('[FOREGROUND] WARNING: direct port "$_kBioFitActionPort" not found');
+      debugPrint(
+        '[FOREGROUND] WARNING: direct port "$_kMuvioActionPort" not found',
+      );
     }
 
     // FALLBACK: plugin's own channel (may or may not work)
@@ -131,12 +148,12 @@ class BioFitTaskHandler extends TaskHandler {
   }
 }
 
-class BioFitForegroundService {
+class MuvioForegroundService {
   static void init() {
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
-        channelId: 'biofit_foreground_channel',
-        channelName: 'BioFit Tracking',
+        channelId: 'muvio_foreground_channel',
+        channelName: 'Muvio Tracking',
         channelDescription: 'Ongoing task controls and sensors',
         channelImportance: NotificationChannelImportance.MAX,
         priority: NotificationPriority.HIGH,
@@ -184,11 +201,9 @@ class BioFitForegroundService {
         NotificationButton(id: 'skip_rest$suffix', text: 'SKIP REST'),
       ];
     }
-    
+
     // Default workout button — we'll only show this if the user wants it
-    return [
-      NotificationButton(id: 'toggle_set$suffix', text: 'DONE'),
-    ];
+    return [NotificationButton(id: 'toggle_set$suffix', text: 'DONE')];
   }
 
   static Future<void> startService({
@@ -274,4 +289,3 @@ class BioFitForegroundService {
     }
   }
 }
-

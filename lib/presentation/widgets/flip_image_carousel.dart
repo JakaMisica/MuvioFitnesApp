@@ -19,7 +19,8 @@ class FlipImageCarousel extends StatefulWidget {
   State<FlipImageCarousel> createState() => _FlipImageCarouselState();
 }
 
-class _FlipImageCarouselState extends State<FlipImageCarousel> with SingleTickerProviderStateMixin {
+class _FlipImageCarouselState extends State<FlipImageCarousel>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   String _currentImagePath = "";
   String _nextImagePath = "";
@@ -40,7 +41,7 @@ class _FlipImageCarouselState extends State<FlipImageCarousel> with SingleTicker
     if (oldWidget.imagePath != widget.imagePath) {
       _nextImagePath = widget.imagePath;
       if (_controller.isAnimating) return;
-      
+
       _controller.forward(from: 0).then((_) {
         setState(() {
           _currentImagePath = _nextImagePath;
@@ -62,10 +63,12 @@ class _FlipImageCarouselState extends State<FlipImageCarousel> with SingleTicker
       animation: _controller,
       builder: (context, child) {
         final val = _controller.value;
-        
+
         // Show current image until half-flip, then show next
-        final displayedImage = (val < 0.5 || _nextImagePath.isEmpty) ? _currentImagePath : _nextImagePath;
-        
+        final displayedImage = (val < 0.5 || _nextImagePath.isEmpty)
+            ? _currentImagePath
+            : _nextImagePath;
+
         // Calculate rotation so it flips 0 -> 90 then -90 -> 0
         double rotation;
         if (val < 0.5) {
@@ -73,7 +76,7 @@ class _FlipImageCarouselState extends State<FlipImageCarousel> with SingleTicker
         } else {
           rotation = (val - 1.0) * math.pi; // -pi/2 to 0
         }
-        
+
         return Transform(
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.002) // Perspective/Tilt

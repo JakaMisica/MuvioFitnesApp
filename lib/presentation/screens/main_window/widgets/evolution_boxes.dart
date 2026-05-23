@@ -61,11 +61,7 @@ class EvolutionBox extends StatelessWidget {
                 else if (icon != null)
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: 20,
-                    ),
+                    child: Icon(icon, color: color, size: 20),
                   ),
                 Flexible(
                   child: FittedBox(

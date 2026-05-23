@@ -251,7 +251,6 @@ class _TasksContentState extends State<_TasksContent> {
     );
   }
 
-
   Widget _buildBottomActionButton({
     required VoidCallback onPressed,
     required IconData icon,

@@ -11,7 +11,11 @@ class AnalyticsService {
   ///   - < 1.0: Stronger at low reps (uses Brzycki)
   ///   - = 1.0: Balanced (uses Epley)
   ///   - > 1.0: Stronger at high reps (uses Mayhew)
-  static double calculate1RM(double weight, int reps, {double strengthIndex = 1.0}) {
+  static double calculate1RM(
+    double weight,
+    int reps, {
+    double strengthIndex = 1.0,
+  }) {
     if (reps == 1) return weight;
     int cappedReps = reps > 30 ? 30 : reps;
 
@@ -80,7 +84,12 @@ class AnalyticsService {
       }
     }
 
-    if ([lowRepSets, midRepSets, highRepSets].where((l) => l.isNotEmpty).length < 2) {
+    if ([
+          lowRepSets,
+          midRepSets,
+          highRepSets,
+        ].where((l) => l.isNotEmpty).length <
+        2) {
       return 1.0;
     }
 
@@ -100,21 +109,28 @@ class AnalyticsService {
     double index = 1.0;
     if (lowRep1RM > 0 && highRep1RM > 0) {
       final ratio = highRep1RM / lowRep1RM;
-      if (ratio < 0.95) index = 0.85;
-      else if (ratio > 1.05) index = 1.15;
+      if (ratio < 0.95)
+        index = 0.85;
+      else if (ratio > 1.05)
+        index = 1.15;
     }
 
     return index.clamp(0.5, 1.5);
   }
 
   /// Get the best 1RM from a list of sets
-  static double getBest1RM(List<WorkoutSet> sets, {double strengthIndex = 1.0}) {
+  static double getBest1RM(
+    List<WorkoutSet> sets, {
+    double strengthIndex = 1.0,
+  }) {
     if (sets.isEmpty) return 0;
-    return sets.map((set) {
-      final weight = set.weight ?? 0;
-      final reps = set.reps ?? 0;
-      return calculate1RM(weight, reps, strengthIndex: strengthIndex);
-    }).reduce(max);
+    return sets
+        .map((set) {
+          final weight = set.weight ?? 0;
+          final reps = set.reps ?? 0;
+          return calculate1RM(weight, reps, strengthIndex: strengthIndex);
+        })
+        .reduce(max);
   }
 
   /// Aggregate daily stats from exercise logs

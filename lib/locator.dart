@@ -39,7 +39,9 @@ void setupLocator() {
   locator.registerLazySingleton(() => TaskRepository(locator<IsarService>()));
   locator.registerLazySingleton(() => BodyRepository(locator<IsarService>()));
   locator.registerLazySingleton(() => DietRepository(locator<IsarService>()));
-  locator.registerLazySingleton(() => FatigueRepository(locator<IsarService>()));
+  locator.registerLazySingleton(
+    () => FatigueRepository(locator<IsarService>()),
+  );
   locator.registerLazySingleton(
     () => AnalyticsRepository(
       locator<IsarService>(),
@@ -62,5 +64,7 @@ void setupLocator() {
   locator.registerSingleton<WorkoutCubit>(WorkoutCubit());
   locator.registerSingleton<SleepCubit>(SleepCubit());
   locator.registerSingleton<SocialCubit>(SocialCubit());
-  locator.registerSingleton<EvolutionCubit>(EvolutionCubit(locator<BodyRepository>()));
+  locator.registerSingleton<EvolutionCubit>(
+    EvolutionCubit(locator<BodyRepository>()),
+  );
 }

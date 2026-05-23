@@ -480,7 +480,11 @@ class _FoodFormDialogState extends State<FoodFormDialog> {
       style: const TextStyle(color: Colors.white, fontSize: 13),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+        labelStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+        ),
         filled: true,
         fillColor: Colors.white.withOpacity(0.05),
         contentPadding: const EdgeInsets.symmetric(

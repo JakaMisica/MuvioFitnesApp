@@ -579,9 +579,7 @@ class _FoodDetailDialogState extends State<FoodDetailDialog> {
                 style: TextStyle(
                   color: color ?? Colors.white.withOpacity(0.85),
                   fontSize: 13,
-                  fontWeight: color != null
-                      ? FontWeight.w900
-                      : FontWeight.bold,
+                  fontWeight: color != null ? FontWeight.w900 : FontWeight.bold,
                 ),
               ),
               Text(

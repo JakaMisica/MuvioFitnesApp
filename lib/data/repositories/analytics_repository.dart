@@ -1,12 +1,12 @@
-import 'package:biofit_pro/data/models/analytics_experiment.dart';
-import 'package:biofit_pro/data/models/fatigue_state.dart';
+import 'package:muvio/data/models/analytics_experiment.dart';
+import 'package:muvio/data/models/fatigue_state.dart';
 import 'package:flutter/material.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/data/repositories/diet_repository.dart';
-import 'package:biofit_pro/data/repositories/task_repository.dart';
-import 'package:biofit_pro/data/repositories/workout_repository.dart';
-import 'package:biofit_pro/data/repositories/fatigue_repository.dart';
-import 'package:biofit_pro/data/datasources/isar_service.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/data/repositories/diet_repository.dart';
+import 'package:muvio/data/repositories/task_repository.dart';
+import 'package:muvio/data/repositories/workout_repository.dart';
+import 'package:muvio/data/repositories/fatigue_repository.dart';
+import 'package:muvio/data/datasources/isar_service.dart';
 import 'package:isar/isar.dart';
 import 'package:collection/collection.dart';
 import 'dart:math' as math;
@@ -141,29 +141,77 @@ class AnalyticsRepository {
       case AnalyticsMetricType.stressLevel:
         return await _getTaskNumericValue('stress', start, end);
       case AnalyticsMetricType.measurementNeck:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'neck');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'neck',
+        );
       case AnalyticsMetricType.measurementChest:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'chest');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'chest',
+        );
       case AnalyticsMetricType.measurementWaist:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'waist');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'waist',
+        );
       case AnalyticsMetricType.measurementHips:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'hips');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'hips',
+        );
       case AnalyticsMetricType.measurementLeftArm:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'leftArm');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'leftArm',
+        );
       case AnalyticsMetricType.measurementRightArm:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'rightArm');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'rightArm',
+        );
       case AnalyticsMetricType.measurementLeftForearm:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'leftForearm');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'leftForearm',
+        );
       case AnalyticsMetricType.measurementRightForearm:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'rightForearm');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'rightForearm',
+        );
       case AnalyticsMetricType.measurementLeftThigh:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'leftThigh');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'leftThigh',
+        );
       case AnalyticsMetricType.measurementRightThigh:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'rightThigh');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'rightThigh',
+        );
       case AnalyticsMetricType.measurementLeftCalf:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'leftCalf');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'leftCalf',
+        );
       case AnalyticsMetricType.measurementRightCalf:
-        return await _bodyRepo.getMetricHistory(start: start, end: end, metricField: 'rightCalf');
+        return await _bodyRepo.getMetricHistory(
+          start: start,
+          end: end,
+          metricField: 'rightCalf',
+        );
       case AnalyticsMetricType.steps:
         return await _workoutRepo.getStepsHistory(start, end);
       case AnalyticsMetricType.distance:
@@ -277,9 +325,7 @@ class AnalyticsRepository {
       );
     }
 
-    return aggregated.entries
-        .map((e) => MapEntry(e.key, e.value))
-        .toList()
+    return aggregated.entries.map((e) => MapEntry(e.key, e.value)).toList()
       ..sort((a, b) => a.key.compareTo(b.key));
   }
 

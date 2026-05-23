@@ -126,8 +126,9 @@ class AuthScreen extends StatelessWidget {
 
                   // Skip Button
                   TextButton(
-                    onPressed: () =>
-                        context.read<AuthCubit>().signInAnonymously(persistLocally: true),
+                    onPressed: () => context
+                        .read<AuthCubit>()
+                        .signInAnonymously(persistLocally: true),
                     child: Text(
                       "CONTINUE AS OFFLINE PHENOTYPE",
                       style: TextStyle(
@@ -170,7 +171,11 @@ class AuthScreen extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.mark_email_unread_outlined, color: Colors.cyanAccent, size: 48),
+            const Icon(
+              Icons.mark_email_unread_outlined,
+              color: Colors.cyanAccent,
+              size: 48,
+            ),
             const Gap(16),
             Text(
               "A verification link has been sent to:\n$email",
@@ -188,11 +193,18 @@ class AuthScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => context.read<AuthCubit>().signOut(),
-            child: const Text("CANCEL", style: TextStyle(color: Colors.white38)),
+            child: const Text(
+              "CANCEL",
+              style: TextStyle(color: Colors.white38),
+            ),
           ),
           TextButton(
-            onPressed: () => context.read<AuthCubit>().resendVerificationEmail(),
-            child: const Text("RESEND", style: TextStyle(color: Colors.cyanAccent)),
+            onPressed: () =>
+                context.read<AuthCubit>().resendVerificationEmail(),
+            child: const Text(
+              "RESEND",
+              style: TextStyle(color: Colors.cyanAccent),
+            ),
           ),
           ElevatedButton(
             onPressed: () => context.read<AuthCubit>().checkEmailVerification(),
@@ -200,7 +212,10 @@ class AuthScreen extends StatelessWidget {
               backgroundColor: Colors.cyanAccent,
               foregroundColor: Colors.black,
             ),
-            child: const Text("I'VE VERIFIED", style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text(
+              "I'VE VERIFIED",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -287,10 +302,10 @@ class AuthScreen extends StatelessWidget {
                 final authCubit = context.read<AuthCubit>();
                 final email = emailController.text.trim();
                 final password = passwordController.text.trim();
-                
+
                 if (email.isEmpty || password.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please fill all fields"))
+                    const SnackBar(content: Text("Please fill all fields")),
                   );
                   return;
                 }

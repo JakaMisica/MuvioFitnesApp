@@ -343,15 +343,15 @@ class _FoodSearchDialogState extends State<FoodSearchDialog> {
       context: context,
       builder: (_) => FoodDetailDialog(food: food),
     );
-    
+
     if (result != null) {
       final amount = result['amount'] as double;
       final unit = result['unit'] as String;
-      
+
       // Update sticky preference
       food.lastUsedAmount = amount;
       food.lastUsedUnit = unit;
-      
+
       if (widget.mealIndex == null) {
         context.read<DietCubit>().addSupplement(food, amount, unit);
       } else {

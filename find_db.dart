@@ -12,7 +12,7 @@ void main() async {
     print('Cache: ${localDir.path}');
     print('Docs: ${docsDir.path}');
     
-    final dbPath = Directory('${supportDir.path}/biofit_pro_db');
+    final dbPath = Directory('${supportDir.path}/muvio_db');
     if (await dbPath.exists()) {
       print('FOUND! -> ${dbPath.path}');
     } else {

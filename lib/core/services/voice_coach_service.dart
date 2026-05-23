@@ -10,7 +10,7 @@ class VoiceCoachService {
   final GraniteSpeechService _hearing = GraniteSpeechService();
   final PiperVoiceService _voice = PiperVoiceService();
   final AudioRecorder _recorder = AudioRecorder();
-  
+
   static final VoiceCoachService _instance = VoiceCoachService._internal();
   factory VoiceCoachService() => _instance;
   VoiceCoachService._internal();
@@ -21,7 +21,7 @@ class VoiceCoachService {
       if (await _recorder.hasPermission()) {
         final tempDir = await getTemporaryDirectory();
         final path = '${tempDir.path}/muvio_voice_input.wav';
-        
+
         final file = File(path);
         if (await file.exists()) await file.delete();
 
@@ -54,12 +54,12 @@ class VoiceCoachService {
     try {
       final file = File(audioPath);
       if (!await file.exists()) return "";
-      
+
       final bytes = await file.readAsBytes();
       // Simple WAV header skip (44 bytes typical)
-      // For a better implementation we should use a wav decoder, 
+      // For a better implementation we should use a wav decoder,
       // but for 16k mono it's often predictable.
-      final pcmBytes = bytes.sublist(44); 
+      final pcmBytes = bytes.sublist(44);
       final List<double> samples = [];
       for (int i = 0; i < pcmBytes.length - 1; i += 2) {
         final int low = pcmBytes[i];
@@ -81,18 +81,30 @@ class VoiceCoachService {
 
   /// STEP 2: THINKING (BRAIN)
   /// Fallback between Gemini Cloud and Local Emergency Brain
-  Future<String> getBrainResponse(List<Map<String, String>> messages, {String? audioPath}) async {
+  Future<String> getBrainResponse(
+    List<Map<String, String>> messages, {
+    String? audioPath,
+  }) async {
     try {
-      debugPrint("VoiceCoachService: Syncing with Cloud Brain (Gemini Flash-Lite)...");
-      final response = await _cloudBrain.getResponse(messages, audioPath: audioPath);
-      
-      if (response.contains("exhausted") || response.contains("unavailable") || response.isEmpty) {
+      debugPrint(
+        "VoiceCoachService: Syncing with Cloud Brain (Gemini Flash-Lite)...",
+      );
+      final response = await _cloudBrain.getResponse(
+        messages,
+        audioPath: audioPath,
+      );
+
+      if (response.contains("exhausted") ||
+          response.contains("unavailable") ||
+          response.isEmpty) {
         return _getEmergencyResponse(messages.last['content'] ?? "");
       }
-      
+
       return response;
     } catch (e) {
-      debugPrint("VoiceCoachService: Cloud Brain sync failure: $e. Activating Emergency Brain...");
+      debugPrint(
+        "VoiceCoachService: Cloud Brain sync failure: $e. Activating Emergency Brain...",
+      );
       return _getEmergencyResponse(messages.last['content'] ?? "");
     }
   }

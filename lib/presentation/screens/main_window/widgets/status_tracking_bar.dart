@@ -33,8 +33,13 @@ class StatusTrackingBar extends StatelessWidget {
               child: BlocBuilder<WorkoutCubit, WorkoutState>(
                 builder: (context, state) {
                   final total = state.workoutDay?.exercises.length ?? 0;
-                  final finished = state.workoutDay?.exercises
-                          .where((e) => e.sets.isNotEmpty && e.sets.every((s) => s.isCompleted))
+                  final finished =
+                      state.workoutDay?.exercises
+                          .where(
+                            (e) =>
+                                e.sets.isNotEmpty &&
+                                e.sets.every((s) => s.isCompleted),
+                          )
                           .length ??
                       0;
                   return _buildSegment(

@@ -5,19 +5,19 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import '../../../core/services/tutorial_service.dart';
-import 'package:biofit_pro/logic/cubit/social/social_cubit.dart';
-import 'package:biofit_pro/logic/cubit/workout/workout_cubit.dart';
-import 'package:biofit_pro/logic/cubit/diet/diet_cubit.dart';
-import 'package:biofit_pro/logic/cubit/tasks/task_cubit.dart';
-import 'package:biofit_pro/logic/cubit/sleep/sleep_cubit.dart';
-import 'package:biofit_pro/presentation/screens/social/widgets/social_import_dialogs.dart';
-import 'package:biofit_pro/presentation/screens/workout_window/widgets/save_workout_template_dialog.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_cubit.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_state.dart';
+import 'package:muvio/logic/cubit/social/social_cubit.dart';
+import 'package:muvio/logic/cubit/workout/workout_cubit.dart';
+import 'package:muvio/logic/cubit/diet/diet_cubit.dart';
+import 'package:muvio/logic/cubit/tasks/task_cubit.dart';
+import 'package:muvio/logic/cubit/sleep/sleep_cubit.dart';
+import 'package:muvio/presentation/screens/social/widgets/social_import_dialogs.dart';
+import 'package:muvio/presentation/screens/workout_window/widgets/save_workout_template_dialog.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_cubit.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_state.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:biofit_pro/presentation/screens/social/widgets/coach_selection_dialog.dart';
+import 'package:muvio/presentation/screens/social/widgets/coach_selection_dialog.dart';
 
-import 'package:biofit_pro/presentation/widgets/foggy_background.dart';
+import 'package:muvio/presentation/widgets/foggy_background.dart';
 
 class SocialHubScreen extends StatefulWidget {
   const SocialHubScreen({super.key});
@@ -65,7 +65,6 @@ class _SocialHubScreenState extends State<SocialHubScreen>
     );
   }
 
-
   Widget _buildHeader() {
     final tabTitles = ['CHATS', 'FRIENDS', 'COACH'];
     final currentTitle = tabTitles[_tabController.index];
@@ -111,12 +110,18 @@ class _SocialHubScreenState extends State<SocialHubScreen>
             children: [
               IconButton(
                 onPressed: () => _showContactDevDialog(context),
-                icon: const Icon(Icons.bug_report_outlined, color: Colors.orangeAccent),
+                icon: const Icon(
+                  Icons.bug_report_outlined,
+                  color: Colors.orangeAccent,
+                ),
                 tooltip: 'Report Bug / Contact Dev',
               ),
               IconButton(
                 onPressed: () => _showAddFriendDialog(context),
-                icon: const Icon(Icons.person_add_outlined, color: Colors.cyanAccent),
+                icon: const Icon(
+                  Icons.person_add_outlined,
+                  color: Colors.cyanAccent,
+                ),
               ),
               const Gap(4),
               BlocBuilder<SocialCubit, SocialState>(
@@ -130,11 +135,16 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.cyanAccent.withOpacity(0.1),
-                        border: Border.all(color: Colors.cyanAccent.withOpacity(0.3)),
+                        border: Border.all(
+                          color: Colors.cyanAccent.withOpacity(0.3),
+                        ),
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        (state.userName.isNotEmpty ? state.userName.substring(0, 1) : 'U').toUpperCase(),
+                        (state.userName.isNotEmpty
+                                ? state.userName.substring(0, 1)
+                                : 'U')
+                            .toUpperCase(),
                         style: const TextStyle(
                           color: Colors.cyanAccent,
                           fontWeight: FontWeight.bold,
@@ -210,7 +220,9 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Message sent to developer! Check the conversation list.'),
+                    content: Text(
+                      'Message sent to developer! Check the conversation list.',
+                    ),
                     backgroundColor: Colors.orangeAccent,
                   ),
                 );
@@ -229,7 +241,6 @@ class _SocialHubScreenState extends State<SocialHubScreen>
       ),
     );
   }
-
 
   Widget _buildTabBar() {
     return TabBar(
@@ -295,7 +306,10 @@ class _SocialHubScreenState extends State<SocialHubScreen>
         ),
         child: ListTile(
           onTap: () => _openChat(conv),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
           leading: Container(
             width: 50,
             height: 50,
@@ -305,8 +319,8 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 colors: conv.remoteId.startsWith('monthly_gym_bros_')
                     ? [Colors.orangeAccent, Colors.deepOrange]
                     : (conv.isGroup
-                        ? [Colors.purpleAccent, Colors.blueAccent]
-                        : [Colors.cyanAccent, Colors.greenAccent]),
+                          ? [Colors.purpleAccent, Colors.blueAccent]
+                          : [Colors.cyanAccent, Colors.greenAccent]),
               ),
             ),
             child: Icon(
@@ -379,34 +393,74 @@ class _SocialHubScreenState extends State<SocialHubScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, margin: const EdgeInsets.symmetric(vertical: 12), decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             ListTile(
-              leading: Icon(conv.isBlocked ? Icons.check_circle_outline : Icons.block, color: Colors.orangeAccent),
-              title: Text(conv.isBlocked ? 'Unblock' : 'Block Chat', style: const TextStyle(color: Colors.white)),
+              leading: Icon(
+                conv.isBlocked ? Icons.check_circle_outline : Icons.block,
+                color: Colors.orangeAccent,
+              ),
+              title: Text(
+                conv.isBlocked ? 'Unblock' : 'Block Chat',
+                style: const TextStyle(color: Colors.white),
+              ),
               onTap: () {
                 Navigator.pop(ctx);
                 context.read<SocialCubit>().toggleBlock(conv.remoteId);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
-              title: const Text('Delete Chat', style: TextStyle(color: Colors.redAccent)),
+              leading: const Icon(
+                Icons.delete_outline,
+                color: Colors.redAccent,
+              ),
+              title: const Text(
+                'Delete Chat',
+                style: TextStyle(color: Colors.redAccent),
+              ),
               onTap: () {
                 Navigator.pop(ctx);
                 showDialog(
                   context: context,
                   builder: (dCtx) => AlertDialog(
                     backgroundColor: const Color(0xFF1A1A1A),
-                    title: const Text('Delete Chat?', style: TextStyle(color: Colors.white)),
-                    content: Text('This will permanently delete "${conv.name}" and all its messages.', style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                    title: const Text(
+                      'Delete Chat?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    content: Text(
+                      'This will permanently delete "${conv.name}" and all its messages.',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
+                    ),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(dCtx), child: const Text('CANCEL', style: TextStyle(color: Colors.white38))),
+                      TextButton(
+                        onPressed: () => Navigator.pop(dCtx),
+                        child: const Text(
+                          'CANCEL',
+                          style: TextStyle(color: Colors.white38),
+                        ),
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pop(dCtx);
-                          context.read<SocialCubit>().deleteConversation(conv.remoteId);
+                          context.read<SocialCubit>().deleteConversation(
+                            conv.remoteId,
+                          );
                         },
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                        ),
                         child: const Text('DELETE'),
                       ),
                     ],
@@ -450,7 +504,12 @@ class _SocialHubScreenState extends State<SocialHubScreen>
             .where((c) => !c.isGroup && c.isPendingFriendRequest)
             .toList();
         final activeFriends = state.conversations
-            .where((c) => !c.isGroup && !c.isPendingFriendRequest && c.remoteId.startsWith('p2p_'))
+            .where(
+              (c) =>
+                  !c.isGroup &&
+                  !c.isPendingFriendRequest &&
+                  c.remoteId.startsWith('p2p_'),
+            )
             .toList();
 
         return SingleChildScrollView(
@@ -469,17 +528,29 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 ),
                 child: Column(
                   children: [
-                    const Icon(Icons.fingerprint_rounded, color: Colors.cyanAccent, size: 40),
+                    const Icon(
+                      Icons.fingerprint_rounded,
+                      color: Colors.cyanAccent,
+                      size: 40,
+                    ),
                     const Gap(12),
                     Text(
                       state.userName,
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     const Gap(4),
                     SelectableText(
                       myId,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.cyanAccent, fontSize: 10, fontFamily: 'monospace'),
+                      style: const TextStyle(
+                        color: Colors.cyanAccent,
+                        fontSize: 10,
+                        fontFamily: 'monospace',
+                      ),
                     ),
                     const Gap(16),
                     Row(
@@ -489,7 +560,10 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                             onPressed: () {
                               Clipboard.setData(ClipboardData(text: myId));
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('DNA ID copied!'), backgroundColor: Colors.cyanAccent),
+                                const SnackBar(
+                                  content: Text('DNA ID copied!'),
+                                  backgroundColor: Colors.cyanAccent,
+                                ),
                               );
                             },
                             icon: const Icon(Icons.copy_rounded, size: 16),
@@ -498,21 +572,26 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                               backgroundColor: Colors.cyanAccent,
                               foregroundColor: Colors.black,
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
                         const Gap(12),
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: () => _showCreateGroupDialog(context, activeFriends),
+                            onPressed: () =>
+                                _showCreateGroupDialog(context, activeFriends),
                             icon: const Icon(Icons.group_add_rounded, size: 16),
                             label: const Text('CREATE GROUP'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.purpleAccent,
                               foregroundColor: Colors.black,
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
@@ -528,18 +607,29 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 Row(
                   children: [
                     Container(
-                      width: 8, height: 8,
-                      decoration: const BoxDecoration(color: Colors.orangeAccent, shape: BoxShape.circle),
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Colors.orangeAccent,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     const Gap(8),
                     Text(
                       'PENDING REQUESTS (${pendingRequests.length})',
-                      style: const TextStyle(color: Colors.orangeAccent, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                      style: const TextStyle(
+                        color: Colors.orangeAccent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
                     ),
                   ],
                 ),
                 const Gap(12),
-                ...pendingRequests.map((conv) => _buildPendingRequestCard(conv)),
+                ...pendingRequests.map(
+                  (conv) => _buildPendingRequestCard(conv),
+                ),
               ],
 
               // Active Friends
@@ -549,7 +639,12 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 children: [
                   Text(
                     'FRIENDS (${activeFriends.length})',
-                    style: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                    style: const TextStyle(
+                      color: Colors.white38,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
                   ),
                 ],
               ),
@@ -558,7 +653,10 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(24.0),
-                    child: Text('No friends yet. Add someone below!', style: TextStyle(color: Colors.white24, fontSize: 12)),
+                    child: Text(
+                      'No friends yet. Add someone below!',
+                      style: TextStyle(color: Colors.white24, fontSize: 12),
+                    ),
                   ),
                 )
               else
@@ -568,7 +666,12 @@ class _SocialHubScreenState extends State<SocialHubScreen>
               const Gap(28),
               const Text(
                 'ADD FRIEND BY ID',
-                style: TextStyle(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5),
+                style: TextStyle(
+                  color: Colors.white24,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2.5,
+                ),
               ),
               const Gap(12),
               TextField(
@@ -579,18 +682,32 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                   hintStyle: const TextStyle(color: Colors.white10),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.03),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   suffixIcon: Container(
                     margin: const EdgeInsets.only(right: 8),
                     child: IconButton(
-                      icon: const Icon(Icons.person_add_rounded, color: Colors.cyanAccent),
+                      icon: const Icon(
+                        Icons.person_add_rounded,
+                        color: Colors.cyanAccent,
+                      ),
                       onPressed: () {
                         if (friendController.text.isNotEmpty) {
-                          context.read<SocialCubit>().addFriend(friendController.text.trim());
+                          context.read<SocialCubit>().addFriend(
+                            friendController.text.trim(),
+                          );
                           friendController.clear();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Friend request sent! ✓'), backgroundColor: Colors.greenAccent),
+                            const SnackBar(
+                              content: Text('Friend request sent! ✓'),
+                              backgroundColor: Colors.greenAccent,
+                            ),
                           );
                         }
                       },
@@ -602,7 +719,11 @@ class _SocialHubScreenState extends State<SocialHubScreen>
               const Text(
                 'Share your ID with friends and enter theirs to connect.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white10, fontSize: 10, height: 1.5),
+                style: TextStyle(
+                  color: Colors.white10,
+                  fontSize: 10,
+                  height: 1.5,
+                ),
               ),
               const Gap(24),
             ],
@@ -624,15 +745,24 @@ class _SocialHubScreenState extends State<SocialHubScreen>
       child: Row(
         children: [
           Container(
-            width: 44, height: 44,
+            width: 44,
+            height: 44,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [Colors.orangeAccent, Colors.deepOrange]),
+              gradient: LinearGradient(
+                colors: [Colors.orangeAccent, Colors.deepOrange],
+              ),
             ),
             child: Center(
               child: Text(
-                (conv.peerName ?? conv.name).isNotEmpty ? (conv.peerName ?? conv.name)[0].toUpperCase() : '?',
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+                (conv.peerName ?? conv.name).isNotEmpty
+                    ? (conv.peerName ?? conv.name)[0].toUpperCase()
+                    : '?',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ),
           ),
@@ -643,35 +773,66 @@ class _SocialHubScreenState extends State<SocialHubScreen>
               children: [
                 Text(
                   conv.peerName ?? conv.name,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                  ),
                 ),
-                const Text('Wants to connect with you', style: TextStyle(color: Colors.orangeAccent, fontSize: 11)),
+                const Text(
+                  'Wants to connect with you',
+                  style: TextStyle(color: Colors.orangeAccent, fontSize: 11),
+                ),
               ],
             ),
           ),
           Column(
             children: [
               GestureDetector(
-                onTap: () => context.read<SocialCubit>().acceptFriendRequest(conv.remoteId),
+                onTap: () => context.read<SocialCubit>().acceptFriendRequest(
+                  conv.remoteId,
+                ),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.greenAccent,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text('ACCEPT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 11)),
+                  child: const Text(
+                    'ACCEPT',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
                 ),
               ),
               const Gap(6),
               GestureDetector(
-                onTap: () => context.read<SocialCubit>().deleteConversation(conv.remoteId),
+                onTap: () => context.read<SocialCubit>().deleteConversation(
+                  conv.remoteId,
+                ),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white10,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text('DECLINE', style: TextStyle(color: Colors.white38, fontWeight: FontWeight.bold, fontSize: 11)),
+                  child: const Text(
+                    'DECLINE',
+                    style: TextStyle(
+                      color: Colors.white38,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -693,7 +854,8 @@ class _SocialHubScreenState extends State<SocialHubScreen>
       child: Row(
         children: [
           Container(
-            width: 44, height: 44,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
@@ -704,8 +866,14 @@ class _SocialHubScreenState extends State<SocialHubScreen>
             ),
             child: Center(
               child: Text(
-                (conv.peerName ?? conv.name).isNotEmpty ? (conv.peerName ?? conv.name)[0].toUpperCase() : '?',
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+                (conv.peerName ?? conv.name).isNotEmpty
+                    ? (conv.peerName ?? conv.name)[0].toUpperCase()
+                    : '?',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ),
           ),
@@ -726,7 +894,12 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                   children: [
                     Text(
                       conv.isBlocked ? 'Blocked' : 'Friend',
-                      style: TextStyle(color: conv.isBlocked ? Colors.redAccent.withOpacity(0.6) : Colors.greenAccent.withOpacity(0.7), fontSize: 11),
+                      style: TextStyle(
+                        color: conv.isBlocked
+                            ? Colors.redAccent.withOpacity(0.6)
+                            : Colors.greenAccent.withOpacity(0.7),
+                        fontSize: 11,
+                      ),
                     ),
                     if (!conv.isBlocked) ...[
                       const Gap(8),
@@ -736,7 +909,11 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                       const Gap(4),
                       Text(
                         conv.peerSocialPoints.toString(),
-                        style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ],
@@ -757,16 +934,36 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                   context: context,
                   builder: (dCtx) => AlertDialog(
                     backgroundColor: const Color(0xFF1A1A1A),
-                    title: const Text('Remove Friend?', style: TextStyle(color: Colors.white)),
-                    content: Text('Remove ${conv.peerName ?? conv.name} from your friends?', style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                    title: const Text(
+                      'Remove Friend?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    content: Text(
+                      'Remove ${conv.peerName ?? conv.name} from your friends?',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
+                    ),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(dCtx), child: const Text('CANCEL', style: TextStyle(color: Colors.white38))),
+                      TextButton(
+                        onPressed: () => Navigator.pop(dCtx),
+                        child: const Text(
+                          'CANCEL',
+                          style: TextStyle(color: Colors.white38),
+                        ),
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pop(dCtx);
-                          context.read<SocialCubit>().deleteConversation(conv.remoteId);
+                          context.read<SocialCubit>().deleteConversation(
+                            conv.remoteId,
+                          );
                         },
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                        ),
                         child: const Text('REMOVE'),
                       ),
                     ],
@@ -775,9 +972,57 @@ class _SocialHubScreenState extends State<SocialHubScreen>
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'chat', child: Row(children: [Icon(Icons.chat_bubble_outline, color: Colors.cyanAccent, size: 18), Gap(12), Text('Open Chat', style: TextStyle(color: Colors.white, fontSize: 13))])),
-              PopupMenuItem(value: 'block', child: Row(children: [Icon(conv.isBlocked ? Icons.check_circle_outline : Icons.block, color: Colors.orangeAccent, size: 18), const Gap(12), Text(conv.isBlocked ? 'Unblock' : 'Block', style: const TextStyle(color: Colors.white, fontSize: 13))])),
-              const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.person_remove_outlined, color: Colors.redAccent, size: 18), Gap(12), Text('Remove Friend', style: TextStyle(color: Colors.redAccent, fontSize: 13))])),
+              const PopupMenuItem(
+                value: 'chat',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.chat_bubble_outline,
+                      color: Colors.cyanAccent,
+                      size: 18,
+                    ),
+                    Gap(12),
+                    Text(
+                      'Open Chat',
+                      style: TextStyle(color: Colors.white, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'block',
+                child: Row(
+                  children: [
+                    Icon(
+                      conv.isBlocked ? Icons.check_circle_outline : Icons.block,
+                      color: Colors.orangeAccent,
+                      size: 18,
+                    ),
+                    const Gap(12),
+                    Text(
+                      conv.isBlocked ? 'Unblock' : 'Block',
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.person_remove_outlined,
+                      color: Colors.redAccent,
+                      size: 18,
+                    ),
+                    Gap(12),
+                    Text(
+                      'Remove Friend',
+                      style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
@@ -785,7 +1030,10 @@ class _SocialHubScreenState extends State<SocialHubScreen>
     );
   }
 
-  void _showCreateGroupDialog(BuildContext context, List<SocialConversation> friends) {
+  void _showCreateGroupDialog(
+    BuildContext context,
+    List<SocialConversation> friends,
+  ) {
     final nameController = TextEditingController();
     final selectedIds = <String>{};
 
@@ -794,8 +1042,17 @@ class _SocialHubScreenState extends State<SocialHubScreen>
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
           backgroundColor: const Color(0xFF1A1A1A),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text('CREATE GROUP CHAT', style: TextStyle(color: Colors.purpleAccent, fontWeight: FontWeight.w900, fontSize: 16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: const Text(
+            'CREATE GROUP CHAT',
+            style: TextStyle(
+              color: Colors.purpleAccent,
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+            ),
+          ),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -810,14 +1067,26 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                     hintStyle: const TextStyle(color: Colors.white24),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 const Gap(16),
-                const Text('SELECT FRIENDS:', style: TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w900)),
+                const Text(
+                  'SELECT FRIENDS:',
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
                 const Gap(8),
                 if (friends.isEmpty)
-                  const Text('No friends yet. Add friends first!', style: TextStyle(color: Colors.white24, fontSize: 12))
+                  const Text(
+                    'No friends yet. Add friends first!',
+                    style: TextStyle(color: Colors.white24, fontSize: 12),
+                  )
                 else
                   ...friends.map((f) {
                     final pid = f.peerId ?? f.remoteId;
@@ -825,10 +1094,19 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                       value: selectedIds.contains(pid),
                       onChanged: (v) {
                         setDialogState(() {
-                          if (v == true) selectedIds.add(pid); else selectedIds.remove(pid);
+                          if (v == true)
+                            selectedIds.add(pid);
+                          else
+                            selectedIds.remove(pid);
                         });
                       },
-                      title: Text(f.peerName ?? f.name, style: const TextStyle(color: Colors.white, fontSize: 13)),
+                      title: Text(
+                        f.peerName ?? f.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                      ),
                       activeColor: Colors.purpleAccent,
                       checkColor: Colors.black,
                     );
@@ -837,19 +1115,37 @@ class _SocialHubScreenState extends State<SocialHubScreen>
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('CANCEL', style: TextStyle(color: Colors.white38))),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text(
+                'CANCEL',
+                style: TextStyle(color: Colors.white38),
+              ),
+            ),
             ElevatedButton(
               onPressed: () {
                 if (nameController.text.isNotEmpty && selectedIds.isNotEmpty) {
-                  context.read<SocialCubit>().createGroupChat(nameController.text, selectedIds.toList());
+                  context.read<SocialCubit>().createGroupChat(
+                    nameController.text,
+                    selectedIds.toList(),
+                  );
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Group created! ✓'), backgroundColor: Colors.purpleAccent),
+                    const SnackBar(
+                      content: Text('Group created! ✓'),
+                      backgroundColor: Colors.purpleAccent,
+                    ),
                   );
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.purpleAccent, foregroundColor: Colors.black),
-              child: const Text('CREATE', style: TextStyle(fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purpleAccent,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text(
+                'CREATE',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
@@ -871,7 +1167,11 @@ class _SocialHubScreenState extends State<SocialHubScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text(
           'IDENTITY SETTINGS',
-          style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.w900, fontSize: 16),
+          style: TextStyle(
+            color: Colors.cyanAccent,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -891,13 +1191,21 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 hintStyle: const TextStyle(color: Colors.white24),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('CANCEL', style: TextStyle(color: Colors.white24))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'CANCEL',
+              style: TextStyle(color: Colors.white24),
+            ),
+          ),
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
@@ -905,14 +1213,19 @@ class _SocialHubScreenState extends State<SocialHubScreen>
                 Navigator.pop(ctx);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent, foregroundColor: Colors.black),
-            child: const Text('SAVE NAME', style: TextStyle(fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.cyanAccent,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text(
+              'SAVE NAME',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
     );
   }
-
 }
 
 class ChatWindowScreen extends StatefulWidget {
@@ -958,8 +1271,8 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                         conversation.isBlocked
                             ? 'BLOCKED'
                             : (conversation.isGroup
-                                ? '${conversation.participantIds.length} members'
-                                : 'Active Channel'),
+                                  ? '${conversation.participantIds.length} members'
+                                  : 'Active Channel'),
                         style: TextStyle(
                           fontSize: 10,
                           color: conversation.isBlocked
@@ -971,7 +1284,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                   ),
                   actions: [
                     PopupMenuButton<String>(
-                      key: TutorialService().getKeyForStep(TutorialStep.squadDetailsIcon),
+                      key: TutorialService().getKeyForStep(
+                        TutorialStep.squadDetailsIcon,
+                      ),
                       icon: const Icon(Icons.more_vert, color: Colors.white70),
                       color: const Color(0xFF1A1A1A),
                       onSelected: (value) {
@@ -1044,10 +1359,16 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                         .where((m) => m.conversationId == conversation.remoteId)
                         .length,
                     itemBuilder: (context, index) {
-                      final filteredMessages = state.messages
-                          .where((m) => m.conversationId == conversation.remoteId)
-                          .toList()
-                        ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+                      final filteredMessages =
+                          state.messages
+                              .where(
+                                (m) =>
+                                    m.conversationId == conversation.remoteId,
+                              )
+                              .toList()
+                            ..sort(
+                              (a, b) => b.timestamp.compareTo(a.timestamp),
+                            );
                       return _buildMessageBubble(
                         filteredMessages[index],
                         conversation,
@@ -1208,7 +1529,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                         ),
                       )
                     : ElevatedButton.icon(
-                        key: TutorialService().getKeyForStep(TutorialStep.workoutPlanButton),
+                        key: TutorialService().getKeyForStep(
+                          TutorialStep.workoutPlanButton,
+                        ),
                         onPressed: () async {
                           await context
                               .read<TaskCubit>()
@@ -1253,12 +1576,17 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
     );
   }
 
-  Widget _buildMessageBubble(SocialMessage msg, SocialConversation conversation) {
+  Widget _buildMessageBubble(
+    SocialMessage msg,
+    SocialConversation conversation,
+  ) {
     final isMe = msg.senderId == 'me';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe)
@@ -1270,9 +1598,12 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                   radius: 16,
                   backgroundColor: msg.senderId == 'developer'
                       ? Colors.redAccent
-                      : (msg.senderId.startsWith('coach') ? Colors.purple : Colors.white12),
+                      : (msg.senderId.startsWith('coach')
+                            ? Colors.purple
+                            : Colors.white12),
                   child: Text(
-                    (msg.senderName.isNotEmpty ? msg.senderName[0] : '?').toUpperCase(),
+                    (msg.senderName.isNotEmpty ? msg.senderName[0] : '?')
+                        .toUpperCase(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -1283,7 +1614,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
               ),
             ),
           Column(
-            crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: isMe
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             children: [
               if (!isMe && conversation.isGroup)
                 Padding(
@@ -1298,7 +1631,10 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                   ),
                 ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.7,
                 ),
@@ -1337,9 +1673,13 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                         Text(
                           msg.text,
                           style: TextStyle(
-                            color: msg.isDeleted ? Colors.white24 : Colors.white,
+                            color: msg.isDeleted
+                                ? Colors.white24
+                                : Colors.white,
                             fontSize: 13,
-                            fontStyle: msg.isDeleted ? FontStyle.italic : FontStyle.normal,
+                            fontStyle: msg.isDeleted
+                                ? FontStyle.italic
+                                : FontStyle.normal,
                           ),
                         ),
                       if (msg.isEdited && !msg.isDeleted)
@@ -1375,7 +1715,7 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
 
   void _showProfilePreview(SocialMessage msg) {
     if (msg.senderId == 'me') return;
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF1A1A1A),
@@ -1393,18 +1733,31 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                 backgroundColor: Colors.white.withOpacity(0.05),
                 child: Text(
                   msg.senderName[0].toUpperCase(),
-                  style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.cyanAccent),
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.cyanAccent,
+                  ),
                 ),
               ),
               const Gap(16),
               Text(
                 msg.senderName.toUpperCase(),
-                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
               ),
               const Gap(4),
               Text(
                 'Muvio Community Member',
-                style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 11, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.3),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Gap(32),
               SizedBox(
@@ -1414,7 +1767,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                     context.read<SocialCubit>().addFriend(msg.senderName);
                     Navigator.pop(ctx);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Added ${msg.senderName} to friends')),
+                      SnackBar(
+                        content: Text('Added ${msg.senderName} to friends'),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.person_add_alt_1),
@@ -1423,44 +1778,58 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                     backgroundColor: Colors.cyanAccent,
                     foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                 ),
               ),
               const Gap(12),
               Row(
                 children: [
-                   Expanded(
-                     child: OutlinedButton.icon(
-                       onPressed: () {
-                          context.read<SocialCubit>().banUser(msg.senderId);
-                          Navigator.pop(ctx);
-                       },
-                       icon: const Icon(Icons.block, size: 16),
-                       label: const Text('BAN USER', style: TextStyle(fontSize: 10)),
-                       style: OutlinedButton.styleFrom(
-                         foregroundColor: Colors.redAccent,
-                         side: const BorderSide(color: Colors.redAccent),
-                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                       ),
-                     ),
-                   ),
-                   const Gap(12),
-                   Expanded(
-                     child: OutlinedButton.icon(
-                       onPressed: () {
-                          context.read<SocialCubit>().toggleMute(msg.conversationId);
-                          Navigator.pop(ctx);
-                       },
-                       icon: const Icon(Icons.visibility_off, size: 16),
-                       label: const Text('MUTE / UNMUTE', style: TextStyle(fontSize: 10)),
-                       style: OutlinedButton.styleFrom(
-                         foregroundColor: Colors.white54,
-                         side: const BorderSide(color: Colors.white54),
-                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                       ),
-                     ),
-                   ),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        context.read<SocialCubit>().banUser(msg.senderId);
+                        Navigator.pop(ctx);
+                      },
+                      icon: const Icon(Icons.block, size: 16),
+                      label: const Text(
+                        'BAN USER',
+                        style: TextStyle(fontSize: 10),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.redAccent,
+                        side: const BorderSide(color: Colors.redAccent),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Gap(12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        context.read<SocialCubit>().toggleMute(
+                          msg.conversationId,
+                        );
+                        Navigator.pop(ctx);
+                      },
+                      icon: const Icon(Icons.visibility_off, size: 16),
+                      label: const Text(
+                        'MUTE / UNMUTE',
+                        style: TextStyle(fontSize: 10),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white54,
+                        side: const BorderSide(color: Colors.white54),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const Gap(20),
@@ -1578,12 +1947,16 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
               ],
             ),
           ),
-          if (!msg.snapViewed) 
+          if (!msg.snapViewed)
             const Padding(
               padding: EdgeInsets.only(top: 4.0, left: 2.0),
               child: Text(
                 'THIS MESSAGE WILL SELF-DESTRUCT',
-                style: TextStyle(color: Colors.white24, fontSize: 8, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white24,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
         ],
@@ -1607,7 +1980,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
                 fit: BoxFit.contain,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator(color: Colors.cyanAccent));
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.cyanAccent),
+                  );
                 },
               ),
             ),
@@ -1620,9 +1995,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
               onPressed: () {
                 Navigator.pop(ctx);
                 context.read<SocialCubit>().markSnapAsViewed(
-                  msg.conversationId, 
-                  msg.remoteId, 
-                  msg.text
+                  msg.conversationId,
+                  msg.remoteId,
+                  msg.text,
                 );
               },
             ),
@@ -1633,14 +2008,21 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
                   'SNAP VIEWING...',
-                  style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold, letterSpacing: 2),
+                  style: TextStyle(
+                    color: Colors.cyanAccent,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
                 ),
               ),
             ),
@@ -1702,16 +2084,34 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
             const Gap(20),
             if (msg.senderId == 'me' && !msg.isDeleted) ...[
               ListTile(
-                leading: const Icon(Icons.edit_outlined, color: Colors.cyanAccent),
-                title: const Text('EDIT MESSAGE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                leading: const Icon(
+                  Icons.edit_outlined,
+                  color: Colors.cyanAccent,
+                ),
+                title: const Text(
+                  'EDIT MESSAGE',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 onTap: () {
                   Navigator.pop(ctx);
                   _showEditDialog(msg);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                title: const Text('DELETE MESSAGE', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                leading: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.redAccent,
+                ),
+                title: const Text(
+                  'DELETE MESSAGE',
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 onTap: () {
                   Navigator.pop(ctx);
                   context.read<SocialCubit>().deleteMessage(msg.remoteId);
@@ -1774,7 +2174,13 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Text('EDIT MESSAGE', style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'EDIT MESSAGE',
+          style: TextStyle(
+            color: Colors.cyanAccent,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: TextField(
           controller: controller,
           style: const TextStyle(color: Colors.white),
@@ -1786,22 +2192,30 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
           maxLines: 3,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('CANCEL')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('CANCEL'),
+          ),
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                context.read<SocialCubit>().editMessage(msg.remoteId, controller.text);
+                context.read<SocialCubit>().editMessage(
+                  msg.remoteId,
+                  controller.text,
+                );
                 Navigator.pop(ctx);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.cyanAccent,
+              foregroundColor: Colors.black,
+            ),
             child: const Text('UPDATE'),
           ),
         ],
       ),
     );
   }
-
 
   void _showReportDialog(SocialMessage msg) {
     final TextEditingController reportController = TextEditingController();
@@ -2050,11 +2464,14 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
       ),
       onTap: () async {
         Navigator.pop(context);
-        
+
         if (type == 'snap') {
           final imageUrl = await context.read<SocialCubit>().pickImage();
           if (imageUrl != null) {
-            context.read<SocialCubit>().sendSnap(widget.conversation.remoteId, imageUrl);
+            context.read<SocialCubit>().sendSnap(
+              widget.conversation.remoteId,
+              imageUrl,
+            );
           }
           return;
         }
@@ -2166,7 +2583,9 @@ class _ChatWindowScreenState extends State<ChatWindowScreen> {
 
   void _send() {
     if (_controller.text.isNotEmpty) {
-      debugPrint('[SOCIAL UI] Sending message to ${widget.conversation.remoteId}: "${_controller.text}"');
+      debugPrint(
+        '[SOCIAL UI] Sending message to ${widget.conversation.remoteId}: "${_controller.text}"',
+      );
       context.read<SocialCubit>().sendMessage(
         widget.conversation.remoteId,
         _controller.text,
@@ -2929,7 +3348,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
             child: OutlinedButton.icon(
               onPressed: () {
                 Share.share(
-                  'Hey! Join me on BioFit Pro to track our workouts and chat! Download here: https://biofitpro.app/invite/user123',
+                  'Hey! Join me on Muvio to track our workouts and chat! Download here: https://muvio.app/invite/user123',
                 );
               },
               icon: const Icon(Icons.link, size: 18),
@@ -2984,9 +3403,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   Widget _buildSocialIcon(IconData icon, String label, Color color) {
     return InkWell(
       onTap: () {
-        Share.share(
-          'Join me on BioFit Pro! https://biofitpro.app/invite/user123',
-        );
+        Share.share('Join me on Muvio! https://muvio.app/invite/user123');
       },
       child: Column(
         children: [

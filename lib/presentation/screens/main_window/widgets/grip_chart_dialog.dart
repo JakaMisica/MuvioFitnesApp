@@ -267,9 +267,13 @@ class _GripChartDialogState extends State<GripChartDialog> {
   }
 
   LineChartData _mainData(List<MapEntry<DateTime, double>> history) {
-    double minVal = history.isEmpty ? 0 : history.map((e) => e.value).reduce(math.min);
-    double maxVal = history.isEmpty ? 0 : history.map((e) => e.value).reduce(math.max);
-    
+    double minVal = history.isEmpty
+        ? 0
+        : history.map((e) => e.value).reduce(math.min);
+    double maxVal = history.isEmpty
+        ? 0
+        : history.map((e) => e.value).reduce(math.max);
+
     if (maxVal == minVal) {
       maxVal = minVal + 5;
       minVal = minVal - 5;
@@ -370,7 +374,11 @@ class _GripChartDialogState extends State<GripChartDialog> {
             return touchedSpots.map((spot) {
               return LineTooltipItem(
                 '${spot.y.toStringAsFixed(1)}kg',
-                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
               );
             }).toList();
           },

@@ -14,8 +14,8 @@ import '../../logic/cubit/tasks/task_cubit.dart';
 import '../screens/tasks/widgets/alarm_trigger_dialog.dart';
 import '../../logic/cubit/auth/auth_cubit.dart';
 import '../../logic/cubit/auth/auth_state.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/locator.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/locator.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/onboarding/auth_screen.dart';
 import '../../logic/cubit/sleep/sleep_cubit.dart';
@@ -45,19 +45,18 @@ class _MainPageViewState extends State<MainPageView> {
   void initState() {
     super.initState();
     _checkAppStatus();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   // GLOBAL ACTION HANDLER MOVED TO main.dart
-  
+
   Future<void> _checkAppStatus() async {
     debugPrint("MainPageView: Checking app status...");
     try {
       final settings = await locator<BodyRepository>()
           .getUserSettings()
           .timeout(const Duration(seconds: 10));
-          
+
       debugPrint("MainPageView: Settings loaded.");
       if (mounted) {
         setState(() {
@@ -65,7 +64,7 @@ class _MainPageViewState extends State<MainPageView> {
           _isGuestModeActive = settings.devPersistLogin;
           _isLoading = false;
         });
-        
+
         // Coach inactivity check is handled by SocialCubit on init (once per day)
       }
     } catch (e) {
@@ -124,7 +123,8 @@ class _MainPageViewState extends State<MainPageView> {
             );
           }
 
-          if ((authState is AuthInitial || authState is AuthFailure) && !_isGuestModeActive) {
+          if ((authState is AuthInitial || authState is AuthFailure) &&
+              !_isGuestModeActive) {
             return AuthScreen(
               onAuthComplete: () {
                 _checkAppStatus();
@@ -168,7 +168,8 @@ class _MainPageViewState extends State<MainPageView> {
                     }
                   },
                   child: BlocListener<SleepCubit, SleepState>(
-                    listenWhen: (prev, curr) => curr.alarmTriggered && !prev.alarmTriggered,
+                    listenWhen: (prev, curr) =>
+                        curr.alarmTriggered && !prev.alarmTriggered,
                     listener: (context, state) {
                       if (state.alarmTriggered) {
                         showDialog(
@@ -227,7 +228,8 @@ class _MainPageViewState extends State<MainPageView> {
                                   if (snapshot.data?.visible == true) {
                                     return Positioned.fill(
                                       child: AiCallOverlay(
-                                        isOutbound: snapshot.data?.isOutbound ?? false,
+                                        isOutbound:
+                                            snapshot.data?.isOutbound ?? false,
                                       ),
                                     );
                                   }
@@ -246,7 +248,9 @@ class _MainPageViewState extends State<MainPageView> {
                   right: 0,
                   bottom: 16,
                   child: AnimatedSlide(
-                    offset: _isHotBarVisible ? Offset.zero : const Offset(0, 1.5),
+                    offset: _isHotBarVisible
+                        ? Offset.zero
+                        : const Offset(0, 1.5),
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeOutCubic,
                     child: _buildHotBar(),

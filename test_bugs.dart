@@ -1,6 +1,6 @@
-import 'package:biofit_pro/data/datasources/isar_service.dart';
-import 'package:biofit_pro/data/repositories/social_repository.dart';
-import 'package:biofit_pro/locator.dart';
+import 'package:muvio/data/datasources/isar_service.dart';
+import 'package:muvio/data/repositories/social_repository.dart';
+import 'package:muvio/locator.dart';
 import 'package:flutter/material.dart';
 
 void main() async {

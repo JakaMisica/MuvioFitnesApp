@@ -195,7 +195,9 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
                 const SizedBox(height: 6),
                 BlocBuilder<AiCubit, AiState>(
                   builder: (context, state) {
-                    final coachName = state.activeCoachName?.toUpperCase() ?? "BIOLOGICAL OPTIMIZATION ENGINE";
+                    final coachName =
+                        state.activeCoachName?.toUpperCase() ??
+                        "BIOLOGICAL OPTIMIZATION ENGINE";
                     return Text(
                       coachName,
                       style: TextStyle(
@@ -210,12 +212,15 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
               ],
             ),
           ),
-          
+
           // NEURAL CALL BUTTON - More Prominent
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.cyanAccent.withOpacity(0.15), Colors.blueAccent.withOpacity(0.05)],
+                colors: [
+                  Colors.cyanAccent.withOpacity(0.15),
+                  Colors.blueAccent.withOpacity(0.05),
+                ],
               ),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: Colors.cyanAccent.withOpacity(0.3)),
@@ -225,21 +230,36 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
               icon: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.wifi_calling_3_rounded, color: Colors.cyanAccent, size: 20),
+                  Icon(
+                    Icons.wifi_calling_3_rounded,
+                    color: Colors.cyanAccent,
+                    size: 20,
+                  ),
                   SizedBox(height: 1),
-                  Text('CALL', style: TextStyle(color: Colors.cyanAccent, fontSize: 7, fontWeight: FontWeight.w900)),
+                  Text(
+                    'CALL',
+                    style: TextStyle(
+                      color: Colors.cyanAccent,
+                      fontSize: 7,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                 ],
               ),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               tooltip: 'Initialize Neural Voice Link',
             ),
           ),
-          
+
           const SizedBox(width: 8),
-          
+
           IconButton(
             onPressed: () => _showHistoryDialog(context),
-            icon: const Icon(Icons.history_rounded, color: Colors.white24, size: 20),
+            icon: const Icon(
+              Icons.history_rounded,
+              color: Colors.white24,
+              size: 20,
+            ),
             tooltip: 'Archives',
           ),
           IconButton(
@@ -252,7 +272,11 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
                 });
               }
             },
-            icon: const Icon(Icons.add_comment_outlined, color: Colors.white24, size: 20),
+            icon: const Icon(
+              Icons.add_comment_outlined,
+              color: Colors.white24,
+              size: 20,
+            ),
             tooltip: 'Synchronize New Protocol',
           ),
         ],
@@ -273,7 +297,6 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
       ),
     );
   }
-
 
   void _showHistoryDialog(BuildContext context) {
     showModalBottomSheet(
@@ -901,9 +924,14 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
   Widget _buildInputArea(BuildContext context) {
     final state = context.watch<AiCubit>().state;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    
+
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, bottomPadding > 0 ? bottomPadding + 8 : 24),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        bottomPadding > 0 ? bottomPadding + 8 : 24,
+      ),
       decoration: BoxDecoration(
         color: Colors.black,
         border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
@@ -1007,8 +1035,8 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: _isDictating 
-                        ? Colors.redAccent.withOpacity(0.2) 
+                    color: _isDictating
+                        ? Colors.redAccent.withOpacity(0.2)
                         : Colors.white.withOpacity(0.05),
                     shape: BoxShape.circle,
                     border: Border.all(
@@ -1029,9 +1057,7 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
                     ? null
                     : () {
                         if (_controller.text.isNotEmpty) {
-                          context.read<AiCubit>().sendMessage(
-                            _controller.text,
-                          );
+                          context.read<AiCubit>().sendMessage(_controller.text);
                           _controller.clear();
                         }
                       },
@@ -1047,10 +1073,11 @@ class _AiViewState extends State<_AiView> with AutomaticKeepAliveClientMixin {
                     boxShadow: [
                       if (!state.isLoading)
                         BoxShadow(
-                          color: (state.mode == AiMode.diet
-                                  ? Colors.orangeAccent
-                                  : Colors.cyanAccent)
-                              .withOpacity(0.3),
+                          color:
+                              (state.mode == AiMode.diet
+                                      ? Colors.orangeAccent
+                                      : Colors.cyanAccent)
+                                  .withOpacity(0.3),
                           blurRadius: 10,
                           spreadRadius: 1,
                         ),

@@ -30,11 +30,13 @@ class IsarService {
     debugPrint('IsarService: _initDb() started');
     try {
       if (Isar.instanceNames.isEmpty) {
-        debugPrint('IsarService: No instances found. Getting application support directory...');
+        debugPrint(
+          'IsarService: No instances found. Getting application support directory...',
+        );
         final dir = await getApplicationSupportDirectory();
-        
+
         final separator = Platform.pathSeparator;
-        final path = '${dir.path}${separator}biofit_pro_db';
+        final path = '${dir.path}${separator}muvio_db';
         debugPrint('IsarService: Database path: $path');
 
         final dbDir = Directory(path);

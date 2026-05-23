@@ -4,8 +4,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:biofit_pro/locator.dart';
-import 'package:biofit_pro/logic/cubit/social/social_cubit.dart';
+import 'package:muvio/locator.dart';
+import 'package:muvio/logic/cubit/social/social_cubit.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -39,16 +39,16 @@ class NotificationService {
         initializationSettings,
         onDidReceiveNotificationResponse: (details) {
           if (details.id == 1001) {
-             // Let the SleepCubit know the user tapped the notification
+            // Let the SleepCubit know the user tapped the notification
           }
-          
+
           // Handle Chat Mute Action
           if (details.actionId == 'mute_action' && details.payload != null) {
-             try {
-                locator<SocialCubit>().toggleMute(details.payload!);
-             } catch (e) {
-                debugPrint('Background mute error: $e');
-             }
+            try {
+              locator<SocialCubit>().toggleMute(details.payload!);
+            } catch (e) {
+              debugPrint('Background mute error: $e');
+            }
           }
         },
       );
@@ -351,27 +351,29 @@ class NotificationService {
 
       final AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-        'chat_messages_channel',
-        'Social Messages',
-        channelDescription: 'New messages from friends and groups',
-        importance: Importance.max,
-        priority: Priority.high,
-        category: AndroidNotificationCategory.message,
-        styleInformation: BigTextStyleInformation(
-          text,
-          contentTitle: isGroup ? '$senderName (GROUP)' : senderName,
-          summaryText: isGroup ? 'Group Message' : 'New Message',
-        ),
-        actions: <AndroidNotificationAction>[
-          AndroidNotificationAction(
-            'mute_action',
-            isGroup ? 'Mute Group' : 'Mute Friend',
-            icon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
-            showsUserInterface: false, // Mute in background!
-            cancelNotification: true,
-          ),
-        ],
-      );
+            'chat_messages_channel',
+            'Social Messages',
+            channelDescription: 'New messages from friends and groups',
+            importance: Importance.max,
+            priority: Priority.high,
+            category: AndroidNotificationCategory.message,
+            styleInformation: BigTextStyleInformation(
+              text,
+              contentTitle: isGroup ? '$senderName (GROUP)' : senderName,
+              summaryText: isGroup ? 'Group Message' : 'New Message',
+            ),
+            actions: <AndroidNotificationAction>[
+              AndroidNotificationAction(
+                'mute_action',
+                isGroup ? 'Mute Group' : 'Mute Friend',
+                icon: const DrawableResourceAndroidBitmap(
+                  '@mipmap/ic_launcher',
+                ),
+                showsUserInterface: false, // Mute in background!
+                cancelNotification: true,
+              ),
+            ],
+          );
 
       final NotificationDetails details = NotificationDetails(
         android: androidDetails,

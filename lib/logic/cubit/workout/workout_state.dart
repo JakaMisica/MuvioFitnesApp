@@ -145,7 +145,9 @@ class WorkoutState extends Equatable {
       tutTimer: clearTutTimer ? null : (tutTimer ?? this.tutTimer),
       autoConfig: autoConfig ?? this.autoConfig,
       expandedExerciseIds: expandedExerciseIds ?? this.expandedExerciseIds,
-      lastExpandedLogId: clearLastExpanded ? null : (lastExpandedLogId ?? this.lastExpandedLogId),
+      lastExpandedLogId: clearLastExpanded
+          ? null
+          : (lastExpandedLogId ?? this.lastExpandedLogId),
     );
   }
 

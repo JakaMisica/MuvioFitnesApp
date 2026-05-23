@@ -49,18 +49,20 @@ class CoachCubit extends Cubit<CoachState> {
     await _coachRepo.seedCoaches();
     final coaches = await _coachRepo.getAllCoaches();
     final settings = await _bodyRepo.getUserSettings();
-    emit(state.copyWith(
-      coaches: coaches,
-      activeCoachId: settings.activeCoachId,
-      isLoading: false,
-    ));
+    emit(
+      state.copyWith(
+        coaches: coaches,
+        activeCoachId: settings.activeCoachId,
+        isLoading: false,
+      ),
+    );
   }
 
   Future<void> selectCoach(int coachId) async {
     final settings = await _bodyRepo.getUserSettings();
     settings.activeCoachId = coachId;
     await _bodyRepo.saveUserSettings(settings);
-    
+
     // Mark as hired locally for mock purposes
     final coach = await _coachRepo.getCoach(coachId);
     if (coach != null) {
@@ -73,7 +75,7 @@ class CoachCubit extends Cubit<CoachState> {
   }
 
   Future<void> hireCoach(int coachId) async {
-    // In a real app, this would involve payment. 
+    // In a real app, this would involve payment.
     // Here we just mark as hired and then select it.
     await selectCoach(coachId);
   }

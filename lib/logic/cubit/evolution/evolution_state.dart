@@ -1,5 +1,5 @@
-import 'package:biofit_pro/data/models/body_metric.dart';
-import 'package:biofit_pro/data/models/user_settings.dart';
+import 'package:muvio/data/models/body_metric.dart';
+import 'package:muvio/data/models/user_settings.dart';
 import 'package:equatable/equatable.dart';
 
 class EvolutionState extends Equatable {
@@ -73,7 +73,8 @@ class EvolutionState extends Equatable {
       chartHistory: chartHistory ?? this.chartHistory,
       testoChartHistory: testoChartHistory ?? this.testoChartHistory,
       gripChartHistory: gripChartHistory ?? this.gripChartHistory,
-      measurementChartHistory: measurementChartHistory ?? this.measurementChartHistory,
+      measurementChartHistory:
+          measurementChartHistory ?? this.measurementChartHistory,
       volumeChartHistory: volumeChartHistory ?? this.volumeChartHistory,
       totalVolumeWeek: totalVolumeWeek ?? this.totalVolumeWeek,
       availableSubGroups: availableSubGroups ?? this.availableSubGroups,

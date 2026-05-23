@@ -9,7 +9,7 @@ import '../../locator.dart';
 ///
 /// ## How the full referral flow works:
 ///
-/// 1. User A shares their referral link: https://biofitpro.app/invite?ref=biofit_0_ref
+/// 1. User A shares their referral link: https://muvio.app/invite?ref=muvio_0_ref
 ///
 /// 2. Friend (User B) taps the link:
 ///    - On Android: Google Play records the referrer param in its install referrer API.
@@ -35,7 +35,7 @@ import '../../locator.dart';
 class ReferralService {
   // ─── CONFIGURE THIS ────────────────────────────────────────────────────────
   /// Your backend API base URL. Replace before going to production.
-  static const String _apiBase = 'https://api.biofitpro.app';
+  static const String _apiBase = 'https://api.muvio.app';
   // ───────────────────────────────────────────────────────────────────────────
 
   final BodyRepository _bodyRepo = locator<BodyRepository>();
@@ -138,7 +138,7 @@ class ReferralService {
         //   import 'package:play_install_referrer/play_install_referrer.dart';
         //   final referrer = await PlayInstallReferrer.installReferrer;
         //   // referrer.installReferrer contains something like:
-        //   // "utm_source=biofit&utm_content=biofit_0_ref"
+        //   // "utm_source=muvio&utm_content=muvio_0_ref"
         //   return _parseReferralCode(referrer.installReferrer);
         //
         // Stub for development on Windows:
@@ -151,7 +151,7 @@ class ReferralService {
         //
         // Then read it here via MethodChannel:
         //
-        //   const channel = MethodChannel('biofit_pro/referral');
+        //   const channel = MethodChannel('muvio/referral');
         //   return await channel.invokeMethod<String?>('getPendingReferral');
         //
         // Stub for development:
@@ -166,9 +166,9 @@ class ReferralService {
   /// Generates the referral link for the current user to share.
   Future<String> generateReferralLink() async {
     final settings = await _bodyRepo.getUserSettings();
-    final code = 'biofit_${settings.id}_ref';
+    final code = 'muvio_${settings.id}_ref';
     // For Android: deep link via Play Store referrer
     // For iOS: Universal Link
-    return 'https://biofitpro.app/invite?ref=$code';
+    return 'https://muvio.app/invite?ref=$code';
   }
 }

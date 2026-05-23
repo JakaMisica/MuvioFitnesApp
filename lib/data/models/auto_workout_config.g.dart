@@ -47,7 +47,7 @@ const AutoWorkoutConfigSchema = CollectionSchema(
       id: 5,
       name: r'multipleFoldersEnabled',
       type: IsarType.bool,
-    )
+    ),
   },
   estimateSize: _autoWorkoutConfigEstimateSize,
   serialize: _autoWorkoutConfigSerialize,
@@ -75,8 +75,11 @@ int _autoWorkoutConfigEstimateSize(
     final offsets = allOffsets[AutoFolderConfig]!;
     for (var i = 0; i < object.folders.length; i++) {
       final value = object.folders[i];
-      bytesCount +=
-          AutoFolderConfigSchema.estimateSize(value, offsets, allOffsets);
+      bytesCount += AutoFolderConfigSchema.estimateSize(
+        value,
+        offsets,
+        allOffsets,
+      );
     }
   }
   return bytesCount;
@@ -112,7 +115,8 @@ AutoWorkoutConfig _autoWorkoutConfigDeserialize(
   object.currentRepeatCount = reader.readLong(offsets[1]);
   object.currentWorkoutIndex = reader.readLong(offsets[2]);
   object.expandedFolderIds = reader.readLongList(offsets[3]) ?? [];
-  object.folders = reader.readObjectList<AutoFolderConfig>(
+  object.folders =
+      reader.readObjectList<AutoFolderConfig>(
         offsets[4],
         AutoFolderConfigSchema.deserialize,
         allOffsets,
@@ -141,12 +145,13 @@ P _autoWorkoutConfigDeserializeProp<P>(
       return (reader.readLongList(offset) ?? []) as P;
     case 4:
       return (reader.readObjectList<AutoFolderConfig>(
-            offset,
-            AutoFolderConfigSchema.deserialize,
-            allOffsets,
-            AutoFolderConfig(),
-          ) ??
-          []) as P;
+                offset,
+                AutoFolderConfigSchema.deserialize,
+                allOffsets,
+                AutoFolderConfig(),
+              ) ??
+              [])
+          as P;
     case 5:
       return (reader.readBool(offset)) as P;
     default:
@@ -159,12 +164,16 @@ Id _autoWorkoutConfigGetId(AutoWorkoutConfig object) {
 }
 
 List<IsarLinkBase<dynamic>> _autoWorkoutConfigGetLinks(
-    AutoWorkoutConfig object) {
+  AutoWorkoutConfig object,
+) {
   return [];
 }
 
 void _autoWorkoutConfigAttach(
-    IsarCollection<dynamic> col, Id id, AutoWorkoutConfig object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  AutoWorkoutConfig object,
+) {
   object.id = id;
 }
 
@@ -180,17 +189,14 @@ extension AutoWorkoutConfigQueryWhereSort
 extension AutoWorkoutConfigQueryWhere
     on QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QWhereClause> {
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterWhereClause>
-      idEqualTo(Id id) {
+  idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterWhereClause>
-      idNotEqualTo(Id id) {
+  idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -213,7 +219,7 @@ extension AutoWorkoutConfigQueryWhere
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
+  idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -222,7 +228,7 @@ extension AutoWorkoutConfigQueryWhere
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterWhereClause>
-      idLessThan(Id id, {bool include = false}) {
+  idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -231,19 +237,21 @@ extension AutoWorkoutConfigQueryWhere
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterWhereClause>
-      idBetween(
+  idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -251,289 +259,255 @@ extension AutoWorkoutConfigQueryWhere
 extension AutoWorkoutConfigQueryFilter
     on QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QFilterCondition> {
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentFolderIndexEqualTo(int value) {
+  currentFolderIndexEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'currentFolderIndex',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'currentFolderIndex', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentFolderIndexGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  currentFolderIndexGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'currentFolderIndex',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'currentFolderIndex',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentFolderIndexLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  currentFolderIndexLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'currentFolderIndex',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'currentFolderIndex',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentFolderIndexBetween(
+  currentFolderIndexBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'currentFolderIndex',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'currentFolderIndex',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentRepeatCountEqualTo(int value) {
+  currentRepeatCountEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'currentRepeatCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'currentRepeatCount', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentRepeatCountGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  currentRepeatCountGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'currentRepeatCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'currentRepeatCount',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentRepeatCountLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  currentRepeatCountLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'currentRepeatCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'currentRepeatCount',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentRepeatCountBetween(
+  currentRepeatCountBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'currentRepeatCount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'currentRepeatCount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentWorkoutIndexEqualTo(int value) {
+  currentWorkoutIndexEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'currentWorkoutIndex',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'currentWorkoutIndex', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentWorkoutIndexGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  currentWorkoutIndexGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'currentWorkoutIndex',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'currentWorkoutIndex',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentWorkoutIndexLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  currentWorkoutIndexLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'currentWorkoutIndex',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'currentWorkoutIndex',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      currentWorkoutIndexBetween(
+  currentWorkoutIndexBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'currentWorkoutIndex',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'currentWorkoutIndex',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsElementEqualTo(int value) {
+  expandedFolderIdsElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'expandedFolderIds',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'expandedFolderIds', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsElementGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  expandedFolderIdsElementGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'expandedFolderIds',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'expandedFolderIds',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsElementLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  expandedFolderIdsElementLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'expandedFolderIds',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'expandedFolderIds',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsElementBetween(
+  expandedFolderIdsElementBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'expandedFolderIds',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'expandedFolderIds',
-        length,
-        true,
-        length,
-        true,
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'expandedFolderIds',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsIsEmpty() {
+  expandedFolderIdsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'expandedFolderIds',
-        0,
-        true,
-        0,
-        true,
-      );
+      return query.listLength(r'expandedFolderIds', length, true, length, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsIsNotEmpty() {
+  expandedFolderIdsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'expandedFolderIds',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'expandedFolderIds', 0, true, 0, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  expandedFolderIdsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'expandedFolderIds',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'expandedFolderIds', 0, false, 999999, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  expandedFolderIdsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'expandedFolderIds', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
+  expandedFolderIdsLengthGreaterThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'expandedFolderIds',
@@ -546,7 +520,7 @@ extension AutoWorkoutConfigQueryFilter
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      expandedFolderIdsLengthBetween(
+  expandedFolderIdsLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -564,78 +538,42 @@ extension AutoWorkoutConfigQueryFilter
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersLengthEqualTo(int length) {
+  foldersLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'folders',
-        length,
-        true,
-        length,
-        true,
-      );
+      return query.listLength(r'folders', length, true, length, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersIsEmpty() {
+  foldersIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'folders',
-        0,
-        true,
-        0,
-        true,
-      );
+      return query.listLength(r'folders', 0, true, 0, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersIsNotEmpty() {
+  foldersIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'folders',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'folders', 0, false, 999999, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  foldersLengthLessThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'folders',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'folders', 0, true, length, include);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  foldersLengthGreaterThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'folders',
-        length,
-        include,
-        999999,
-        true,
-      );
+      return query.listLength(r'folders', length, include, 999999, true);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersLengthBetween(
+  foldersLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -653,68 +591,69 @@ extension AutoWorkoutConfigQueryFilter
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      idEqualTo(Id value) {
+  idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idGreaterThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idLessThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      idBetween(
+  idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      multipleFoldersEnabledEqualTo(bool value) {
+  multipleFoldersEnabledEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'multipleFoldersEnabled',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'multipleFoldersEnabled',
+          value: value,
+        ),
+      );
     });
   }
 }
@@ -722,7 +661,7 @@ extension AutoWorkoutConfigQueryFilter
 extension AutoWorkoutConfigQueryObject
     on QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QFilterCondition> {
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterFilterCondition>
-      foldersElement(FilterQuery<AutoFolderConfig> q) {
+  foldersElement(FilterQuery<AutoFolderConfig> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'folders');
     });
@@ -735,56 +674,56 @@ extension AutoWorkoutConfigQueryLinks
 extension AutoWorkoutConfigQuerySortBy
     on QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QSortBy> {
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByCurrentFolderIndex() {
+  sortByCurrentFolderIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentFolderIndex', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByCurrentFolderIndexDesc() {
+  sortByCurrentFolderIndexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentFolderIndex', Sort.desc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByCurrentRepeatCount() {
+  sortByCurrentRepeatCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentRepeatCount', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByCurrentRepeatCountDesc() {
+  sortByCurrentRepeatCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentRepeatCount', Sort.desc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByCurrentWorkoutIndex() {
+  sortByCurrentWorkoutIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentWorkoutIndex', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByCurrentWorkoutIndexDesc() {
+  sortByCurrentWorkoutIndexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentWorkoutIndex', Sort.desc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByMultipleFoldersEnabled() {
+  sortByMultipleFoldersEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'multipleFoldersEnabled', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      sortByMultipleFoldersEnabledDesc() {
+  sortByMultipleFoldersEnabledDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'multipleFoldersEnabled', Sort.desc);
     });
@@ -794,42 +733,42 @@ extension AutoWorkoutConfigQuerySortBy
 extension AutoWorkoutConfigQuerySortThenBy
     on QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QSortThenBy> {
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByCurrentFolderIndex() {
+  thenByCurrentFolderIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentFolderIndex', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByCurrentFolderIndexDesc() {
+  thenByCurrentFolderIndexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentFolderIndex', Sort.desc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByCurrentRepeatCount() {
+  thenByCurrentRepeatCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentRepeatCount', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByCurrentRepeatCountDesc() {
+  thenByCurrentRepeatCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentRepeatCount', Sort.desc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByCurrentWorkoutIndex() {
+  thenByCurrentWorkoutIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentWorkoutIndex', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByCurrentWorkoutIndexDesc() {
+  thenByCurrentWorkoutIndexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentWorkoutIndex', Sort.desc);
     });
@@ -842,21 +781,21 @@ extension AutoWorkoutConfigQuerySortThenBy
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByIdDesc() {
+  thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByMultipleFoldersEnabled() {
+  thenByMultipleFoldersEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'multipleFoldersEnabled', Sort.asc);
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QAfterSortBy>
-      thenByMultipleFoldersEnabledDesc() {
+  thenByMultipleFoldersEnabledDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'multipleFoldersEnabled', Sort.desc);
     });
@@ -866,35 +805,35 @@ extension AutoWorkoutConfigQuerySortThenBy
 extension AutoWorkoutConfigQueryWhereDistinct
     on QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QDistinct> {
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QDistinct>
-      distinctByCurrentFolderIndex() {
+  distinctByCurrentFolderIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'currentFolderIndex');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QDistinct>
-      distinctByCurrentRepeatCount() {
+  distinctByCurrentRepeatCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'currentRepeatCount');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QDistinct>
-      distinctByCurrentWorkoutIndex() {
+  distinctByCurrentWorkoutIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'currentWorkoutIndex');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QDistinct>
-      distinctByExpandedFolderIds() {
+  distinctByExpandedFolderIds() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'expandedFolderIds');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, AutoWorkoutConfig, QDistinct>
-      distinctByMultipleFoldersEnabled() {
+  distinctByMultipleFoldersEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'multipleFoldersEnabled');
     });
@@ -910,42 +849,42 @@ extension AutoWorkoutConfigQueryProperty
   }
 
   QueryBuilder<AutoWorkoutConfig, int, QQueryOperations>
-      currentFolderIndexProperty() {
+  currentFolderIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'currentFolderIndex');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, int, QQueryOperations>
-      currentRepeatCountProperty() {
+  currentRepeatCountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'currentRepeatCount');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, int, QQueryOperations>
-      currentWorkoutIndexProperty() {
+  currentWorkoutIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'currentWorkoutIndex');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, List<int>, QQueryOperations>
-      expandedFolderIdsProperty() {
+  expandedFolderIdsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'expandedFolderIds');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, List<AutoFolderConfig>, QQueryOperations>
-      foldersProperty() {
+  foldersProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'folders');
     });
   }
 
   QueryBuilder<AutoWorkoutConfig, bool, QQueryOperations>
-      multipleFoldersEnabledProperty() {
+  multipleFoldersEnabledProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'multipleFoldersEnabled');
     });
@@ -963,21 +902,13 @@ const AutoFolderConfigSchema = Schema(
   name: r'AutoFolderConfig',
   id: -3713723201332809309,
   properties: {
-    r'folderId': PropertySchema(
-      id: 0,
-      name: r'folderId',
-      type: IsarType.long,
-    ),
+    r'folderId': PropertySchema(id: 0, name: r'folderId', type: IsarType.long),
     r'folderName': PropertySchema(
       id: 1,
       name: r'folderName',
       type: IsarType.string,
     ),
-    r'repeats': PropertySchema(
-      id: 2,
-      name: r'repeats',
-      type: IsarType.long,
-    )
+    r'repeats': PropertySchema(id: 2, name: r'repeats', type: IsarType.long),
   },
   estimateSize: _autoFolderConfigEstimateSize,
   serialize: _autoFolderConfigSerialize,
@@ -1045,145 +976,147 @@ P _autoFolderConfigDeserializeProp<P>(
 extension AutoFolderConfigQueryFilter
     on QueryBuilder<AutoFolderConfig, AutoFolderConfig, QFilterCondition> {
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderIdIsNull() {
+  folderIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'folderId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'folderId'),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderIdIsNotNull() {
+  folderIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'folderId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'folderId'),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderIdEqualTo(int? value) {
+  folderIdEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'folderId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'folderId', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderIdGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  folderIdGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'folderId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'folderId',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderIdLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  folderIdLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'folderId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'folderId',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderIdBetween(
+  folderIdBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'folderId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'folderId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameIsNull() {
+  folderNameIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'folderName',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'folderName'),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameIsNotNull() {
+  folderNameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'folderName',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'folderName'),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  folderNameEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'folderName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'folderName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'folderName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameLessThan(
+  folderNameGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'folderName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'folderName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameBetween(
+  folderNameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'folderName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
+  folderNameBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1191,140 +1124,141 @@ extension AutoFolderConfigQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'folderName',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'folderName',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  folderNameStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'folderName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'folderName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  folderNameEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'folderName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'folderName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameContains(String value, {bool caseSensitive = true}) {
+  folderNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'folderName',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'folderName',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameMatches(String pattern, {bool caseSensitive = true}) {
+  folderNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'folderName',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'folderName',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameIsEmpty() {
+  folderNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'folderName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'folderName', value: ''),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      folderNameIsNotEmpty() {
+  folderNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'folderName',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'folderName', value: ''),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      repeatsEqualTo(int value) {
+  repeatsEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'repeats',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'repeats', value: value),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      repeatsGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  repeatsGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'repeats',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'repeats',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      repeatsLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  repeatsLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'repeats',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'repeats',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<AutoFolderConfig, AutoFolderConfig, QAfterFilterCondition>
-      repeatsBetween(
+  repeatsBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'repeats',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'repeats',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }

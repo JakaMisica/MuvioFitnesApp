@@ -54,18 +54,19 @@ class _SleepViewState extends State<SleepView>
 
       final List<String> alarms = assets.where((String key) {
         final nk = key.toLowerCase();
-        final isAlarm = nk.contains('alarms/') &&
+        final isAlarm =
+            nk.contains('alarms/') &&
             (nk.endsWith('.mp3') || nk.endsWith('.wav') || nk.endsWith('.ogg'));
-        
+
         if (!isAlarm) return false;
-        
+
         // Filter to only 1-5
         final filename = nk.split('/').last.toLowerCase();
-        return filename.contains('alarm-1') || 
-               filename.contains('alarm-2') || 
-               filename.contains('alarm-3') || 
-               filename.contains('alarm-4') || 
-               filename.contains('alarm-5');
+        return filename.contains('alarm-1') ||
+            filename.contains('alarm-2') ||
+            filename.contains('alarm-3') ||
+            filename.contains('alarm-4') ||
+            filename.contains('alarm-5');
       }).toList();
 
       if (mounted) {
@@ -76,11 +77,13 @@ class _SleepViewState extends State<SleepView>
     } catch (e) {
       debugPrint("SleepScreen: Error loading alarms: $e");
     }
-    
+
     // Update UI every minute for the alarm countdown
     Timer.periodic(const Duration(minutes: 1), (timer) {
-      if (mounted) setState(() {});
-      else timer.cancel();
+      if (mounted)
+        setState(() {});
+      else
+        timer.cancel();
     });
   }
 
@@ -176,7 +179,9 @@ class _SleepViewState extends State<SleepView>
                       ? "Monitoring: On-Device AI Active"
                       : (state.isAiReady ? "Analysis Ready" : "AI Loading..."),
                   style: TextStyle(
-                    color: state.isAiReady ? Colors.white.withOpacity(0.4) : Colors.redAccent.withOpacity(0.7),
+                    color: state.isAiReady
+                        ? Colors.white.withOpacity(0.4)
+                        : Colors.redAccent.withOpacity(0.7),
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -224,10 +229,14 @@ class _SleepViewState extends State<SleepView>
             width: 160,
             height: 160,
             child: CircularProgressIndicator(
-              value: (session != null && session.endTime == null) ? null : score,
+              value: (session != null && session.endTime == null)
+                  ? null
+                  : score,
               strokeWidth: 10,
               backgroundColor: Colors.white.withOpacity(0.05),
-              color: session != null && session.endTime == null ? Colors.redAccent : Colors.cyanAccent,
+              color: session != null && session.endTime == null
+                  ? Colors.redAccent
+                  : Colors.cyanAccent,
             ),
           ),
           Column(
@@ -251,7 +260,9 @@ class _SleepViewState extends State<SleepView>
                   ),
                 ),
               Text(
-                session != null && session.endTime == null ? "MONITORING" : "SLEEP SCORE",
+                session != null && session.endTime == null
+                    ? "MONITORING"
+                    : "SLEEP SCORE",
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.4),
                   fontSize: 10,
@@ -301,8 +312,11 @@ class _SleepViewState extends State<SleepView>
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.chevron_right_rounded,
-                    color: Colors.cyanAccent.withOpacity(0.4), size: 16),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: Colors.cyanAccent.withOpacity(0.4),
+                  size: 16,
+                ),
                 Text(
                   "7-DAY HISTORY",
                   style: TextStyle(
@@ -321,7 +335,10 @@ class _SleepViewState extends State<SleepView>
             else
               Text(
                 "No stage data yet",
-                style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 11),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.2),
+                  fontSize: 11,
+                ),
               ),
             const Gap(14),
             SizedBox(
@@ -348,19 +365,20 @@ class _SleepViewState extends State<SleepView>
     if (total == 0) return const SizedBox();
 
     // Estimate duration per stage entry (total duration / stage count)
-    final totalDuration = (session.endTime ?? DateTime.now())
-        .difference(session.startTime);
+    final totalDuration = (session.endTime ?? DateTime.now()).difference(
+      session.startTime,
+    );
     final minutesPerEntry = total > 0
         ? (totalDuration.inMinutes / total).clamp(1.0, 60.0)
         : 1.0;
 
     int deepCount = stages.where((s) => s.stage == SleepStage.deep).length;
-    int remCount  = stages.where((s) => s.stage == SleepStage.rem).length;
+    int remCount = stages.where((s) => s.stage == SleepStage.rem).length;
     int lightCount = stages.where((s) => s.stage == SleepStage.light).length;
     int awakeCount = stages.where((s) => s.stage == SleepStage.awake).length;
 
-    int deepMin  = (deepCount  * minutesPerEntry).round();
-    int remMin   = (remCount   * minutesPerEntry).round();
+    int deepMin = (deepCount * minutesPerEntry).round();
+    int remMin = (remCount * minutesPerEntry).round();
     int lightMin = (lightCount * minutesPerEntry).round();
     int awakeMin = (awakeCount * minutesPerEntry).round();
 
@@ -368,8 +386,8 @@ class _SleepViewState extends State<SleepView>
       spacing: 8,
       runSpacing: 6,
       children: [
-        _stagePill("DEEP",  "${deepMin}m",  const Color(0xFF0D47A1)),
-        _stagePill("REM",   "${remMin}m",   const Color(0xFF6A0080)),
+        _stagePill("DEEP", "${deepMin}m", const Color(0xFF0D47A1)),
+        _stagePill("REM", "${remMin}m", const Color(0xFF6A0080)),
         _stagePill("LIGHT", "${lightMin}m", const Color(0xFF006064)),
         _stagePill("AWAKE", "${awakeMin}m", const Color(0xFF7B3F00)),
       ],
@@ -388,7 +406,8 @@ class _SleepViewState extends State<SleepView>
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 6, height: 6,
+            width: 6,
+            height: 6,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const Gap(5),
@@ -433,10 +452,8 @@ class _SleepViewState extends State<SleepView>
           show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
-          getDrawingHorizontalLine: (v) => FlLine(
-            color: Colors.white.withOpacity(0.05),
-            strokeWidth: 1,
-          ),
+          getDrawingHorizontalLine: (v) =>
+              FlLine(color: Colors.white.withOpacity(0.05), strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
@@ -457,9 +474,15 @@ class _SleepViewState extends State<SleepView>
               },
             ),
           ),
-          bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(show: false),
         lineBarsData: [
@@ -689,7 +712,6 @@ class _SleepViewState extends State<SleepView>
     );
   }
 
-
   Widget _buildSmartAlarmWindowSlider(BuildContext context, SleepState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -799,20 +821,41 @@ class _SleepViewState extends State<SleepView>
                 ),
                 isExpanded: true,
                 dropdownColor: const Color(0xFF1a1a1a),
-                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.cyanAccent),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.cyanAccent,
+                ),
                 items: (() {
-                  final sortedList = List<String>.from(_builtInSounds)..sort((a, b) {
-                    final aNum = int.tryParse(RegExp(r'alarm-(\d+)').firstMatch(a.toLowerCase())?.group(1) ?? '0') ?? 0;
-                    final bNum = int.tryParse(RegExp(r'alarm-(\d+)').firstMatch(b.toLowerCase())?.group(1) ?? '0') ?? 0;
-                    return aNum.compareTo(bNum);
-                  });
+                  final sortedList = List<String>.from(_builtInSounds)
+                    ..sort((a, b) {
+                      final aNum =
+                          int.tryParse(
+                            RegExp(
+                                  r'alarm-(\d+)',
+                                ).firstMatch(a.toLowerCase())?.group(1) ??
+                                '0',
+                          ) ??
+                          0;
+                      final bNum =
+                          int.tryParse(
+                            RegExp(
+                                  r'alarm-(\d+)',
+                                ).firstMatch(b.toLowerCase())?.group(1) ??
+                                '0',
+                          ) ??
+                          0;
+                      return aNum.compareTo(bNum);
+                    });
                   return sortedList.asMap().entries.map((entry) {
                     final path = entry.value;
                     return DropdownMenuItem(
                       value: path,
                       child: Text(
                         'Ringtone ${entry.key + 1}',
-                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
                       ),
                     );
                   }).toList();
@@ -822,13 +865,13 @@ class _SleepViewState extends State<SleepView>
                     context.read<SleepCubit>().updateAlarmSound(val);
                     // Force a rebuild to update the text immediately
                     setState(() {});
-                    
+
                     // Preview with 5s limit
                     try {
                       await _audioPlayer.stop();
                       final relativePath = val.replaceFirst('assets/', '');
                       await _audioPlayer.play(AssetSource(relativePath));
-                      
+
                       // Auto stop after 5s
                       Future.delayed(const Duration(seconds: 5), () {
                         if (mounted) _audioPlayer.stop();
@@ -864,7 +907,8 @@ class _SleepViewState extends State<SleepView>
         title: "WAKE UP WINDOW",
         showSmartAlarmToggle: true,
         isSmartAlarmEnabled: state.isSmartAlarmEnabled,
-        onSmartAlarmToggle: (val) => context.read<SleepCubit>().toggleSmartAlarm(val),
+        onSmartAlarmToggle: (val) =>
+            context.read<SleepCubit>().toggleSmartAlarm(val),
       ),
     );
 
@@ -894,7 +938,9 @@ class _SleepViewState extends State<SleepView>
     if (state.settings == null) {
       debugPrint("SleepScreen: Settings not loaded yet.");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Initializing sleep engine... Please wait a second.")),
+        const SnackBar(
+          content: Text("Initializing sleep engine... Please wait a second."),
+        ),
       );
       return;
     }
@@ -937,9 +983,7 @@ class _SleepViewState extends State<SleepView>
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF121212),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(

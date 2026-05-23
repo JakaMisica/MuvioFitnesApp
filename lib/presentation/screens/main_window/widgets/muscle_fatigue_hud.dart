@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:biofit_pro/data/models/enums.dart';
-import 'package:biofit_pro/data/models/muscle_metadata.dart';
+import 'package:muvio/data/models/enums.dart';
+import 'package:muvio/data/models/muscle_metadata.dart';
 import 'package:flutter/material.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_state.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_state.dart';
 
 class MuscleGainsHUD extends StatefulWidget {
   final EvolutionState evolutionState;
@@ -90,9 +90,13 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
               Text(
                 _isAutoPlaying ? "Auto-rotating (10s)" : "Manual Mode",
                 style: TextStyle(
-                  color: _isAutoPlaying ? Colors.white.withOpacity(0.4) : Colors.cyanAccent.withOpacity(0.6),
+                  color: _isAutoPlaying
+                      ? Colors.white.withOpacity(0.4)
+                      : Colors.cyanAccent.withOpacity(0.6),
                   fontSize: 8,
-                  fontWeight: _isAutoPlaying ? FontWeight.normal : FontWeight.bold,
+                  fontWeight: _isAutoPlaying
+                      ? FontWeight.normal
+                      : FontWeight.bold,
                 ),
               ),
             ],
@@ -112,13 +116,17 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
                 itemBuilder: (context, index) {
                   final group = _slides[index];
                   final subGroups = MuscleMetadata.subgroups[group] ?? [];
-                  final groupGains = widget.evolutionState.muscleGains[group.name] ?? {};
+                  final groupGains =
+                      widget.evolutionState.muscleGains[group.name] ?? {};
 
                   // If per-subgroup data exists, use it.
                   // Otherwise distribute the 'General' total evenly across all subgroups.
                   final generalTotal = groupGains['General'] ?? 0.0;
-                  final hasSpecificData = groupGains.keys.any((k) => k != 'General' && (groupGains[k] ?? 0) > 0);
-                  final fallbackPerSubgroup = (!hasSpecificData && subGroups.isNotEmpty)
+                  final hasSpecificData = groupGains.keys.any(
+                    (k) => k != 'General' && (groupGains[k] ?? 0) > 0,
+                  );
+                  final fallbackPerSubgroup =
+                      (!hasSpecificData && subGroups.isNotEmpty)
                       ? generalTotal / subGroups.length
                       : 0.0;
 
@@ -133,10 +141,11 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
                             fit: BoxFit.cover,
                             color: Colors.black.withOpacity(0.6),
                             colorBlendMode: BlendMode.darken,
-                            errorBuilder: (ctx, err, stack) => Container(color: Colors.black45),
+                            errorBuilder: (ctx, err, stack) =>
+                                Container(color: Colors.black45),
                           ),
                         ),
-                        
+
                         // Content
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -174,19 +183,26 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 8),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             name,
-                                            style: const TextStyle(color: Colors.white, fontSize: 10),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                            ),
                                           ),
                                           Text(
                                             "${value > 0 ? '+' : ''}${(value * 20).toStringAsFixed(1)}%",
                                             style: TextStyle(
-                                              color: value > 0 ? Colors.greenAccent : Colors.white38,
+                                              color: value > 0
+                                                  ? Colors.greenAccent
+                                                  : Colors.white38,
                                               fontSize: 9,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -198,8 +214,12 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
                                         borderRadius: BorderRadius.circular(2),
                                         child: LinearProgressIndicator(
                                           value: progress,
-                                          backgroundColor: Colors.white.withOpacity(0.05),
-                                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.cyanAccent),
+                                          backgroundColor: Colors.white
+                                              .withOpacity(0.05),
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                Color
+                                              >(Colors.cyanAccent),
                                           minHeight: 2,
                                         ),
                                       ),
@@ -211,7 +231,7 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
                           ),
                         ),
 
-                        // Dot indicators (now inside the stack for each page or better outside? 
+                        // Dot indicators (now inside the stack for each page or better outside?
                         // Inside is fine if correctly aligned)
                         Positioned(
                           top: 12,
@@ -224,9 +244,9 @@ class _MuscleGainsHUDState extends State<MuscleGainsHUD> {
                                 margin: const EdgeInsets.only(left: 4),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: entry.key == index 
-                                    ? Colors.cyanAccent 
-                                    : Colors.white24,
+                                  color: entry.key == index
+                                      ? Colors.cyanAccent
+                                      : Colors.white24,
                                 ),
                               );
                             }).toList(),

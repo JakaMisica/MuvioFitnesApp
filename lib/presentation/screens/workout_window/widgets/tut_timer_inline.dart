@@ -17,8 +17,9 @@ class TutTimerInline extends StatelessWidget {
         final isPrep = timer.isPreparing;
         final color = isPrep ? Colors.orangeAccent : Colors.blueAccent;
         final title = isPrep ? 'PREPARING' : 'TIME UNDER TENSION';
-        final displayTime =
-            isPrep ? timer.prepRemainingSeconds : timer.elapsedSeconds;
+        final displayTime = isPrep
+            ? timer.prepRemainingSeconds
+            : timer.elapsedSeconds;
 
         return TweenAnimationBuilder<double>(
           duration: const Duration(seconds: 1),
@@ -29,7 +30,10 @@ class TutTimerInline extends StatelessWidget {
               scale: isPrep ? scale : 1.0,
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1a1a1a),
                   borderRadius: BorderRadius.circular(20),
@@ -109,10 +113,12 @@ class TutTimerInline extends StatelessWidget {
                                 ),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
-                                tooltip: 'Restart (${timer.totalPrepSeconds}s prep)',
+                                tooltip:
+                                    'Restart (${timer.totalPrepSeconds}s prep)',
                                 style: IconButton.styleFrom(
-                                  backgroundColor:
-                                      Colors.white.withOpacity(0.08),
+                                  backgroundColor: Colors.white.withOpacity(
+                                    0.08,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -132,13 +138,15 @@ class TutTimerInline extends StatelessWidget {
                                     backgroundColor: Colors.blueAccent,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12),
+                                      horizontal: 12,
+                                    ),
                                     minimumSize: const Size(0, 0),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                     elevation: 2,
-                                    shadowColor:
-                                    Colors.blueAccent.withOpacity(0.3),
+                                    shadowColor: Colors.blueAccent.withOpacity(
+                                      0.3,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
                                     ),
@@ -167,15 +175,20 @@ class TutTimerInline extends StatelessWidget {
                                         ?.sets[setIdx];
                                     if (set != null) {
                                       cubit.skipTutAndFinishSet(
-                                          logId, setIdx, set);
+                                        logId,
+                                        setIdx,
+                                        set,
+                                      );
                                     }
                                   },
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.white70,
                                     side: const BorderSide(
-                                        color: Colors.white10),
+                                      color: Colors.white10,
+                                    ),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
+                                      horizontal: 8,
+                                    ),
                                     minimumSize: const Size(0, 0),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
@@ -213,13 +226,15 @@ class TutTimerInline extends StatelessWidget {
                                     backgroundColor: const Color(0xFF00E676),
                                     foregroundColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
+                                      horizontal: 10,
+                                    ),
                                     minimumSize: const Size(0, 0),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                     elevation: 2,
-                                    shadowColor: const Color(0xFF00E676)
-                                        .withOpacity(0.3),
+                                    shadowColor: const Color(
+                                      0xFF00E676,
+                                    ).withOpacity(0.3),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
                                     ),
@@ -244,9 +259,11 @@ class TutTimerInline extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                         value: isPrep
+                        value: isPrep
                             ? (timer.prepRemainingSeconds /
-                                (timer.totalPrepSeconds > 0 ? timer.totalPrepSeconds : 1))
+                                  (timer.totalPrepSeconds > 0
+                                      ? timer.totalPrepSeconds
+                                      : 1))
                             : null,
                         backgroundColor: Colors.white.withOpacity(0.05),
                         valueColor: AlwaysStoppedAnimation(color),

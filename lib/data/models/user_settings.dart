@@ -52,28 +52,28 @@ class UserSettings {
   bool devPersistLogin = false;
 
   bool isGuidedBreathingEnabled = false;
-  
+
   // Tracking for Coaching system
   DateTime? lastAppOpenDate;
   DateTime? lastWorkoutDate;
   int? activeCoachId; // ID of the currently selected coach
-  
+
   // AI Call Feature
   bool isAiCallEnabled = true;
   DateTime? nextAiCallAllowedDate;
   int consecutiveGetLostCount = 0;
   DateTime? lastWorkoutFinishTime;
   bool isAiCallActive = false;
-  
+
   // Persistent Rest Timer
   DateTime? restTimerEndTime;
   int? restTimerExerciseLogId;
   int? restTimerNextSetIndex;
   int? restTimerTotalDuration;
-  
+
   String? socialUserName;
   String? socialUserId;
-  
+
   bool isSick = false;
   bool isInjured = false;
   int workoutFrequencyDays = 3; // How often the AI expects a workout
@@ -85,12 +85,12 @@ class UserSettings {
   int musclePoints = 0;
   int coins = 0;
   DateTime? lastMusclePointTime;
-  
+
   // Daily Reward Tracking
   DateTime? lastRewardResetDate;
   int todayDietCoinsCount = 0;
   List<String> rewardedTaskNamesToday = [];
-  
+
   // Social Points Tracking (🕶️)
   int socialPoints = 0;
   int todayMessageRewardsCount = 0;

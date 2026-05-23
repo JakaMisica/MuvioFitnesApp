@@ -76,12 +76,20 @@ class TaskCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.sticky_note_2_outlined, size: 14, color: Colors.blueAccent),
+                            const Icon(
+                              Icons.sticky_note_2_outlined,
+                              size: 14,
+                              color: Colors.blueAccent,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 task.name,
-                                style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             IconButton(

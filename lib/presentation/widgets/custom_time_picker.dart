@@ -105,7 +105,9 @@ class _CustomTimePickerDialogState extends State<CustomTimePickerDialog> {
                   ),
                 ),
                 subtitle: Text(
-                  _isSmartAlarmEnabled ? "Wakes you during light sleep" : "Wakes you at fixed time",
+                  _isSmartAlarmEnabled
+                      ? "Wakes you during light sleep"
+                      : "Wakes you at fixed time",
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.4),
                     fontSize: 9,

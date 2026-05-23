@@ -90,7 +90,9 @@ class _SingleTechniqueEditDialogState extends State<SingleTechniqueEditDialog> {
                     labelStyle: const TextStyle(color: Colors.cyanAccent),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.cyanAccent.withOpacity(0.3)),
+                      borderSide: BorderSide(
+                        color: Colors.cyanAccent.withOpacity(0.3),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -143,10 +145,15 @@ class _SingleTechniqueEditDialogState extends State<SingleTechniqueEditDialog> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.cyanAccent,
                   foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('SAVE', style: TextStyle(fontWeight: FontWeight.w900)),
+                child: const Text(
+                  'SAVE',
+                  style: TextStyle(fontWeight: FontWeight.w900),
+                ),
               )
             else
               ElevatedButton(
@@ -157,10 +164,15 @@ class _SingleTechniqueEditDialogState extends State<SingleTechniqueEditDialog> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
-                child: const Text('REMOVE', style: TextStyle(fontWeight: FontWeight.w900)),
+                child: const Text(
+                  'REMOVE',
+                  style: TextStyle(fontWeight: FontWeight.w900),
+                ),
               ),
           ],
         ),

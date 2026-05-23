@@ -1,7 +1,7 @@
-import 'package:biofit_pro/locator.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_cubit.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_state.dart';
+import 'package:muvio/locator.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_cubit.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'widgets/evolution_boxes.dart';
@@ -16,8 +16,8 @@ import 'widgets/body_metrics_history_dialog.dart';
 import 'widgets/volume_chart_dialog.dart';
 import 'widgets/muscle_fatigue_hud.dart';
 import 'widgets/status_tracking_bar.dart';
-import 'package:biofit_pro/logic/cubit/auth/auth_cubit.dart';
-import 'package:biofit_pro/logic/cubit/auth/auth_state.dart';
+import 'package:muvio/logic/cubit/auth/auth_cubit.dart';
+import 'package:muvio/logic/cubit/auth/auth_state.dart';
 import '../../widgets/foggy_background.dart';
 import '../../../core/services/coach_call_service.dart';
 import '../../../core/services/tutorial_service.dart';
@@ -77,7 +77,8 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
                 Expanded(
                   child: BlocBuilder<EvolutionCubit, EvolutionState>(
                     builder: (context, state) {
-                      final isComplete = state.settings?.isProfileComplete ?? false;
+                      final isComplete =
+                          state.settings?.isProfileComplete ?? false;
 
                       return Stack(
                         children: [
@@ -101,8 +102,12 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
                                   top: 100,
                                   bottom: 30,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    child: MuscleGainsHUD(evolutionState: state),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
+                                    child: MuscleGainsHUD(
+                                      evolutionState: state,
+                                    ),
                                   ),
                                 ),
                                 // --- SMART ADAPTIVE TOP BAR ---
@@ -112,110 +117,258 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
                                   right: 0,
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final w = MediaQuery.of(context).size.width;
+                                      final w = MediaQuery.of(
+                                        context,
+                                      ).size.width;
                                       // Scale factor: 1.0 at 390px, smaller below
                                       final scale = (w / 390).clamp(0.7, 1.0);
-                                      final iconSize = (20 * scale).roundToDouble();
+                                      final iconSize = (20 * scale)
+                                          .roundToDouble();
                                       final gap = (4 * scale).roundToDouble();
-                                      final txtSize = (11 * scale).roundToDouble();
-                                      final emojiSize = (13 * scale).roundToDouble();
+                                      final txtSize = (11 * scale)
+                                          .roundToDouble();
+                                      final emojiSize = (13 * scale)
+                                          .roundToDouble();
                                       final narrow = w < 360;
 
                                       Widget rewardGroup = narrow
-                                        ? Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              _buildRewardLabel(icon: "💪", value: state.settings?.musclePoints ?? 0, color: Colors.orangeAccent, emojiSize: emojiSize, txtSize: txtSize),
-                                              SizedBox(height: gap / 2),
-                                              _buildRewardLabel(icon: "🪙", value: state.settings?.coins ?? 0, color: Colors.yellowAccent, emojiSize: emojiSize, txtSize: txtSize),
-                                            ],
-                                          )
-                                        : Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              _buildRewardLabel(icon: "💪", value: state.settings?.musclePoints ?? 0, color: Colors.orangeAccent, emojiSize: emojiSize * 1.5, txtSize: txtSize * 1.5),
-                                              SizedBox(width: gap),
-                                              _buildRewardLabel(icon: "🪙", value: state.settings?.coins ?? 0, color: Colors.yellowAccent, emojiSize: emojiSize * 1.5, txtSize: txtSize * 1.5),
-                                            ],
-                                          );
+                                          ? Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                _buildRewardLabel(
+                                                  icon: "💪",
+                                                  value:
+                                                      state
+                                                          .settings
+                                                          ?.musclePoints ??
+                                                      0,
+                                                  color: Colors.orangeAccent,
+                                                  emojiSize: emojiSize,
+                                                  txtSize: txtSize,
+                                                ),
+                                                SizedBox(height: gap / 2),
+                                                _buildRewardLabel(
+                                                  icon: "🪙",
+                                                  value:
+                                                      state.settings?.coins ??
+                                                      0,
+                                                  color: Colors.yellowAccent,
+                                                  emojiSize: emojiSize,
+                                                  txtSize: txtSize,
+                                                ),
+                                              ],
+                                            )
+                                          : Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                _buildRewardLabel(
+                                                  icon: "💪",
+                                                  value:
+                                                      state
+                                                          .settings
+                                                          ?.musclePoints ??
+                                                      0,
+                                                  color: Colors.orangeAccent,
+                                                  emojiSize: emojiSize * 1.5,
+                                                  txtSize: txtSize * 1.5,
+                                                ),
+                                                SizedBox(width: gap),
+                                                _buildRewardLabel(
+                                                  icon: "🪙",
+                                                  value:
+                                                      state.settings?.coins ??
+                                                      0,
+                                                  color: Colors.yellowAccent,
+                                                  emojiSize: emojiSize * 1.5,
+                                                  txtSize: txtSize * 1.5,
+                                                ),
+                                              ],
+                                            );
 
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                        ),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             GestureDetector(
                                               key: _pointsKey,
-                                              onTap: () => _showGainsChart(context),
+                                              onTap: () =>
+                                                  _showGainsChart(context),
                                               child: rewardGroup,
                                             ),
                                             SizedBox(width: gap),
                                             PopupMenuButton<String>(
-                                              icon: Icon(Icons.settings, color: Colors.white70, size: (iconSize + 8).roundToDouble()),
+                                              icon: Icon(
+                                                Icons.settings,
+                                                color: Colors.white70,
+                                                size: (iconSize + 8)
+                                                    .roundToDouble(),
+                                              ),
                                               offset: const Offset(0, 40),
                                               color: const Color(0xFF1A1A1A),
                                               padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(),
+                                              constraints:
+                                                  const BoxConstraints(),
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(14),
-                                                side: const BorderSide(color: Colors.white10),
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                                side: const BorderSide(
+                                                  color: Colors.white10,
+                                                ),
                                               ),
                                               onSelected: (value) {
                                                 if (value == 'profile') {
                                                   _showProfileDialog(context);
                                                 } else if (value == 'coach') {
-                                                  CoachCallService().triggerTestCall();
+                                                  CoachCallService()
+                                                      .triggerTestCall();
                                                 } else if (value == 'auth') {
-                                                  final authState = context.read<AuthCubit>().state;
-                                                  _showLoginLogoutDialog(context, authState is AuthSuccess);
-                                                } else if (value == 'tutorial') {
+                                                  final authState = context
+                                                      .read<AuthCubit>()
+                                                      .state;
+                                                  _showLoginLogoutDialog(
+                                                    context,
+                                                    authState is AuthSuccess,
+                                                  );
+                                                } else if (value ==
+                                                    'tutorial') {
                                                   TutorialService().start();
                                                 }
                                               },
                                               itemBuilder: (ctx) => [
                                                 PopupMenuItem(
                                                   value: 'profile',
-                                                  child: Row(children: [
-                                                    Icon(Icons.person_pin, color: isComplete ? Colors.blueAccent : Colors.orangeAccent, size: 18),
-                                                    const SizedBox(width: 10),
-                                                    const Text('BIO PROFILE', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                                                  ]),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.person_pin,
+                                                        color: isComplete
+                                                            ? Colors.blueAccent
+                                                            : Colors
+                                                                  .orangeAccent,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 10),
+                                                      const Text(
+                                                        'BIO PROFILE',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                                 const PopupMenuItem(
                                                   value: 'coach',
-                                                  child: Row(children: [
-                                                    Icon(Icons.support_agent, color: Colors.cyanAccent, size: 18),
-                                                    SizedBox(width: 10),
-                                                    Text('AI COACH', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                                                  ]),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.support_agent,
+                                                        color:
+                                                            Colors.cyanAccent,
+                                                        size: 18,
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      Text(
+                                                        'AI COACH',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                                 const PopupMenuItem(
                                                   value: 'tutorial',
-                                                  child: Row(children: [
-                                                    Icon(Icons.school, color: Colors.purpleAccent, size: 18),
-                                                    SizedBox(width: 10),
-                                                    Text('TEST TUTORIAL', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                                                  ]),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.school,
+                                                        color:
+                                                            Colors.purpleAccent,
+                                                        size: 18,
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      Text(
+                                                        'TEST TUTORIAL',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                                 PopupMenuItem(
                                                   value: 'auth',
-                                                  child: Builder(builder: (ctx) {
-                                                    final isLoggedIn = ctx.read<AuthCubit>().state is AuthSuccess;
-                                                    return Row(children: [
-                                                      Icon(Icons.logout, color: isLoggedIn ? Colors.redAccent : Colors.greenAccent, size: 18),
-                                                      const SizedBox(width: 10),
-                                                      Text(isLoggedIn ? 'LOGOUT' : 'LOGIN', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                                                    ]);
-                                                  }),
+                                                  child: Builder(
+                                                    builder: (ctx) {
+                                                      final isLoggedIn =
+                                                          ctx
+                                                                  .read<
+                                                                    AuthCubit
+                                                                  >()
+                                                                  .state
+                                                              is AuthSuccess;
+                                                      return Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.logout,
+                                                            color: isLoggedIn
+                                                                ? Colors
+                                                                      .redAccent
+                                                                : Colors
+                                                                      .greenAccent,
+                                                            size: 18,
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                            isLoggedIn
+                                                                ? 'LOGOUT'
+                                                                : 'LOGIN',
+                                                            style:
+                                                                const TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 11,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                             SizedBox(width: gap),
                                             _buildSystemButton(
                                               key: _measurementsKey,
-                                              icon: Icons.straighten, color: Colors.cyanAccent, onTap: () => _showMeasurementsDialog(context), size: iconSize
+                                              icon: Icons.straighten,
+                                              color: Colors.cyanAccent,
+                                              onTap: () =>
+                                                  _showMeasurementsDialog(
+                                                    context,
+                                                  ),
+                                              size: iconSize,
                                             ),
                                             SizedBox(width: gap),
                                             SizedBox(
@@ -223,11 +376,17 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
                                               width: 44,
                                               height: 44,
                                               child: _buildSystemButton(
-                                                icon: state.showBottomMetrics ? Icons.unfold_less : Icons.unfold_more,
+                                                icon: state.showBottomMetrics
+                                                    ? Icons.unfold_less
+                                                    : Icons.unfold_more,
                                                 color: Colors.white38,
                                                 onTap: () {
-                                                  context.read<EvolutionCubit>().toggleBottomMetrics();
-                                                  _handleTutorialStep(TutorialStep.expandMetrics);
+                                                  context
+                                                      .read<EvolutionCubit>()
+                                                      .toggleBottomMetrics();
+                                                  _handleTutorialStep(
+                                                    TutorialStep.expandMetrics,
+                                                  );
                                                 },
                                                 size: iconSize,
                                               ),
@@ -235,7 +394,11 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
                                             SizedBox(width: gap),
                                             _buildSystemButton(
                                               key: _gainsKey,
-                                              icon: Icons.bar_chart, color: Colors.orangeAccent, onTap: () => _showVolumeChart(context), size: iconSize
+                                              icon: Icons.bar_chart,
+                                              color: Colors.orangeAccent,
+                                              onTap: () =>
+                                                  _showVolumeChart(context),
+                                              size: iconSize,
                                             ),
                                           ],
                                         ),
@@ -367,7 +530,11 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
   Widget _buildLogMetricsButton(BuildContext context) {
     return IconButton(
       onPressed: () => _showMeasurementsDialog(context),
-      icon: const Icon(Icons.add_chart_rounded, color: Colors.cyanAccent, size: 22),
+      icon: const Icon(
+        Icons.add_chart_rounded,
+        color: Colors.cyanAccent,
+        size: 22,
+      ),
       style: IconButton.styleFrom(
         backgroundColor: Colors.cyanAccent.withOpacity(0.1),
         padding: const EdgeInsets.all(10),
@@ -379,7 +546,11 @@ class _MainWindowScreenState extends State<MainWindowScreen> {
   Widget _buildVolumeButton(BuildContext context) {
     return IconButton(
       onPressed: () => _showVolumeChart(context),
-      icon: const Icon(Icons.fitness_center_rounded, color: Colors.orangeAccent, size: 22),
+      icon: const Icon(
+        Icons.fitness_center_rounded,
+        color: Colors.orangeAccent,
+        size: 22,
+      ),
       style: IconButton.styleFrom(
         backgroundColor: Colors.orangeAccent.withOpacity(0.1),
         padding: const EdgeInsets.all(10),
@@ -530,7 +701,8 @@ class EvolutionMonitoringSection extends StatelessWidget {
                 flex: 2,
                 child: EvolutionBox(
                   key: fatKey,
-                  value: (state.latestMetric?.bodyFatPercentage ?? 0.0).toStringAsFixed(1),
+                  value: (state.latestMetric?.bodyFatPercentage ?? 0.0)
+                      .toStringAsFixed(1),
                   icon: Icons.bloodtype_outlined,
                   color: Colors.greenAccent,
                   onTap: onFatTap,
@@ -548,10 +720,12 @@ class EvolutionMonitoringSection extends StatelessWidget {
                   flex: 2,
                   child: EvolutionBox(
                     key: gripKey,
-                    value: (((state.latestMetric?.gripStrengthLeft ?? 0.0) +
-                                (state.latestMetric?.gripStrengthRight ?? 0.0)) /
-                            2)
-                        .toStringAsFixed(1),
+                    value:
+                        (((state.latestMetric?.gripStrengthLeft ?? 0.0) +
+                                    (state.latestMetric?.gripStrengthRight ??
+                                        0.0)) /
+                                2)
+                            .toStringAsFixed(1),
                     icon: Icons.pan_tool_outlined,
                     color: Colors.cyanAccent,
                     onTap: onGripTap,
@@ -561,7 +735,9 @@ class EvolutionMonitoringSection extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: EvolutionBox(
-                    value: (state.latestMetric?.estimatedFreeTestosterone ?? 0.0).toStringAsFixed(1),
+                    value:
+                        (state.latestMetric?.estimatedFreeTestosterone ?? 0.0)
+                            .toStringAsFixed(1),
                     icon: Icons.bolt_rounded,
                     color: Colors.cyanAccent,
                     onTap: onTestoTap,

@@ -9,10 +9,15 @@ class SocialRepository {
 
   Future<List<SocialConversation>> getAllConversations() async {
     final isar = await _isarService.db;
-    return await isar.socialConversations.where().sortByLastActiveDesc().findAll();
+    return await isar.socialConversations
+        .where()
+        .sortByLastActiveDesc()
+        .findAll();
   }
 
-  Future<List<SocialMessage>> getMessagesForConversation(String conversationId) async {
+  Future<List<SocialMessage>> getMessagesForConversation(
+    String conversationId,
+  ) async {
     final isar = await _isarService.db;
     return await isar.socialMessages
         .filter()
@@ -49,7 +54,10 @@ class SocialRepository {
 
   Future<SocialConversation?> getConversationByRemoteId(String remoteId) async {
     final isar = await _isarService.db;
-    return await isar.socialConversations.filter().remoteIdEqualTo(remoteId).findFirst();
+    return await isar.socialConversations
+        .filter()
+        .remoteIdEqualTo(remoteId)
+        .findFirst();
   }
 
   Future<void> deleteMessage(int id) async {
@@ -61,10 +69,16 @@ class SocialRepository {
 
   Future<SocialMessage?> getMessageByRemoteId(String remoteId) async {
     final isar = await _isarService.db;
-    return await isar.socialMessages.filter().remoteIdEqualTo(remoteId).findFirst();
+    return await isar.socialMessages
+        .filter()
+        .remoteIdEqualTo(remoteId)
+        .findFirst();
   }
 
-  Future<void> deleteOldMessages(String conversationId, DateTime olderThan) async {
+  Future<void> deleteOldMessages(
+    String conversationId,
+    DateTime olderThan,
+  ) async {
     final isar = await _isarService.db;
     await isar.writeTxn(() async {
       await isar.socialMessages

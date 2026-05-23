@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_cubit.dart';
-import 'package:biofit_pro/locator.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_cubit.dart';
+import 'package:muvio/locator.dart';
 
 class RewardAnimationOverlay extends StatefulWidget {
   final Widget child;
@@ -21,7 +21,9 @@ class _RewardAnimationOverlayState extends State<RewardAnimationOverlay> {
   @override
   void initState() {
     super.initState();
-    _subscription = locator<EvolutionCubit>().rewardStream.listen(_handleReward);
+    _subscription = locator<EvolutionCubit>().rewardStream.listen(
+      _handleReward,
+    );
   }
 
   @override
@@ -34,14 +36,19 @@ class _RewardAnimationOverlayState extends State<RewardAnimationOverlay> {
     if (!mounted) return;
 
     setState(() {
-      _rewards.add(_ActiveReward(
-        id: DateTime.now().millisecondsSinceEpoch,
-        type: event.type,
-        amount: event.amount,
-        // Start from top-right area (near the bars)
-        x: MediaQuery.of(context).size.width - 120 + (Random().nextDouble() * 40),
-        y: 80 + (Random().nextDouble() * 20),
-      ));
+      _rewards.add(
+        _ActiveReward(
+          id: DateTime.now().millisecondsSinceEpoch,
+          type: event.type,
+          amount: event.amount,
+          // Start from top-right area (near the bars)
+          x:
+              MediaQuery.of(context).size.width -
+              120 +
+              (Random().nextDouble() * 40),
+          y: 80 + (Random().nextDouble() * 20),
+        ),
+      );
     });
   }
 
@@ -57,11 +64,13 @@ class _RewardAnimationOverlayState extends State<RewardAnimationOverlay> {
     return Stack(
       children: [
         widget.child,
-        ..._rewards.map((reward) => _RewardItem(
-              key: ValueKey(reward.id),
-              reward: reward,
-              onComplete: () => _removeReward(reward.id),
-            )),
+        ..._rewards.map(
+          (reward) => _RewardItem(
+            key: ValueKey(reward.id),
+            reward: reward,
+            onComplete: () => _removeReward(reward.id),
+          ),
+        ),
       ],
     );
   }
@@ -99,7 +108,9 @@ class _RewardItem extends StatelessWidget {
     final isSocial = reward.type == RewardType.sunglasses;
     final emoji = isSocial ? "🕶️" : (isMuscle ? "💪" : "🪙");
     final text = '+${reward.amount} $emoji';
-    final color = isSocial ? Colors.cyanAccent : (isMuscle ? Colors.orangeAccent : Colors.yellowAccent);
+    final color = isSocial
+        ? Colors.cyanAccent
+        : (isMuscle ? Colors.orangeAccent : Colors.yellowAccent);
 
     return Positioned(
       left: reward.x,

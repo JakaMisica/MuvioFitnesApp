@@ -70,16 +70,21 @@ class MultiMetricChart extends StatelessWidget {
 
           final Map<DateTime, double> dateToVal = Map.fromEntries(metricData);
 
-          final spots = sortedDates.asMap().entries
+          final spots = sortedDates
+              .asMap()
+              .entries
               .where((e) => dateToVal.containsKey(e.value))
               .map((e) {
-            final date = e.value;
-            final val = dateToVal[date]!;
+                final date = e.value;
+                final val = dateToVal[date]!;
 
-            // If range is 0 (all points same), center the point at 0.5
-            final normalizedY = (max - min) == 0 ? 0.5 : (val - min) / range;
-            return FlSpot(e.key.toDouble(), normalizedY);
-          }).toList();
+                // If range is 0 (all points same), center the point at 0.5
+                final normalizedY = (max - min) == 0
+                    ? 0.5
+                    : (val - min) / range;
+                return FlSpot(e.key.toDouble(), normalizedY);
+              })
+              .toList();
 
           return LineChartBarData(
             spots: spots,
@@ -87,14 +92,16 @@ class MultiMetricChart extends StatelessWidget {
             color: _getMetricColor(key),
             barWidth: 3,
             dotData: FlDotData(
-              show: spots.length == 1, // Show dots only if there is nothing to connect
+              show:
+                  spots.length ==
+                  1, // Show dots only if there is nothing to connect
               getDotPainter: (spot, percent, barData, index) =>
                   FlDotCirclePainter(
-                radius: 4,
-                color: _getMetricColor(key),
-                strokeWidth: 2,
-                strokeColor: Colors.black,
-              ),
+                    radius: 4,
+                    color: _getMetricColor(key),
+                    strokeWidth: 2,
+                    strokeColor: Colors.black,
+                  ),
             ),
             belowBarData: BarAreaData(
               show: true,
@@ -145,8 +152,12 @@ class MultiMetricChart extends StatelessWidget {
               return touchedSpots.map((spot) {
                 final key = visibleMetrics[touchedSpots.indexOf(spot)];
                 final date = sortedDates[spot.x.toInt()];
-                final valEntry = data[key]!.firstWhereOrNull((e) => e.key == date);
-                final valStr = valEntry != null ? valEntry.value.toStringAsFixed(1) : "N/A";
+                final valEntry = data[key]!.firstWhereOrNull(
+                  (e) => e.key == date,
+                );
+                final valStr = valEntry != null
+                    ? valEntry.value.toStringAsFixed(1)
+                    : "N/A";
 
                 return LineTooltipItem(
                   "${key.formatMetricKey}: $valStr",

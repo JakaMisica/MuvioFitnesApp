@@ -47,7 +47,9 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
         : _currentValue.toString();
 
     _valueController = TextEditingController(text: valText);
-    _incrementController = TextEditingController(text: _formatDouble(_increment));
+    _incrementController = TextEditingController(
+      text: _formatDouble(_increment),
+    );
 
     // Select all text initially
     _valueController.selection = TextSelection(
@@ -135,8 +137,10 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
                 onTap: () async {
                   final result = await showDialog<String>(
                     context: context,
-                    builder: (_) =>
-                        _IncrementEditorDialog(initialValue: _increment, unit: widget.unit),
+                    builder: (_) => _IncrementEditorDialog(
+                      initialValue: _increment,
+                      unit: widget.unit,
+                    ),
                   );
                   if (result != null) {
                     _updateIncrement(result);
@@ -155,10 +159,14 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.35), // Increased opacity
+                    color: Theme.of(
+                      context,
+                    ).primaryColor.withOpacity(0.35), // Increased opacity
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Theme.of(context).primaryColor.withOpacity(0.8), // Semi-transparent border
+                      color: Theme.of(context).primaryColor.withOpacity(
+                        0.8,
+                      ), // Semi-transparent border
                       width: 1.5,
                     ),
                   ),
@@ -176,7 +184,11 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
 
               // Increment Arrow
               IconButton(
-                key: widget.title == 'Rest Duration' ? TutorialService().getKeyForStep(TutorialStep.increaseRestTime) : null,
+                key: widget.title == 'Rest Duration'
+                    ? TutorialService().getKeyForStep(
+                        TutorialStep.increaseRestTime,
+                      )
+                    : null,
                 onPressed: _incrementValue,
                 icon: const Icon(Icons.arrow_right, size: 32),
                 style: IconButton.styleFrom(
@@ -192,7 +204,9 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
         const SizedBox(height: 12), // Shrunk from 24
         // Value Input Field
         TextField(
-          key: widget.title == 'RIR' ? TutorialService().getKeyForStep(TutorialStep.typeRir) : null,
+          key: widget.title == 'RIR'
+              ? TutorialService().getKeyForStep(TutorialStep.typeRir)
+              : null,
           controller: _valueController,
           autofocus: true,
           onTap: () {
@@ -217,7 +231,8 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
           ),
           inputFormatters: [
             if (widget.unit == 'rps')
-              FilteringTextInputFormatter.digitsOnly // Only whole numbers for reps
+              FilteringTextInputFormatter
+                  .digitsOnly // Only whole numbers for reps
             else
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
           ],
@@ -252,9 +267,11 @@ class _ValueInputDialogState extends State<ValueInputDialog> {
             ),
             const SizedBox(width: 8),
             ElevatedButton(
-              key: widget.title == 'Rest Duration' 
-                ? TutorialService().getKeyForStep(TutorialStep.saveRestTime) 
-                : (widget.title == 'RIR' ? TutorialService().getKeyForStep(TutorialStep.saveRir) : null),
+              key: widget.title == 'Rest Duration'
+                  ? TutorialService().getKeyForStep(TutorialStep.saveRestTime)
+                  : (widget.title == 'RIR'
+                        ? TutorialService().getKeyForStep(TutorialStep.saveRir)
+                        : null),
               onPressed: () {
                 final value = double.tryParse(_valueController.text);
                 Navigator.pop(context, value ?? _currentValue);
@@ -298,7 +315,10 @@ class _IncrementEditorDialog extends StatefulWidget {
   final double initialValue;
   final String unit;
 
-  const _IncrementEditorDialog({required this.initialValue, required this.unit});
+  const _IncrementEditorDialog({
+    required this.initialValue,
+    required this.unit,
+  });
 
   @override
   State<_IncrementEditorDialog> createState() => _IncrementEditorDialogState();

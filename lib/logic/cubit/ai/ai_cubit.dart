@@ -30,9 +30,11 @@ class AiCubit extends Cubit<AiState> {
     await loadUserContext();
     await loadSessions();
     await _loadQuota();
-    
+
     // Listen for setting changes (coach rename etc)
-    _userSettingsSubscription = _bodyRepository.watchUserSettings().listen((settings) {
+    _userSettingsSubscription = _bodyRepository.watchUserSettings().listen((
+      settings,
+    ) {
       if (settings != null) {
         _loadCoachIdentity();
       }
@@ -129,7 +131,7 @@ class AiCubit extends Cubit<AiState> {
   Future<void> loadUserContext() async {
     final settings = await _bodyRepository.getUserSettings();
     final latestMetric = await _bodyRepository.getLatestMetric();
-    
+
     String coachName = "Biological Optimization Engine";
     if (settings.activeCoachId != null) {
       final coach = await _coachRepository.getCoach(settings.activeCoachId!);
@@ -204,12 +206,15 @@ class AiCubit extends Cubit<AiState> {
 
     String modeInstructions = '';
     if (state.mode == AiMode.diet) {
-      modeInstructions = 'STRICT RULE: Only generate Diet/Nutrition plans. IGNORE WORKOUT REQUESTS. Use <diet> tags.';
+      modeInstructions =
+          'STRICT RULE: Only generate Diet/Nutrition plans. IGNORE WORKOUT REQUESTS. Use <diet> tags.';
     } else if (state.mode == AiMode.workout) {
-      modeInstructions = 'STRICT RULE: Only generate Exercise/Workout plans. IGNORE DIET REQUESTS. Use <exercise> tags.';
+      modeInstructions =
+          'STRICT RULE: Only generate Exercise/Workout plans. IGNORE DIET REQUESTS. Use <exercise> tags.';
     }
 
-    String dataContext = "User Profile: ${state.gender}, ${state.age}yo, ${state.height}cm, ${state.weight}kg. Goal: ${state.goal}.";
+    String dataContext =
+        "User Profile: ${state.gender}, ${state.age}yo, ${state.height}cm, ${state.weight}kg. Goal: ${state.goal}.";
     if (state.useBioData) {
       try {
         final bioData = await _bioContextService.getAIPromptContext();
@@ -221,13 +226,18 @@ class AiCubit extends Cubit<AiState> {
 
     String recommendationInstructions = '';
     if (state.mode == AiMode.workout) {
-      recommendationInstructions = 'Suggest exercises using <exercise> tags: {"type": "exercise_recommendation", "name": "Exercise Name", "muscleGroup": "chest", "sets": 3, "reps": 10, "weight": 20.0, "notes": "Tip", "isIsolate": false, "hasCablePosition": false, "hasBenchPosition": false}.';
+      recommendationInstructions =
+          'Suggest exercises using <exercise> tags: {"type": "exercise_recommendation", "name": "Exercise Name", "muscleGroup": "chest", "sets": 3, "reps": 10, "weight": 20.0, "notes": "Tip", "isIsolate": false, "hasCablePosition": false, "hasBenchPosition": false}.';
     } else if (state.mode == AiMode.diet) {
-      recommendationInstructions = 'Suggest DIET plans using <diet> tags: {"type": "diet_recommendation", "name": "Plan Name", "meals": [{"name": "Meal Name", "time": "HH:mm", "items": [{"name": "Food Name", "amount": 100, "unit": "g", "calories": 200, "protein": 20, "carbs": 10, "fat": 5}]}], "supplements": [{"name": "Name", "amount": 5, "unit": "g", "calories": 0, "protein": 0, "carbs": 0, "fat": 0}]}.';
+      recommendationInstructions =
+          'Suggest DIET plans using <diet> tags: {"type": "diet_recommendation", "name": "Plan Name", "meals": [{"name": "Meal Name", "time": "HH:mm", "items": [{"name": "Food Name", "amount": 100, "unit": "g", "calories": 200, "protein": 20, "carbs": 10, "fat": 5}]}], "supplements": [{"name": "Name", "amount": 5, "unit": "g", "calories": 0, "protein": 0, "carbs": 0, "fat": 0}]}.';
     }
 
-    final String baseSystemPrompt = 'You are a professional fitness and health assistant called AI COACH. CONTEXT: $dataContext $modeInstructions $recommendationInstructions';
-    final finalPrompt = state.useCoT ? '$baseSystemPrompt Use Chain of Thought reasoning.' : baseSystemPrompt;
+    final String baseSystemPrompt =
+        'You are a professional fitness and health assistant called AI COACH. CONTEXT: $dataContext $modeInstructions $recommendationInstructions';
+    final finalPrompt = state.useCoT
+        ? '$baseSystemPrompt Use Chain of Thought reasoning.'
+        : baseSystemPrompt;
 
     apiMessages.insert(0, {'role': 'system', 'content': finalPrompt});
     final response = await _aiService.getResponse(apiMessages);
@@ -236,14 +246,24 @@ class AiCubit extends Cubit<AiState> {
       emit(state.copyWith(isLoading: false, error: response));
     } else {
       if (state.activeSessionId != null) {
-        await _chatRepo.saveMessage(state.activeSessionId!, 'assistant', response);
+        await _chatRepo.saveMessage(
+          state.activeSessionId!,
+          'assistant',
+          response,
+        );
       }
       updatedMessages.add({'role': 'assistant', 'content': response});
       if (!state.isPremium) {
         final settings = await _bodyRepository.getUserSettings();
         settings.usedAiMessages = settings.usedAiMessages + 1;
         await _bodyRepository.saveUserSettings(settings);
-        emit(state.copyWith(messages: updatedMessages, isLoading: false, usedAiMessages: settings.usedAiMessages));
+        emit(
+          state.copyWith(
+            messages: updatedMessages,
+            isLoading: false,
+            usedAiMessages: settings.usedAiMessages,
+          ),
+        );
       } else {
         emit(state.copyWith(messages: updatedMessages, isLoading: false));
       }

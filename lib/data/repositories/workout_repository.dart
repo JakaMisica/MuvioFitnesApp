@@ -427,7 +427,7 @@ class WorkoutRepository {
       newSets[setIndex] = updatedSet;
       log.sets = newSets;
       await isar.writeTxn(() => isar.workoutExerciseLogs.put(log));
-      
+
       if (updatedSet.isCompleted) {
         final settings = await isar.userSettings.get(0);
         if (settings != null) {
@@ -444,7 +444,7 @@ class WorkoutRepository {
     if (log != null) {
       log.sets = sets;
       await isar.writeTxn(() => isar.workoutExerciseLogs.put(log));
-      
+
       if (sets.any((s) => s.isCompleted)) {
         final settings = await isar.userSettings.get(0);
         if (settings != null) {
@@ -599,12 +599,13 @@ class WorkoutRepository {
 
     final history = <MapEntry<DateTime, double>>[];
     double lastKnownAvg = 0;
-    
+
     DateTime current = DateUtils.dateOnly(start);
     int workoutIdx = 0;
 
     while (!current.isAfter(end)) {
-      if (workoutIdx < workouts.length && DateUtils.isSameDay(workouts[workoutIdx].date, current)) {
+      if (workoutIdx < workouts.length &&
+          DateUtils.isSameDay(workouts[workoutIdx].date, current)) {
         double total1RM = 0;
         int setCount = 0;
         for (var log in workouts[workoutIdx].exercises) {
@@ -622,7 +623,7 @@ class WorkoutRepository {
         }
         workoutIdx++;
       }
-      
+
       if (lastKnownAvg > 0) {
         history.add(MapEntry(current, lastKnownAvg));
       }
@@ -752,7 +753,7 @@ class WorkoutRepository {
         if (set.isCompleted) {
           // Add explicit calories from cardio/custom logs
           totalCalories += (set.calories ?? 0);
-          
+
           // Heuristic for strength volume: 1kg * 1 rep = 0.1 calories
           if ((set.weight ?? 0) > 0) {
             totalVolume += (set.weight! * (set.reps ?? 0).toDouble());
@@ -2210,11 +2211,18 @@ class WorkoutRepository {
     }
   }
 
-  Future<void> updateStepsAndDistance(DateTime date, int steps, double distance) async {
+  Future<void> updateStepsAndDistance(
+    DateTime date,
+    int steps,
+    double distance,
+  ) async {
     final isar = await _isarService.db;
     final normalizedDate = DateUtils.dateOnly(date);
     await isar.writeTxn(() async {
-      var workout = await isar.workoutDays.filter().dateEqualTo(normalizedDate).findFirst();
+      var workout = await isar.workoutDays
+          .filter()
+          .dateEqualTo(normalizedDate)
+          .findFirst();
       if (workout == null) {
         workout = WorkoutDay()..date = normalizedDate;
       }
@@ -2224,7 +2232,10 @@ class WorkoutRepository {
     });
   }
 
-  Future<List<MapEntry<DateTime, double>>> getStepsHistory(DateTime start, DateTime end) async {
+  Future<List<MapEntry<DateTime, double>>> getStepsHistory(
+    DateTime start,
+    DateTime end,
+  ) async {
     final isar = await _isarService.db;
     final workouts = await isar.workoutDays
         .filter()
@@ -2234,7 +2245,10 @@ class WorkoutRepository {
     return workouts.map((w) => MapEntry(w.date, w.steps.toDouble())).toList();
   }
 
-  Future<List<MapEntry<DateTime, double>>> getDistanceHistory(DateTime start, DateTime end) async {
+  Future<List<MapEntry<DateTime, double>>> getDistanceHistory(
+    DateTime start,
+    DateTime end,
+  ) async {
     final isar = await _isarService.db;
     final workouts = await isar.workoutDays
         .filter()
@@ -2244,7 +2258,11 @@ class WorkoutRepository {
     return workouts.map((w) => MapEntry(w.date, w.distanceMeters)).toList();
   }
 
-  Future<bool> checkIfSetPr(int exerciseId, int setIndex, WorkoutSet currentSet) async {
+  Future<bool> checkIfSetPr(
+    int exerciseId,
+    int setIndex,
+    WorkoutSet currentSet,
+  ) async {
     final isar = await _isarService.db;
     final normalizedDate = DateUtils.dateOnly(DateTime.now());
 
@@ -2256,11 +2274,13 @@ class WorkoutRepository {
         .findAll();
 
     double currentVolume = (currentSet.weight ?? 0) * (currentSet.reps ?? 0);
-    
+
     // Check if current volume beats the best volume for the SAME set index in history
     for (var day in pastDays) {
       // Find the log for this exercise in this day
-      final log = day.exercises.where((e) => e.exercise.value?.id == exerciseId).firstOrNull;
+      final log = day.exercises
+          .where((e) => e.exercise.value?.id == exerciseId)
+          .firstOrNull;
       if (log != null && setIndex < log.sets.length) {
         final pastSet = log.sets[setIndex];
         if (pastSet.isCompleted) {

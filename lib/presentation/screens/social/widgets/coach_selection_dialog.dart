@@ -40,7 +40,11 @@ class CoachSelectionView extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: Row(
                 children: [
-                  const Icon(Icons.psychology, color: Colors.cyanAccent, size: 32),
+                  const Icon(
+                    Icons.psychology,
+                    color: Colors.cyanAccent,
+                    size: 32,
+                  ),
                   const SizedBox(width: 16),
                   const Expanded(
                     child: Text(
@@ -151,15 +155,19 @@ class CoachDetailDialog extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [accent.withOpacity(0.22), Colors.transparent],
                       ),
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(32)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(32),
+                      ),
                     ),
                   ),
                   Positioned(
                     top: 12,
                     right: 12,
                     child: IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Colors.white54),
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.white54,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -178,7 +186,7 @@ class CoachDetailDialog extends StatelessWidget {
                                 color: accent.withOpacity(0.3),
                                 blurRadius: 20,
                                 spreadRadius: 2,
-                              )
+                              ),
                             ],
                           ),
                           child: CircleAvatar(
@@ -200,12 +208,16 @@ class CoachDetailDialog extends StatelessWidget {
                             bottom: -2,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.amber,
                                 borderRadius: BorderRadius.circular(8),
-                                border:
-                                    Border.all(color: Colors.black, width: 2),
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 2,
+                                ),
                               ),
                               child: const Text(
                                 'AI',
@@ -246,15 +258,18 @@ class CoachDetailDialog extends StatelessWidget {
                     Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 5),
+                          horizontal: 14,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: accent.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
-                          border:
-                              Border.all(color: accent.withOpacity(0.3)),
+                          border: Border.all(color: accent.withOpacity(0.3)),
                         ),
                         child: Text(
-                          coach.isPremium ? 'PREMIUM AI COACH' : 'FREE MOTIVATOR',
+                          coach.isPremium
+                              ? 'PREMIUM AI COACH'
+                              : 'FREE MOTIVATOR',
                           style: TextStyle(
                             color: accent,
                             fontSize: 10,
@@ -265,17 +280,23 @@ class CoachDetailDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 28),
-                    Row(children: [
-                      const Text('PROFILE',
+                    Row(
+                      children: [
+                        const Text(
+                          'PROFILE',
                           style: TextStyle(
-                              color: Colors.white24,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 3)),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                          child: Divider(color: Colors.white12, thickness: 1)),
-                    ]),
+                            color: Colors.white24,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 3,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Divider(color: Colors.white12, thickness: 1),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 14),
                     // Full description (no limit)
                     Text(
@@ -287,16 +308,27 @@ class CoachDetailDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _trait(Icons.bolt, 'Energy',
-                        coach.isLazyCoach ? 'Low / Rude' : 'Maximum Intensity',
-                        accent),
+                    _trait(
+                      Icons.bolt,
+                      'Energy',
+                      coach.isLazyCoach ? 'Low / Rude' : 'Maximum Intensity',
+                      accent,
+                    ),
                     const SizedBox(height: 8),
-                    _trait(Icons.psychology_outlined, 'Style',
-                        _style(coach), accent),
+                    _trait(
+                      Icons.psychology_outlined,
+                      'Style',
+                      _style(coach),
+                      accent,
+                    ),
                     if (coach.isPremium) ...[
                       const SizedBox(height: 8),
-                      _trait(Icons.smart_toy_outlined, 'AI Model',
-                          'Powered by GPT-4o', accent),
+                      _trait(
+                        Icons.smart_toy_outlined,
+                        'AI Model',
+                        'Powered by GPT-4o',
+                        accent,
+                      ),
                     ],
                     const SizedBox(height: 36),
                     SizedBox(
@@ -305,11 +337,11 @@ class CoachDetailDialog extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: isActive ? null : onHire,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isActive ? Colors.grey[800] : accent,
+                          backgroundColor: isActive ? Colors.grey[800] : accent,
                           foregroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           elevation: isActive ? 0 : 12,
                           shadowColor: accent.withOpacity(0.5),
                         ),
@@ -317,8 +349,8 @@ class CoachDetailDialog extends StatelessWidget {
                           isActive
                               ? '✓  CURRENTLY ACTIVE'
                               : coach.isPremium
-                                  ? 'HIRE FOR \$${coach.price.toStringAsFixed(2)} / mo'
-                                  : 'RECRUIT COACH — FREE',
+                              ? 'HIRE FOR \$${coach.price.toStringAsFixed(2)} / mo'
+                              : 'RECRUIT COACH — FREE',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
@@ -348,19 +380,26 @@ class CoachDetailDialog extends StatelessWidget {
   }
 
   Widget _trait(IconData icon, String label, String value, Color accent) {
-    return Row(children: [
-      Icon(icon, size: 16, color: accent.withOpacity(0.6)),
-      const SizedBox(width: 8),
-      Text('$label: ',
-          style: const TextStyle(color: Colors.white38, fontSize: 13)),
-      Expanded(
-        child: Text(value,
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: accent.withOpacity(0.6)),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: const TextStyle(color: Colors.white38, fontSize: 13),
+        ),
+        Expanded(
+          child: Text(
+            value,
             style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.bold)),
-      ),
-    ]);
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -422,12 +461,13 @@ class _CoachCard extends StatelessWidget {
                         bottom: 0,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 1),
+                            horizontal: 4,
+                            vertical: 1,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.amber,
                             borderRadius: BorderRadius.circular(4),
-                            border:
-                                Border.all(color: Colors.black, width: 1.5),
+                            border: Border.all(color: Colors.black, width: 1.5),
                           ),
                           child: const Text(
                             'AI',
@@ -491,8 +531,11 @@ class _CoachCard extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 4),
-                    const Icon(Icons.chevron_right_rounded,
-                        color: Colors.white24, size: 18),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: Colors.white24,
+                      size: 18,
+                    ),
                   ],
                 ),
               ],

@@ -7,4 +7,4 @@
 -dontwarn com.google.firebase.**
 
 # Keep our models for JSON/Isar if needed
--keep class com.biofitpro.biofit_pro.data.models.** { *; }
+-keep class com.muvio.muvio.data.models.** { *; }

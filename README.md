@@ -1,4 +1,4 @@
-# biofit_pro
+# muvio
 
 A new Flutter project.
 

@@ -9,7 +9,7 @@ plugins {
 
 
 android {
-    namespace = "com.biofitpro.biofit_pro"
+    namespace = "com.muvio.muvio"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.biofitpro.biofit_pro"
+        applicationId = "com.muvio.muvio"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion // Desugaring works better with minSdk 21+
@@ -85,4 +85,6 @@ flutter {
     source = "../.."
 }
 
-apply(plugin = "com.google.gms.google-services")
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}

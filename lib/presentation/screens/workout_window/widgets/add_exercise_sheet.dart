@@ -367,7 +367,9 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
             },
           ),
           IconButton(
-            key: ex.id == _cachedExercises?.first.id ? TutorialService().getKeyForStep(TutorialStep.addExerciseToDay) : null,
+            key: ex.id == _cachedExercises?.first.id
+                ? TutorialService().getKeyForStep(TutorialStep.addExerciseToDay)
+                : null,
             icon: const Icon(Icons.add_circle_outline),
             onPressed: _isAdding
                 ? null

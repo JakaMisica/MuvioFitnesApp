@@ -1,13 +1,13 @@
-import 'package:biofit_pro/data/models/enums.dart';
-import 'package:biofit_pro/data/models/workout_day.dart';
-import 'package:biofit_pro/data/models/diet_models.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/data/repositories/workout_repository.dart';
-import 'package:biofit_pro/data/repositories/task_repository.dart';
-import 'package:biofit_pro/data/repositories/sleep_repository.dart';
-import 'package:biofit_pro/data/repositories/diet_repository.dart';
-import 'package:biofit_pro/locator.dart';
-import 'package:biofit_pro/core/services/analytics_service.dart';
+import 'package:muvio/data/models/enums.dart';
+import 'package:muvio/data/models/workout_day.dart';
+import 'package:muvio/data/models/diet_models.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/data/repositories/workout_repository.dart';
+import 'package:muvio/data/repositories/task_repository.dart';
+import 'package:muvio/data/repositories/sleep_repository.dart';
+import 'package:muvio/data/repositories/diet_repository.dart';
+import 'package:muvio/locator.dart';
+import 'package:muvio/core/services/analytics_service.dart';
 import 'dart:math';
 
 class BiologicalDataContextService {
@@ -208,7 +208,10 @@ class BiologicalDataContextService {
         double currentMaxTUTWeight = 0;
         for (var set in log.sets) {
           if (!set.isCompleted) continue;
-          double e1rm = AnalyticsService.calculate1RM(set.weight ?? 0, set.reps ?? 0);
+          double e1rm = AnalyticsService.calculate1RM(
+            set.weight ?? 0,
+            set.reps ?? 0,
+          );
           if (e1rm > currentMax1RM) currentMax1RM = e1rm;
           double tutW = (set.tutSeconds ?? 0) * (set.weight ?? 0);
           if (tutW > currentMaxTUTWeight) currentMaxTUTWeight = tutW;
@@ -220,7 +223,10 @@ class BiologicalDataContextService {
         final oldestDate = dates.first;
         final oldSets = history[oldestDate] ?? [];
         for (var set in oldSets) {
-          double e1rm = AnalyticsService.calculate1RM(set.weight ?? 0, set.reps ?? 0);
+          double e1rm = AnalyticsService.calculate1RM(
+            set.weight ?? 0,
+            set.reps ?? 0,
+          );
           if (e1rm > oldMax1RM) oldMax1RM = e1rm;
           double tutW = (set.tutSeconds ?? 0) * (set.weight ?? 0);
           if (tutW > oldMaxTUTWeight) oldMaxTUTWeight = tutW;

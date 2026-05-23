@@ -9,13 +9,18 @@ import 'package:audioplayers/audioplayers.dart';
 // ── LOCAL HEARING: IBM Granite 4.0 1B ───────────────────────────────
 class GraniteSpeechService {
   sherpa.OnlineRecognizer? _recognizer;
-  static final GraniteSpeechService _instance = GraniteSpeechService._internal();
+  static final GraniteSpeechService _instance =
+      GraniteSpeechService._internal();
   factory GraniteSpeechService() => _instance;
   GraniteSpeechService._internal();
 
   Future<void> initGranite() async {
     // Only init if platform supports sherpa_onnx
-    if (!Platform.isAndroid && !Platform.isWindows && !Platform.isLinux && !Platform.isMacOS) return;
+    if (!Platform.isAndroid &&
+        !Platform.isWindows &&
+        !Platform.isLinux &&
+        !Platform.isMacOS)
+      return;
 
     debugPrint("GraniteSpeechService: Initializing Local AI Hearing...");
     try {
@@ -39,12 +44,12 @@ class GraniteSpeechService {
 
   String transcribeFromSamples(List<double> samples) {
     if (_recognizer == null) return "Hearing offline...";
-    
+
     try {
       final stream = _recognizer!.createStream();
       final floatSamples = Float32List.fromList(samples);
       stream.acceptWaveform(samples: floatSamples, sampleRate: 16000);
-      
+
       _recognizer!.decode(stream);
       final result = _recognizer!.getResult(stream);
       return result.text;
@@ -58,7 +63,7 @@ class GraniteSpeechService {
 class PiperVoiceService {
   PiperTtsPlugin? _piper;
   final AudioPlayer _player = AudioPlayer();
-  
+
   static final PiperVoiceService _instance = PiperVoiceService._internal();
   factory PiperVoiceService() => _instance;
   PiperVoiceService._internal() {
@@ -67,15 +72,20 @@ class PiperVoiceService {
       try {
         _piper = PiperTtsPlugin();
       } catch (e) {
-        debugPrint("PiperVoiceService: Plugin init failed (ESpeakBridge context): $e");
+        debugPrint(
+          "PiperVoiceService: Plugin init failed (ESpeakBridge context): $e",
+        );
       }
     }
   }
 
   Future<void> speak(String text) async {
     if (_piper == null) {
-      debugPrint("PiperVoiceService: Local Piper unavailable. Falling back to Cloud Voice Stream...");
-      final url = "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=en&client=tw-ob";
+      debugPrint(
+        "PiperVoiceService: Local Piper unavailable. Falling back to Cloud Voice Stream...",
+      );
+      final url =
+          "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=en&client=tw-ob";
       await _player.stop();
       await _player.play(UrlSource(url));
       return;
@@ -85,7 +95,7 @@ class PiperVoiceService {
     try {
       final tempDir = await getTemporaryDirectory();
       final String path = "${tempDir.path}/coach_voice.wav";
-      
+
       await _piper!.loadViaVoicePack(PiperVoicePack.norman);
       final result = await _piper!.synthesizeToFile(
         text: text,
@@ -97,8 +107,11 @@ class PiperVoiceService {
         await _player.play(DeviceFileSource(result.path));
       }
     } catch (e) {
-      debugPrint("PiperVoiceService: Synthesis error: $e. Using fallback stream...");
-      final url = "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=en&client=tw-ob";
+      debugPrint(
+        "PiperVoiceService: Synthesis error: $e. Using fallback stream...",
+      );
+      final url =
+          "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=en&client=tw-ob";
       await _player.stop();
       await _player.play(UrlSource(url));
     }

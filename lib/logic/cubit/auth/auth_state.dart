@@ -29,6 +29,7 @@ class AuthFailure extends AuthState {
   @override
   List<Object?> get props => [error];
 }
+
 class AuthNeedsVerification extends AuthState {
   final String email;
   const AuthNeedsVerification(this.email);

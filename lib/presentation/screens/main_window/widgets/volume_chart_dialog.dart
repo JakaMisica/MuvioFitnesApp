@@ -391,12 +391,20 @@ class _VolumeChartDialogState extends State<VolumeChartDialog> {
           borderData: FlBorderData(show: false),
           lineBarsData: barData,
           // Calculate dynamic range for Y axis
-          minY: barData.isEmpty || barData.every((b) => b.spots.isEmpty) 
-            ? 0 
-            : barData.expand((b) => b.spots).map((s) => s.y).reduce(math.min) * 0.95,
+          minY: barData.isEmpty || barData.every((b) => b.spots.isEmpty)
+              ? 0
+              : barData
+                        .expand((b) => b.spots)
+                        .map((s) => s.y)
+                        .reduce(math.min) *
+                    0.95,
           maxY: barData.isEmpty || barData.every((b) => b.spots.isEmpty)
-            ? 100
-            : barData.expand((b) => b.spots).map((s) => s.y).reduce(math.max) * 1.05,
+              ? 100
+              : barData
+                        .expand((b) => b.spots)
+                        .map((s) => s.y)
+                        .reduce(math.max) *
+                    1.05,
           lineTouchData: LineTouchData(
             handleBuiltInTouches: true,
             touchSpotThreshold: 50,

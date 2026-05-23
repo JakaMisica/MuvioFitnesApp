@@ -54,13 +54,13 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     if (rawAction == null) return;
 
     debugPrint('WorkoutCubit received foreground action: $rawAction');
-    
+
     // Ensure data is loaded if this is a fresh resume
     if (state.workoutDay == null || state.workoutDay!.exercises.isEmpty) {
       debugPrint('WorkoutCubit: Loading workout for background action...');
       await loadWorkout(state.selectedDate);
     }
-    
+
     // Re-check after loading
     if (state.workoutDay == null) {
       debugPrint('WorkoutCubit: Failed to load workout for background action.');
@@ -75,7 +75,9 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     switch (action) {
       case 'toggle_set':
         if (logId != null && setIdx != null) {
-          final log = state.workoutDay?.exercises.firstWhereOrNull((l) => l.id == logId);
+          final log = state.workoutDay?.exercises.firstWhereOrNull(
+            (l) => l.id == logId,
+          );
           if (log != null && setIdx < log.sets.length) {
             toggleSetCompletion(logId, setIdx, log.sets[setIdx]);
           }
@@ -94,28 +96,44 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       case 'tut_done':
         debugPrint('Notification: Finishing TUT');
         if (logId != null && setIdx != null) {
-          final log = state.workoutDay?.exercises.firstWhereOrNull((l) => l.id == logId);
+          final log = state.workoutDay?.exercises.firstWhereOrNull(
+            (l) => l.id == logId,
+          );
           if (log != null && setIdx < log.sets.length) {
             finishTutSet(logId, setIdx, log.sets[setIdx]);
           }
         } else if (state.tutTimer != null) {
-          final log = state.workoutDay?.exercises.firstWhereOrNull((l) => l.id == state.tutTimer!.exerciseLogId);
+          final log = state.workoutDay?.exercises.firstWhereOrNull(
+            (l) => l.id == state.tutTimer!.exerciseLogId,
+          );
           if (log != null && state.tutTimer!.setIndex < log.sets.length) {
-            finishTutSet(state.tutTimer!.exerciseLogId, state.tutTimer!.setIndex, log.sets[state.tutTimer!.setIndex]);
+            finishTutSet(
+              state.tutTimer!.exerciseLogId,
+              state.tutTimer!.setIndex,
+              log.sets[state.tutTimer!.setIndex],
+            );
           }
         }
         break;
       case 'tut_skip':
         debugPrint('Notification: Skipping TUT');
         if (logId != null && setIdx != null) {
-          final log = state.workoutDay?.exercises.firstWhereOrNull((l) => l.id == logId);
+          final log = state.workoutDay?.exercises.firstWhereOrNull(
+            (l) => l.id == logId,
+          );
           if (log != null && setIdx < log.sets.length) {
             skipTutAndFinishSet(logId, setIdx, log.sets[setIdx]);
           }
         } else if (state.tutTimer != null) {
-          final log = state.workoutDay?.exercises.firstWhereOrNull((l) => l.id == state.tutTimer!.exerciseLogId);
+          final log = state.workoutDay?.exercises.firstWhereOrNull(
+            (l) => l.id == state.tutTimer!.exerciseLogId,
+          );
           if (log != null && state.tutTimer!.setIndex < log.sets.length) {
-            skipTutAndFinishSet(state.tutTimer!.exerciseLogId, state.tutTimer!.setIndex, log.sets[state.tutTimer!.setIndex]);
+            skipTutAndFinishSet(
+              state.tutTimer!.exerciseLogId,
+              state.tutTimer!.setIndex,
+              log.sets[state.tutTimer!.setIndex],
+            );
           }
         }
         break;
@@ -125,9 +143,10 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   void _handleFinishCurrentSet() {
     // Find first uncompleted set of the first non-completed exercise
     if (state.workoutDay == null) return;
-    
-    final log = state.workoutDay!.exercises
-        .firstWhereOrNull((l) => l.sets.any((s) => !s.isCompleted));
+
+    final log = state.workoutDay!.exercises.firstWhereOrNull(
+      (l) => l.sets.any((s) => !s.isCompleted),
+    );
     if (log != null) {
       final setIdx = log.sets.indexWhere((s) => !s.isCompleted);
       if (setIdx != -1) {
@@ -277,7 +296,9 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     );
     await loadWorkout(state.selectedDate);
     final ids = Set<int>.from(state.expandedExerciseIds)..add(createdLogId);
-    emit(state.copyWith(expandedExerciseIds: ids, lastExpandedLogId: createdLogId));
+    emit(
+      state.copyWith(expandedExerciseIds: ids, lastExpandedLogId: createdLogId),
+    );
     _syncExpandedIdsToSettings(ids);
   }
 
@@ -333,7 +354,9 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     // Add extra sets if requested
     final workout = await _repository.getWorkoutForDate(date);
     if (workout != null) {
-      final log = workout.exercises.toList().firstWhere((l) => l.id == recommendedLogId);
+      final log = workout.exercises.toList().firstWhere(
+        (l) => l.id == recommendedLogId,
+      );
       // addExerciseToWorkout adds 1 set by default, so add sets-1 more
       for (int i = 0; i < sets - 1; i++) {
         final s = WorkoutSet()
@@ -352,7 +375,12 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
     await loadWorkout(state.selectedDate);
     final ids = Set<int>.from(state.expandedExerciseIds)..add(recommendedLogId);
-    emit(state.copyWith(expandedExerciseIds: ids, lastExpandedLogId: recommendedLogId));
+    emit(
+      state.copyWith(
+        expandedExerciseIds: ids,
+        lastExpandedLogId: recommendedLogId,
+      ),
+    );
     _syncExpandedIdsToSettings(ids);
   }
 
@@ -423,7 +451,8 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   ) async {
     // --- ADVANCED TUT LOGIC ---
     if (set.isTutEnabled && !set.isCompleted) {
-      final isCurrentlyInTut = state.tutTimer != null &&
+      final isCurrentlyInTut =
+          state.tutTimer != null &&
           state.tutTimer!.exerciseLogId == logId &&
           state.tutTimer!.setIndex == setIndex;
 
@@ -491,7 +520,10 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
       // Ensure we have a baseline TUT
       if (set.tutSeconds == null || (set.tutSeconds ?? 0) < 0) {
-        int tutPerRep = (set.eccentricSeconds ?? 1) + (set.concentricSeconds ?? 1) + (set.isometricSeconds ?? 0);
+        int tutPerRep =
+            (set.eccentricSeconds ?? 1) +
+            (set.concentricSeconds ?? 1) +
+            (set.isometricSeconds ?? 0);
         if (tutPerRep < 2) tutPerRep = 2;
         int calculated = (set.reps ?? 0) * tutPerRep;
         // Final fallback for 'weird' values reported by user
@@ -509,30 +541,38 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     // Sync only when COMPLETING a set
     if (isNowCompleted) {
       try {
-        final exerciseLog =
-            state.workoutDay?.exercises.firstWhere((e) => e.id == logId);
+        final exerciseLog = state.workoutDay?.exercises.firstWhere(
+          (e) => e.id == logId,
+        );
         final exercise = exerciseLog?.exercise.value;
 
         if (exercise != null) {
           // --- REWARD SYSTEM ---
           final settings = await _bodyRepository.getUserSettings();
           if (!set.pointsEarned) {
-            final isSetPr = await _repository.checkIfSetPr(exercise.id, setIndex, set);
+            final isSetPr = await _repository.checkIfSetPr(
+              exercise.id,
+              setIndex,
+              set,
+            );
             final points = isSetPr ? 3 : 2;
-            
+
             // Mark earned BEFORE granting to prevent race condition spams
             set.pointsEarned = true;
             await _repository.updateSet(logId, setIndex, set);
-            
+
             // Trigger global reward
             locator<EvolutionCubit>().addMusclePoints(points);
           }
 
-          final history =
-              await _repository.getExerciseHistory(exercise.id, DateTime(2020));
+          final history = await _repository.getExerciseHistory(
+            exercise.id,
+            DateTime(2020),
+          );
           final allSets = history.values.expand((sets) => sets).toList();
-          final strengthIndex =
-              AnalyticsService.calculateStrengthIndex(allSets);
+          final strengthIndex = AnalyticsService.calculateStrengthIndex(
+            allSets,
+          );
           final estimatedMax = AnalyticsService.calculate1RM(
             set.weight ?? 0.0,
             set.reps ?? 0,
@@ -557,7 +597,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
             final sortedLogs = state.workoutDay?.exercises.toList() ?? [];
             sortedLogs.sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
             final currentIdx = sortedLogs.indexWhere((l) => l.id == logId);
-            
+
             if (currentIdx != -1 && currentIdx < sortedLogs.length - 1) {
               final nextLog = sortedLogs[currentIdx + 1];
 
@@ -566,7 +606,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
               currentIds.remove(logId);
               currentIds.add(nextLog.id);
               emit(state.copyWith(expandedExerciseIds: currentIds));
-              
+
               if (set.isRestTimerEnabled) {
                 startRestTimer(nextLog.id, 0, set.restDuration ?? 90);
               }
@@ -593,13 +633,14 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     if (!set.isDropSet || set.dropSetItems.isEmpty) return;
 
     // pool sum must use unrounded values if possible? No, we just sum what's in repo
-    int totalPool = (set.tutSeconds ?? 0) +
+    int totalPool =
+        (set.tutSeconds ?? 0) +
         set.dropSetItems.fold(0, (int s, ds) => s + (ds.tutSeconds ?? 0));
 
     // Fallback for weird data
     if (totalPool < 2) {
       // Maybe it was just added and nothing is completed yet
-      return; 
+      return;
     }
 
     final totalSubSets = 1 + set.dropSetItems.length;
@@ -607,7 +648,10 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     final usableSeconds = (totalPool - overhead).clamp(1, 10000);
 
     final mainReps = set.reps ?? 0;
-    final dropReps = set.dropSetItems.fold(0, (int s, ds) => s + (ds.reps ?? 0));
+    final dropReps = set.dropSetItems.fold(
+      0,
+      (int s, ds) => s + (ds.reps ?? 0),
+    );
     final totalReps = (mainReps + dropReps).clamp(1, 1000);
 
     final double secondsPerRep = usableSeconds / totalReps;
@@ -615,11 +659,13 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     // Distribute
     set.tutSeconds = (mainReps * secondsPerRep).round();
     for (var i = 0; i < set.dropSetItems.length; i++) {
-        set.dropSetItems[i].tutSeconds = ((set.dropSetItems[i].reps ?? 0) * secondsPerRep).round();
+      set.dropSetItems[i].tutSeconds =
+          ((set.dropSetItems[i].reps ?? 0) * secondsPerRep).round();
     }
 
     // Rounding correction to preserve total pool
-    int currentSum = (set.tutSeconds ?? 0) +
+    int currentSum =
+        (set.tutSeconds ?? 0) +
         set.dropSetItems.fold(0, (int s, ds) => s + (ds.tutSeconds ?? 0));
     int diff = totalPool - currentSum;
     if (diff != 0) {
@@ -628,21 +674,28 @@ class WorkoutCubit extends Cubit<WorkoutState> {
   }
 
   void startTutTimer(int logId, int setIndex, {bool withPrep = false}) {
-    final activeLog = state.workoutDay?.exercises.firstWhere((e) => e.id == logId);
-    final currentSet = activeLog != null && setIndex < activeLog.sets.length ? activeLog.sets[setIndex] : null;
+    final activeLog = state.workoutDay?.exercises.firstWhere(
+      (e) => e.id == logId,
+    );
+    final currentSet = activeLog != null && setIndex < activeLog.sets.length
+        ? activeLog.sets[setIndex]
+        : null;
     final prepTime = currentSet?.tutPrepSeconds ?? 5;
 
     _tutTicker?.cancel();
-    emit(state.copyWith(
-      tutTimer: TutTimerState(
-        exerciseLogId: logId,
-        setIndex: setIndex,
-        isPreparing: withPrep,
-        prepRemainingSeconds: withPrep ? prepTime : 0,
-        totalPrepSeconds: prepTime, // ← carry the total so UI progress bar is correct
-        elapsedSeconds: 0,
+    emit(
+      state.copyWith(
+        tutTimer: TutTimerState(
+          exerciseLogId: logId,
+          setIndex: setIndex,
+          isPreparing: withPrep,
+          prepRemainingSeconds: withPrep ? prepTime : 0,
+          totalPrepSeconds:
+              prepTime, // ← carry the total so UI progress bar is correct
+          elapsedSeconds: 0,
+        ),
       ),
-    ));
+    );
     _updateForegroundService();
 
     _tutTicker = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -653,25 +706,31 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
       if (state.tutTimer!.isPreparing) {
         if (state.tutTimer!.prepRemainingSeconds > 0) {
-          emit(state.copyWith(
-            tutTimer: state.tutTimer!.copyWith(
-              prepRemainingSeconds: state.tutTimer!.prepRemainingSeconds - 1,
+          emit(
+            state.copyWith(
+              tutTimer: state.tutTimer!.copyWith(
+                prepRemainingSeconds: state.tutTimer!.prepRemainingSeconds - 1,
+              ),
             ),
-          ));
+          );
         } else {
-          emit(state.copyWith(
-            tutTimer: state.tutTimer!.copyWith(
-              isPreparing: false,
-              elapsedSeconds: 0,
+          emit(
+            state.copyWith(
+              tutTimer: state.tutTimer!.copyWith(
+                isPreparing: false,
+                elapsedSeconds: 0,
+              ),
             ),
-          ));
+          );
         }
       } else {
-        emit(state.copyWith(
-          tutTimer: state.tutTimer!.copyWith(
-            elapsedSeconds: state.tutTimer!.elapsedSeconds + 1,
+        emit(
+          state.copyWith(
+            tutTimer: state.tutTimer!.copyWith(
+              elapsedSeconds: state.tutTimer!.elapsedSeconds + 1,
+            ),
           ),
-        ));
+        );
       }
       _updateForegroundService(); // Added for TUT timer ticker
     });
@@ -685,15 +744,24 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   void skipTutTimer() {
     if (state.tutTimer != null && state.tutTimer!.isPreparing) {
-      emit(state.copyWith(
-        tutTimer: state.tutTimer!.copyWith(isPreparing: false, elapsedSeconds: 0),
-      ));
+      emit(
+        state.copyWith(
+          tutTimer: state.tutTimer!.copyWith(
+            isPreparing: false,
+            elapsedSeconds: 0,
+          ),
+        ),
+      );
     }
   }
 
   void restartTutTimer() {
     if (state.tutTimer != null) {
-      startTutTimer(state.tutTimer!.exerciseLogId, state.tutTimer!.setIndex, withPrep: true);
+      startTutTimer(
+        state.tutTimer!.exerciseLogId,
+        state.tutTimer!.setIndex,
+        withPrep: true,
+      );
     }
   }
 
@@ -712,8 +780,6 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       await updateSet(logId, setIdx, updatedSet);
     }
   }
-
-
 
   Future<void> _calculatePrsForLog(int logId) async {
     // Fetch fresh data from repo to avoid stale cubit state issues
@@ -816,12 +882,16 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     for (final log in workout.exercises) {
       final exercise = log.exercise.value;
       if (exercise != null) {
-        final history =
-            await _repository.getExerciseHistory(exercise.id, DateTime(2020));
+        final history = await _repository.getExerciseHistory(
+          exercise.id,
+          DateTime(2020),
+        );
         final allSets = history.values.expand((sets) => sets).toList();
         final strengthIndex = AnalyticsService.calculateStrengthIndex(allSets);
-        maxes[exercise.id] =
-            AnalyticsService.getBest1RM(allSets, strengthIndex: strengthIndex);
+        maxes[exercise.id] = AnalyticsService.getBest1RM(
+          allSets,
+          strengthIndex: strengthIndex,
+        );
       }
     }
 
@@ -861,14 +931,14 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         dropSetItems: [...set.dropSetItems, newItem],
         isDropSet: true, // Mark parent as having drop sets
       );
-      
+
       // USER REQUEST: Redistribute TUT even after completion
       if (updatedSet.isCompleted) {
         _distributeDropSetTut(updatedSet);
       }
 
       await updateSet(logId, setIndex, updatedSet);
-      
+
       // Auto-expand on adding drop set if not already
       if (!state.expandedExerciseIds.contains(logId)) {
         toggleExerciseExpansion(logId);
@@ -890,7 +960,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         newDropSets[dropSetIndex] = updatedItem;
 
         final updatedSet = set.copyWith(dropSetItems: newDropSets);
-        
+
         // USER REQUEST: Redistribute TUT even after completion (e.g. if reps changed)
         if (updatedSet.isCompleted) {
           _distributeDropSetTut(updatedSet);
@@ -946,7 +1016,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
         // Redistribute pool after deletion
         if (updatedSet.isCompleted) {
-           _distributeDropSetTut(updatedSet);
+          _distributeDropSetTut(updatedSet);
         }
 
         await updateSet(logId, setIndex, updatedSet);
@@ -1150,7 +1220,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     );
 
     _startTimerTicker();
-    
+
     _bodyRepository.persistRestTimer(
       endTime: endTime,
       logId: logId,
@@ -1259,12 +1329,18 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
     // AUTO-START TUT for the next set as requested
     if (finishedTimer != null) {
-      final log = state.workoutDay?.exercises.firstWhereOrNull((l) => l.id == finishedTimer.exerciseLogId);
+      final log = state.workoutDay?.exercises.firstWhereOrNull(
+        (l) => l.id == finishedTimer.exerciseLogId,
+      );
       if (log != null && finishedTimer.setIndex < log.sets.length) {
         final nextSet = log.sets[finishedTimer.setIndex];
         if (nextSet.isTutEnabled && !nextSet.isCompleted) {
           // Trigger the 5s prep as requested by user ("go to the tut calculations in 5s")
-          startTutTimer(finishedTimer.exerciseLogId, finishedTimer.setIndex, withPrep: true);
+          startTutTimer(
+            finishedTimer.exerciseLogId,
+            finishedTimer.setIndex,
+            withPrep: true,
+          );
         }
       }
     }
@@ -1422,16 +1498,17 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   void _updateForegroundService() {
     if (state.workoutDay == null || state.workoutDay!.exercises.isEmpty) {
-      BioFitForegroundService.stopService();
+      MuvioForegroundService.stopService();
       _lastNotificationButtonsId = null;
       return;
     }
 
-    final activeLog = state.workoutDay!.exercises
-        .firstWhereOrNull((l) => l.sets.any((s) => !s.isCompleted));
-    
+    final activeLog = state.workoutDay!.exercises.firstWhereOrNull(
+      (l) => l.sets.any((s) => !s.isCompleted),
+    );
+
     if (activeLog == null) {
-      BioFitForegroundService.stopService();
+      MuvioForegroundService.stopService();
       _lastNotificationButtonsId = null;
       return;
     }
@@ -1448,10 +1525,12 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     if (currentSet.side != null) tags += " (${currentSet.side})";
     if (currentSet.partialReps != null) tags += " +${currentSet.partialReps}P";
 
-    String body = "Set ${setIdx + 1}/$totalSets: ${currentSet.weight ?? 0}kg x ${currentSet.reps ?? 0}$tags";
-    
+    String body =
+        "Set ${setIdx + 1}/$totalSets: ${currentSet.weight ?? 0}kg x ${currentSet.reps ?? 0}$tags";
+
     if (state.restTimer != null) {
-      body += "\nRest: ${state.restTimer!.remainingSeconds ~/ 60}:${(state.restTimer!.remainingSeconds % 60).toString().padLeft(2, '0')}";
+      body +=
+          "\nRest: ${state.restTimer!.remainingSeconds ~/ 60}:${(state.restTimer!.remainingSeconds % 60).toString().padLeft(2, '0')}";
     }
     if (state.tutTimer != null) {
       if (state.tutTimer!.isPreparing) {
@@ -1463,19 +1542,21 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
     // --- USER REQUEST: ONLY NOTIFY IF TIMER ACTIVE ---
     // AND USER REQUEST: NO NOTIFICATION DURING PREP
-    final currentButtonsId = state.tutTimer != null ? (state.tutTimer!.isPreparing ? "prep" : "tut") : (state.restTimer != null ? "rest" : "done");
-    
+    final currentButtonsId = state.tutTimer != null
+        ? (state.tutTimer!.isPreparing ? "prep" : "tut")
+        : (state.restTimer != null ? "rest" : "done");
+
     if (currentButtonsId == "done" || currentButtonsId == "prep") {
-      BioFitForegroundService.stopService();
+      MuvioForegroundService.stopService();
       _lastNotificationButtonsId = null;
       return;
     }
 
     bool shouldUpdateButtons = currentButtonsId != _lastNotificationButtonsId;
-    
+
     if (shouldUpdateButtons) {
       _lastNotificationButtonsId = currentButtonsId;
-      BioFitForegroundService.startService(
+      MuvioForegroundService.startService(
         title: exerciseName,
         notificationText: body,
         isTutActive: state.tutTimer != null,
@@ -1485,7 +1566,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       );
     } else {
       // Only update text, keep buttons stable
-      BioFitForegroundService.updateService(
+      MuvioForegroundService.updateService(
         title: exerciseName,
         notificationText: body,
         isTutActive: state.tutTimer != null,
@@ -1506,7 +1587,13 @@ class WorkoutCubit extends Cubit<WorkoutState> {
       ids.add(logId);
       justExpanded = logId;
     }
-    emit(state.copyWith(expandedExerciseIds: ids, lastExpandedLogId: justExpanded, clearLastExpanded: justExpanded == null));
+    emit(
+      state.copyWith(
+        expandedExerciseIds: ids,
+        lastExpandedLogId: justExpanded,
+        clearLastExpanded: justExpanded == null,
+      ),
+    );
     _syncExpandedIdsToSettings(ids);
   }
 

@@ -173,20 +173,20 @@ class _GainsChartDialogState extends State<GainsChartDialog> {
                   height: 250,
                   child: state.chartHistory.isEmpty
                       ? (state.isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.orangeAccent,
-                              ),
-                            )
-                          : Center(
-                              child: Text(
-                                'No growth data for this period',
-                                style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontSize: 12,
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.orangeAccent,
                                 ),
-                              ),
-                            ))
+                              )
+                            : Center(
+                                child: Text(
+                                  'No growth data for this period',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ))
                       : Opacity(
                           opacity: state.isLoading ? 0.6 : 1.0,
                           child: LineChart(_mainData(state.chartHistory)),
@@ -272,8 +272,12 @@ class _GainsChartDialogState extends State<GainsChartDialog> {
   }
 
   LineChartData _mainData(List<MapEntry<DateTime, double>> history) {
-    double minGains = history.isEmpty ? 0 : history.map((e) => e.value).reduce(math.min);
-    double maxGains = history.isEmpty ? 0 : history.map((e) => e.value).reduce(math.max);
+    double minGains = history.isEmpty
+        ? 0
+        : history.map((e) => e.value).reduce(math.min);
+    double maxGains = history.isEmpty
+        ? 0
+        : history.map((e) => e.value).reduce(math.max);
     if (maxGains == minGains) {
       maxGains = minGains + 1.0;
       minGains = minGains - 0.1;
@@ -378,7 +382,11 @@ class _GainsChartDialogState extends State<GainsChartDialog> {
             return touchedSpots.map((spot) {
               return LineTooltipItem(
                 '${spot.y.toStringAsFixed(1)}g',
-                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
               );
             }).toList();
           },

@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:biofit_pro/data/models/workout_day.dart';
+import 'package:muvio/data/models/workout_day.dart';
 
 /// Calculates similarity between two equipment position configurations
 class PositionCalculator {

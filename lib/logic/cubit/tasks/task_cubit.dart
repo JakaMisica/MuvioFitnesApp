@@ -331,53 +331,54 @@ class TaskCubit extends Cubit<TaskState> {
           timeStr: alarmTime,
         );
 
-          // Schedule persistent system alarm
-          if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-            try {
-              final now = DateTime.now();
-              final parts = alarmTime.split(':');
-              final hour = int.parse(parts[0]);
-              final minute = int.parse(parts[1]);
+        // Schedule persistent system alarm
+        if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+          try {
+            final now = DateTime.now();
+            final parts = alarmTime.split(':');
+            final hour = int.parse(parts[0]);
+            final minute = int.parse(parts[1]);
 
-              var scheduleDate = DateTime(
-                now.year,
-                now.month,
-                now.day,
-                hour,
-                minute,
-              );
-              if (scheduleDate.isBefore(now)) {
-                scheduleDate = scheduleDate.add(const Duration(days: 1));
-              }
-
-              final alarmSettings = AlarmSettings(
-                id: task.id,
-                dateTime: scheduleDate,
-                assetAudioPath: task.alarmSoundPath ?? 'assets/audio/ding.mp3',
-                volumeSettings: const VolumeSettings.fixed(),
-                notificationSettings: NotificationSettings(
-                  title: 'ALARM: ${task.name}',
-                  body: 'Time to complete your task!',
-                  stopButton: 'Stop',
-                ),
-                loopAudio: true,
-                vibrate: true,
-                androidFullScreenIntent: true,
-              );
-
-              await Alarm.set(alarmSettings: alarmSettings);
-              debugPrint(
-                  "TaskCubit: Scheduled system alarm for ${task.name} at $scheduleDate");
-            } catch (e) {
-              debugPrint("TaskCubit: Error scheduling system alarm: $e");
+            var scheduleDate = DateTime(
+              now.year,
+              now.month,
+              now.day,
+              hour,
+              minute,
+            );
+            if (scheduleDate.isBefore(now)) {
+              scheduleDate = scheduleDate.add(const Duration(days: 1));
             }
-          }
-        } else {
-          await NotificationService.cancelTaskAlarm(task.id);
-          if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-            await Alarm.stop(task.id);
+
+            final alarmSettings = AlarmSettings(
+              id: task.id,
+              dateTime: scheduleDate,
+              assetAudioPath: task.alarmSoundPath ?? 'assets/audio/ding.mp3',
+              volumeSettings: const VolumeSettings.fixed(),
+              notificationSettings: NotificationSettings(
+                title: 'ALARM: ${task.name}',
+                body: 'Time to complete your task!',
+                stopButton: 'Stop',
+              ),
+              loopAudio: true,
+              vibrate: true,
+              androidFullScreenIntent: true,
+            );
+
+            await Alarm.set(alarmSettings: alarmSettings);
+            debugPrint(
+              "TaskCubit: Scheduled system alarm for ${task.name} at $scheduleDate",
+            );
+          } catch (e) {
+            debugPrint("TaskCubit: Error scheduling system alarm: $e");
           }
         }
+      } else {
+        await NotificationService.cancelTaskAlarm(task.id);
+        if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+          await Alarm.stop(task.id);
+        }
+      }
     }
   }
 
@@ -694,7 +695,7 @@ class TaskCubit extends Cubit<TaskState> {
     final rewardTasks = [
       'Rate your sleep 1 to 10',
       'Rate your morning mood 1 to 10',
-      'Rate your stress 1 to 10'
+      'Rate your stress 1 to 10',
     ];
     if (rewardTasks.contains(task.name)) {
       locator<EvolutionCubit>().addCoins(3, taskName: task.name);

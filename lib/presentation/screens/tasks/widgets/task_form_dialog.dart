@@ -106,18 +106,19 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
 
       final List<String> alarms = assets.where((String key) {
         final nk = key.toLowerCase();
-        final isAlarm = nk.contains('alarms/') &&
+        final isAlarm =
+            nk.contains('alarms/') &&
             (nk.endsWith('.mp3') || nk.endsWith('.wav') || nk.endsWith('.ogg'));
-        
+
         if (!isAlarm) return false;
-        
+
         // Filter to only 1-5
         final filename = nk.split('/').last.toLowerCase();
-        return filename.contains('alarm-1') || 
-               filename.contains('alarm-2') || 
-               filename.contains('alarm-3') || 
-               filename.contains('alarm-4') || 
-               filename.contains('alarm-5');
+        return filename.contains('alarm-1') ||
+            filename.contains('alarm-2') ||
+            filename.contains('alarm-3') ||
+            filename.contains('alarm-4') ||
+            filename.contains('alarm-5');
       }).toList();
 
       if (mounted) {
@@ -133,20 +134,21 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
         final Map<String, dynamic> manifestMap = json.decode(manifestJson);
         final List<String> alarms = manifestMap.keys.where((String key) {
           final nk = key.toLowerCase();
-          final isAlarm = nk.contains('alarms/') &&
+          final isAlarm =
+              nk.contains('alarms/') &&
               (nk.endsWith('.mp3') ||
                   nk.endsWith('.wav') ||
                   nk.endsWith('.ogg'));
-          
+
           if (!isAlarm) return false;
-          
+
           // Filter to only 1-5
           final filename = nk.split('/').last.toLowerCase();
-          return filename.contains('alarm-1') || 
-                 filename.contains('alarm-2') || 
-                 filename.contains('alarm-3') || 
-                 filename.contains('alarm-4') || 
-                 filename.contains('alarm-5');
+          return filename.contains('alarm-1') ||
+              filename.contains('alarm-2') ||
+              filename.contains('alarm-3') ||
+              filename.contains('alarm-4') ||
+              filename.contains('alarm-5');
         }).toList();
         if (mounted) setState(() => _builtInSounds = alarms);
       } catch (e) {
@@ -762,11 +764,26 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                   color: Colors.cyanAccent,
                 ),
                 items: (() {
-                  final sortedList = List<String>.from(_builtInSounds)..sort((a, b) {
-                    final aNum = int.tryParse(RegExp(r'alarm-(\d+)').firstMatch(a.toLowerCase())?.group(1) ?? '0') ?? 0;
-                    final bNum = int.tryParse(RegExp(r'alarm-(\d+)').firstMatch(b.toLowerCase())?.group(1) ?? '0') ?? 0;
-                    return aNum.compareTo(bNum);
-                  });
+                  final sortedList = List<String>.from(_builtInSounds)
+                    ..sort((a, b) {
+                      final aNum =
+                          int.tryParse(
+                            RegExp(
+                                  r'alarm-(\d+)',
+                                ).firstMatch(a.toLowerCase())?.group(1) ??
+                                '0',
+                          ) ??
+                          0;
+                      final bNum =
+                          int.tryParse(
+                            RegExp(
+                                  r'alarm-(\d+)',
+                                ).firstMatch(b.toLowerCase())?.group(1) ??
+                                '0',
+                          ) ??
+                          0;
+                      return aNum.compareTo(bNum);
+                    });
                   return sortedList.asMap().entries.map((entry) {
                     final path = entry.value;
                     return DropdownMenuItem(
@@ -794,8 +811,8 @@ class _TaskFormDialogState extends State<TaskFormDialog> {
                       } else {
                         await _audioPlayer.play(DeviceFileSource(val));
                       }
-                      
-                       // Auto stop after 5s
+
+                      // Auto stop after 5s
                       Future.delayed(const Duration(seconds: 5), () {
                         if (mounted) _audioPlayer.stop();
                       });

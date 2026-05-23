@@ -131,7 +131,8 @@ class _ExerciseCreatorDialogState extends State<ExerciseCreatorDialog> {
               const SizedBox(height: 16),
 
               // Nested Glute Part selection
-              if (_subGroupController.text == 'Glutes' && _selectedGroup == MuscleGroup.legs)
+              if (_subGroupController.text == 'Glutes' &&
+                  _selectedGroup == MuscleGroup.legs)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: DropdownButtonFormField<String>(
@@ -141,16 +142,25 @@ class _ExerciseCreatorDialogState extends State<ExerciseCreatorDialog> {
                       hintText: "Optional detailed targeting",
                     ),
                     items: [
-                      const DropdownMenuItem(value: null, child: Text("All Glutes")),
-                      ...MuscleMetadata.gluteParts.map((s) => DropdownMenuItem(value: s, child: Text(s))),
+                      const DropdownMenuItem(
+                        value: null,
+                        child: Text("All Glutes"),
+                      ),
+                      ...MuscleMetadata.gluteParts.map(
+                        (s) => DropdownMenuItem(value: s, child: Text(s)),
+                      ),
                     ],
-                    onChanged: (val) => setState(() => _selectedGlutePart = val),
+                    onChanged: (val) =>
+                        setState(() => _selectedGlutePart = val),
                   ),
                 ),
 
               // Image Preview
               FlipImageCarousel(
-                imagePath: MuscleMetadata.getMuscleImagePath(_selectedGroup, _subGroupController.text),
+                imagePath: MuscleMetadata.getMuscleImagePath(
+                  _selectedGroup,
+                  _subGroupController.text,
+                ),
                 height: 150,
                 width: double.infinity,
               ),
@@ -404,8 +414,10 @@ class _ExerciseCreatorDialogState extends State<ExerciseCreatorDialog> {
               final result = {
                 'name': _nameController.text,
                 'muscleGroup': _selectedGroup,
-                'subGroup': _subGroupController.text == 'Glutes' && _selectedGlutePart != null 
-                    ? "Glutes ($_selectedGlutePart)" 
+                'subGroup':
+                    _subGroupController.text == 'Glutes' &&
+                        _selectedGlutePart != null
+                    ? "Glutes ($_selectedGlutePart)"
                     : _subGroupController.text,
                 'unit': _selectedUnit,
                 'isIsolate': _isIsolate,

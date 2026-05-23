@@ -1,4 +1,4 @@
-package com.biofitpro.biofit_pro
+package com.muvio.muvio
 
 import io.flutter.embedding.android.FlutterActivity
 

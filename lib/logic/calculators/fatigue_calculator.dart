@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:biofit_pro/data/models/workout_day.dart';
-import 'package:biofit_pro/data/models/exercise.dart';
+import 'package:muvio/data/models/workout_day.dart';
+import 'package:muvio/data/models/exercise.dart';
 
 /// Calculates fatigue accumulation and decay for muscle groups
 class FatigueCalculator {
@@ -87,10 +87,12 @@ class FatigueCalculator {
     if (set.spotReps != null && set.spotReps! > 0) techniqueBoost = 1.4;
     if (set.isDropSet) techniqueBoost = 1.7;
 
-    final baseIntensity = (relativeWeightIntensity * 0.6) + (repsIntensity * 0.4);
-    
+    final baseIntensity =
+        (relativeWeightIntensity * 0.6) + (repsIntensity * 0.4);
+
     // Max theoretical increase for a single set is around 40% if not floored
-    double calculatedIncrease = baseIntensity * 25.0 * rirMultiplier * techniqueBoost;
+    double calculatedIncrease =
+        baseIntensity * 25.0 * rirMultiplier * techniqueBoost;
 
     if (set.isWarmUp) {
       return (calculatedIncrease * 0.1).clamp(0.5, 3.0);
@@ -174,12 +176,12 @@ class FatigueCalculator {
       for (final entry in secondaryEngagement.entries) {
         String key = entry.key;
         if (side != null && !key.contains(':')) {
-           // If secondary is just "Arms", and side is "L", make it "Arms:L"
-           // If it's "Arms:Triceps", we don't necessarily know if triceps has side support yet
-           // but for biceps/triceps we usually want the same side.
-           key += ':$side';
+          // If secondary is just "Arms", and side is "L", make it "Arms:L"
+          // If it's "Arms:Triceps", we don't necessarily know if triceps has side support yet
+          // but for biceps/triceps we usually want the same side.
+          key += ':$side';
         }
-        
+
         // Biological isolation check
         if (primarySubGroup != null) {
           final isBp = primarySubGroup.toLowerCase().contains("bicep");

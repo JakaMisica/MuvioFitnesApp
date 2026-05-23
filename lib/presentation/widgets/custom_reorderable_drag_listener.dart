@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class FastReorderableDelayedDragStartListener extends ReorderableDelayedDragStartListener {
+class FastReorderableDelayedDragStartListener
+    extends ReorderableDelayedDragStartListener {
   final Duration dragDelay;
 
   const FastReorderableDelayedDragStartListener({

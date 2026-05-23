@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:audioplayers/audioplayers.dart';
- import 'package:record/record.dart';
+import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:audio_session/audio_session.dart' as session_lib;
 
@@ -30,14 +30,14 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
   final AudioPlayer _ringPlayer = AudioPlayer();
   final AudioPlayer _ttsUrlPlayer = AudioPlayer();
   final AudioRecorder _recorder = AudioRecorder();
-  
+
   final List<Map<String, String>> _messages = [];
-  
+
   bool _isAnswered = false;
   bool _isHangingUpOptionsVisible = false;
   String _aiText = "Connecting...";
   String _coachName = "AI Coach";
-  String _userSpeechText = ""; 
+  String _userSpeechText = "";
   bool _isAiTyping = false;
   bool _isListening = false;
   bool _isFirstMessage = true; // Track for initial sync message
@@ -54,18 +54,18 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
     // Determine if this is an AI prompt or manual user call
     final settings = await locator<BodyRepository>().getUserSettings();
     final coachRepo = locator<CoachRepository>();
-    
+
     if (settings.activeCoachId != null) {
       final coach = await coachRepo.getCoach(settings.activeCoachId!);
       if (coach != null) {
         if (mounted) setState(() => _coachName = coach.name);
       }
     }
-    
+
     if (widget.isOutbound) {
       if (mounted) {
         setState(() {
-          _isAnswered = false; 
+          _isAnswered = false;
           _aiText = "Dialing Neural Link...";
         });
       }
@@ -75,7 +75,8 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
       });
     } else {
       if (settings.isInjured) {
-         if (mounted) setState(() => _aiText = "I see you are injured. Please rest.");
+        if (mounted)
+          setState(() => _aiText = "I see you are injured. Please rest.");
       }
       _startRinging();
     }
@@ -85,20 +86,24 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
     debugPrint("CoachCallCall: Configuring Audio Session for ALARM...");
     try {
       final session = await session_lib.AudioSession.instance;
-      await session.configure(session_lib.AudioSessionConfiguration(
-        avAudioSessionCategory: session_lib.AVAudioSessionCategory.playback,
-        avAudioSessionMode: session_lib.AVAudioSessionMode.defaultMode,
-        avAudioSessionRouteSharingPolicy:
-            session_lib.AVAudioSessionRouteSharingPolicy.defaultPolicy,
-        androidAudioAttributes: const session_lib.AndroidAudioAttributes(
-          contentType: session_lib.AndroidAudioContentType.music,
-          flags: session_lib.AndroidAudioFlags.none,
-          usage: session_lib.AndroidAudioUsage.alarm, // CRITICAL: Use the alarm stream
+      await session.configure(
+        session_lib.AudioSessionConfiguration(
+          avAudioSessionCategory: session_lib.AVAudioSessionCategory.playback,
+          avAudioSessionMode: session_lib.AVAudioSessionMode.defaultMode,
+          avAudioSessionRouteSharingPolicy:
+              session_lib.AVAudioSessionRouteSharingPolicy.defaultPolicy,
+          androidAudioAttributes: const session_lib.AndroidAudioAttributes(
+            contentType: session_lib.AndroidAudioContentType.music,
+            flags: session_lib.AndroidAudioFlags.none,
+            usage: session_lib
+                .AndroidAudioUsage
+                .alarm, // CRITICAL: Use the alarm stream
+          ),
+          androidAudioFocusGainType:
+              session_lib.AndroidAudioFocusGainType.gainTransientMayDuck,
         ),
-        androidAudioFocusGainType:
-            session_lib.AndroidAudioFocusGainType.gainTransientMayDuck,
-      ));
-      
+      );
+
       debugPrint("CoachCallCall: Starting Ringtone (coach_ringtone)...");
       await _ringPlayer.setReleaseMode(ReleaseMode.loop);
       await _ringPlayer.play(AssetSource('audio/alarms/coach_ringtone.mp3'));
@@ -127,15 +132,17 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
 
   void _startAiConversation({String? userPrompt}) async {
     if (!mounted) return;
-    debugPrint("CoachCallCall: Starting AI Turn (${userPrompt ?? 'Initial Greeting'})...");
-    
+    debugPrint(
+      "CoachCallCall: Starting AI Turn (${userPrompt ?? 'Initial Greeting'})...",
+    );
+
     if (mounted) {
       setState(() {
         _isAiTyping = true;
         if (userPrompt != null) {
-           _aiText = "Analysing bio-feedback...";
+          _aiText = "Analysing bio-feedback...";
         } else if (_isFirstMessage) {
-           _aiText = "Synchronizing neural link...";
+          _aiText = "Synchronizing neural link...";
         }
         _isListening = false;
       });
@@ -143,7 +150,9 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
 
     // STEP 1: LOCAL HEARING (IBM Granite)
     if (userPrompt != null && File(userPrompt).existsSync()) {
-      final localTranscript = await VoiceCoachService().transcribeLocal(userPrompt);
+      final localTranscript = await VoiceCoachService().transcribeLocal(
+        userPrompt,
+      );
       if (mounted) {
         setState(() {
           _userSpeechText = localTranscript;
@@ -159,7 +168,12 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
       final systemPrompt = await coachService.buildSystemPrompt(
         workout: context.read<WorkoutCubit>().state,
         diet: context.read<DietCubit>().state,
-        weightHistory: context.read<EvolutionCubit>().state.chartHistory.map((e) => e.value).toList(),
+        weightHistory: context
+            .read<EvolutionCubit>()
+            .state
+            .chartHistory
+            .map((e) => e.value)
+            .toList(),
         tasks: context.read<TaskCubit>().state,
       );
 
@@ -171,18 +185,21 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
       // Dynamic instructions based on exchange count
       if (_exchangeCount < 2) {
         fullMessages.add({
-          'role': 'system', 
-          'content': 'You MUST continue the conversation. Do NOT use the [END_CALL] token yet.'
+          'role': 'system',
+          'content':
+              'You MUST continue the conversation. Do NOT use the [END_CALL] token yet.',
         });
       } else if (_exchangeCount >= 14) {
         fullMessages.add({
-          'role': 'system', 
-          'content': 'LIMIT REACHED: You MUST end the call now using the [END_CALL] token.'
+          'role': 'system',
+          'content':
+              'LIMIT REACHED: You MUST end the call now using the [END_CALL] token.',
         });
       } else {
         fullMessages.add({
-          'role': 'system', 
-          'content': 'You have the option to end the call if all information is gathered by using [END_CALL].'
+          'role': 'system',
+          'content':
+              'You have the option to end the call if all information is gathered by using [END_CALL].',
         });
       }
 
@@ -190,42 +207,47 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
         fullMessages,
         audioPath: userPrompt,
       );
-      
+
       String cleanResponse = response.replaceAll("[END_CALL]", "").trim();
       bool shouldEnd = response.contains("[END_CALL]");
 
       // Logic adjustments for MIN 3, MAX 15 messages
-      if (_exchangeCount < 2) { // Less than 3 messages (0, 1, 2)
+      if (_exchangeCount < 2) {
+        // Less than 3 messages (0, 1, 2)
         shouldEnd = false; // Block early termination
       }
-      if (_exchangeCount >= 14) { // 15th message
+      if (_exchangeCount >= 14) {
+        // 15th message
         shouldEnd = true; // Force termination
       }
 
       _messages.add({"role": "assistant", "content": cleanResponse});
-      
+
       if (mounted) {
         setState(() {
           _isAiTyping = false;
           _isFirstMessage = false; // Reset first message flag
-          _userSpeechText = ""; 
-          _aiText = cleanResponse; 
-          _exchangeCount++; 
+          _userSpeechText = "";
+          _aiText = cleanResponse;
+          _exchangeCount++;
         });
-        
+
         // STEP 3: VOICE (Handled by the Dual-Layer Strategy)
         await VoiceCoachService().speakLocal(cleanResponse);
-        
+
         final speechDuration = (cleanResponse.length * 52) + 800;
-        Future.delayed(Duration(milliseconds: speechDuration.clamp(2000, 15000)), () {
-          if (mounted && _isAnswered && !_isAiTyping) {
-            if (shouldEnd) {
-              CoachCallService().handleHangUp('end');
-            } else {
-              _startListening();
+        Future.delayed(
+          Duration(milliseconds: speechDuration.clamp(2000, 15000)),
+          () {
+            if (mounted && _isAnswered && !_isAiTyping) {
+              if (shouldEnd) {
+                CoachCallService().handleHangUp('end');
+              } else {
+                _startListening();
+              }
             }
-          }
-        });
+          },
+        );
       }
     } catch (e) {
       debugPrint("CoachCallCall: AI Error: $e");
@@ -242,12 +264,12 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
   void _startListening() async {
     if (_isListening || !mounted || !_isAnswered) return;
     debugPrint("CoachCallCall: Starting Voice Capture...");
-    
+
     try {
       if (await _recorder.hasPermission()) {
         final tempDir = await getTemporaryDirectory();
         final path = '${tempDir.path}/muvio_voice_input.wav';
-        
+
         // Remove old file
         final file = File(path);
         if (await file.exists()) await file.delete();
@@ -281,7 +303,7 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
   void _stopAndSendRecording(String path) async {
     if (!_isListening) return;
     debugPrint("CoachCallCall: Stopping Capture & Sending to Gemini...");
-    
+
     try {
       await _recorder.stop();
       if (mounted) {
@@ -289,15 +311,14 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
           _isListening = false;
           _userSpeechText = "Transmitting...";
         });
-        _startAiConversation(userPrompt: path); // Sending path to audio instead of text
+        _startAiConversation(
+          userPrompt: path,
+        ); // Sending path to audio instead of text
       }
     } catch (e) {
       debugPrint("CoachCallCall: Recording Stop/Send Error: $e");
     }
   }
-
-
-
 
   @override
   void dispose() {
@@ -322,7 +343,7 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
               child: Container(color: Colors.black.withOpacity(0.9)),
             ),
           ),
-          
+
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -343,7 +364,9 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
                     ),
                   ),
                   Text(
-                    _isAnswered ? VoiceCoachService().getConnectionStatus(false) : "EXPECTING INCOMING CALL",
+                    _isAnswered
+                        ? VoiceCoachService().getConnectionStatus(false)
+                        : "EXPECTING INCOMING CALL",
                     style: TextStyle(
                       color: _isAnswered ? Colors.cyanAccent : Colors.white24,
                       fontSize: 10,
@@ -351,9 +374,9 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
                       letterSpacing: 1.2,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 30),
-                  
+
                   // Text Area (Scrollable to prevent overflow)
                   if (_isAnswered)
                     Expanded(
@@ -364,13 +387,14 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
                     )
                   else
                     const Spacer(),
-                  
+
                   const SizedBox(height: 20),
-                  
-                  if (!_isAnswered && !_isHangingUpOptionsVisible) _buildCallActions(),
+
+                  if (!_isAnswered && !_isHangingUpOptionsVisible)
+                    _buildCallActions(),
                   if (_isAnswered) _buildActiveCallUI(),
                   if (_isHangingUpOptionsVisible) _buildHangUpOptions(),
-                  
+
                   const SizedBox(height: 40),
                 ],
               ),
@@ -388,7 +412,10 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
         height: 120,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.cyanAccent.withOpacity(0.3), width: 1),
+          border: Border.all(
+            color: Colors.cyanAccent.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -407,10 +434,14 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
                     color: Colors.cyanAccent.withOpacity(0.3),
                     blurRadius: 25,
                     spreadRadius: 2,
-                  )
+                  ),
                 ],
               ),
-              child: const Icon(Icons.psychology, size: 45, color: Colors.cyanAccent),
+              child: const Icon(
+                Icons.psychology,
+                size: 45,
+                color: Colors.cyanAccent,
+              ),
             ),
           ],
         ),
@@ -436,7 +467,7 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
         );
       },
       // Re-trigger animation without global setState to avoid defunct element errors
-      onEnd: () { }, 
+      onEnd: () {},
     );
   }
 
@@ -454,13 +485,15 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
             ),
           ),
         const SizedBox(height: 12),
-        
+
         // MAIN TEXT AREA
         Text(
           _isListening ? "“$_userSpeechText”" : _aiText,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: _isListening ? Colors.white70 : Colors.white.withOpacity(0.95),
+            color: _isListening
+                ? Colors.white70
+                : Colors.white.withOpacity(0.95),
             fontSize: _isListening ? 22 : 16,
             fontWeight: _isListening ? FontWeight.w900 : FontWeight.w400,
             fontStyle: FontStyle.italic,
@@ -470,11 +503,13 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
         ),
 
         const SizedBox(height: 24),
-        
+
         Text(
-          _isListening 
-            ? "NEURAL LINK: TRANSCRIBING..." 
-            : (_isAiTyping ? "NEURAL LINK: THINKING..." : "NEURAL LINK: TRANSMITTING..."),
+          _isListening
+              ? "NEURAL LINK: TRANSCRIBING..."
+              : (_isAiTyping
+                    ? "NEURAL LINK: THINKING..."
+                    : "NEURAL LINK: TRANSMITTING..."),
           style: TextStyle(
             color: _isListening ? Colors.redAccent : Colors.cyanAccent,
             fontSize: 8,
@@ -522,7 +557,11 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
       children: [
         const Text(
           "RE-SCHEDULE CALL?",
-          style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 13),
+          style: TextStyle(
+            color: Colors.white70,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
         ),
         const SizedBox(height: 20),
         Wrap(
@@ -530,9 +569,19 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
           runSpacing: 12,
           alignment: WrapAlignment.center,
           children: [
-            _buildOptionButton("IN 15 MIN", () => CoachCallService().handleHangUp('15m')),
-            _buildOptionButton("IN 30 MIN", () => CoachCallService().handleHangUp('30m')),
-            _buildOptionButton("GET LOST", () => CoachCallService().handleHangUp('get_lost'), isNegative: true),
+            _buildOptionButton(
+              "IN 15 MIN",
+              () => CoachCallService().handleHangUp('15m'),
+            ),
+            _buildOptionButton(
+              "IN 30 MIN",
+              () => CoachCallService().handleHangUp('30m'),
+            ),
+            _buildOptionButton(
+              "GET LOST",
+              () => CoachCallService().handleHangUp('get_lost'),
+              isNegative: true,
+            ),
           ],
         ),
         const SizedBox(height: 20),
@@ -544,17 +593,30 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
     );
   }
 
-  Widget _buildOptionButton(String text, VoidCallback onTap, {bool isNegative = false}) {
+  Widget _buildOptionButton(
+    String text,
+    VoidCallback onTap, {
+    bool isNegative = false,
+  }) {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: isNegative ? Colors.red.withOpacity(0.1) : Colors.white10,
+        backgroundColor: isNegative
+            ? Colors.red.withOpacity(0.1)
+            : Colors.white10,
         foregroundColor: isNegative ? Colors.redAccent : Colors.white70,
-        side: BorderSide(color: isNegative ? Colors.redAccent.withOpacity(0.3) : Colors.white10),
+        side: BorderSide(
+          color: isNegative
+              ? Colors.redAccent.withOpacity(0.3)
+              : Colors.white10,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       ),
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+      child: Text(
+        text,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+      ),
     );
   }
 
@@ -575,7 +637,11 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
               shape: BoxShape.circle,
               color: color,
               boxShadow: [
-                BoxShadow(color: color.withOpacity(0.4), blurRadius: 15, spreadRadius: 2),
+                BoxShadow(
+                  color: color.withOpacity(0.4),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
               ],
             ),
             child: Icon(icon, color: Colors.white, size: 30),
@@ -584,7 +650,11 @@ class _AiCallOverlayState extends State<AiCallOverlay> {
         const SizedBox(height: 12),
         Text(
           label,
-          style: const TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white38,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

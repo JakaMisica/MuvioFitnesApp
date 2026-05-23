@@ -1,8 +1,8 @@
-import 'package:biofit_pro/data/datasources/isar_service.dart';
-import 'package:biofit_pro/data/models/fatigue_state.dart';
-import 'package:biofit_pro/data/models/exercise.dart';
-import 'package:biofit_pro/data/models/workout_day.dart';
-import 'package:biofit_pro/logic/calculators/fatigue_calculator.dart';
+import 'package:muvio/data/datasources/isar_service.dart';
+import 'package:muvio/data/models/fatigue_state.dart';
+import 'package:muvio/data/models/exercise.dart';
+import 'package:muvio/data/models/workout_day.dart';
+import 'package:muvio/logic/calculators/fatigue_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'dart:math' as math;
@@ -200,12 +200,12 @@ class FatigueRepository {
           set,
           estimatedMax: estimatedMax,
         );
-        
+
         fatigueState.currentFatiguePercent = newFatigue;
         if (newFatigue > fatigueState.peakFatiguePercent) {
           fatigueState.peakFatiguePercent = newFatigue;
         }
-        
+
         fatigueState.lastUpdateTime = DateTime.now();
 
         // Record snapshot - create new list since Isar lists are fixed-length
@@ -299,6 +299,7 @@ class FatigueRepository {
       }
     }
   }
+
   /// Get fatigue history for a specific muscle group across multiple days
   Future<List<MapEntry<DateTime, double>>> getMuscleFatigueHistory({
     required DateTime start,
@@ -323,7 +324,9 @@ class FatigueRepository {
 
     if (subGroup != null) {
       return filtered.map((s) {
-        final val = s.currentFatiguePercent / math.sqrt(math.max(1, s.snapshots.length));
+        final val =
+            s.currentFatiguePercent /
+            math.sqrt(math.max(1, s.snapshots.length));
         return MapEntry(s.workoutDate, val);
       }).toList();
     }
@@ -336,10 +339,11 @@ class FatigueRepository {
     for (var s in filtered) {
       final date = s.workoutDate;
       if (s.snapshots.isEmpty) continue; // Noise/Partial data
-      
+
       // We use sqrt(length) because fatigue doesn't scale perfectly linear with sets
-      final workAdjustedFatigue = s.currentFatiguePercent / math.sqrt(math.max(1, s.snapshots.length));
-      
+      final workAdjustedFatigue =
+          s.currentFatiguePercent / math.sqrt(math.max(1, s.snapshots.length));
+
       aggregated[date] = math.max(aggregated[date] ?? 0, workAdjustedFatigue);
     }
 

@@ -14,7 +14,8 @@ class FatigueState {
   String? side; // "L", "R", or null for bilateral
 
   double currentFatiguePercent = 0.0; // 0-100%
-  double peakFatiguePercent = 0.0; // The highest fatigue reached during this session
+  double peakFatiguePercent =
+      0.0; // The highest fatigue reached during this session
   DateTime lastUpdateTime = DateTime.now();
 
   // Historical performance tracking

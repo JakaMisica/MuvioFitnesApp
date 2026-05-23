@@ -35,18 +35,17 @@ class SleepState extends Equatable {
     this.smartAlarmWindowMinutes = 30,
   });
 
-  factory SleepState.initial() =>
-      const SleepState(
-        isTracking: false, 
-        sensitivity: 0.5, 
-        isLoading: false, 
-        isAiReady: false, 
-        detectedEventsCount: 0,
-        alarmTriggered: false,
-        snoozeDurationMinutes: 15,
-        isSmartAlarmEnabled: false,
-        smartAlarmWindowMinutes: 30,
-      );
+  factory SleepState.initial() => const SleepState(
+    isTracking: false,
+    sensitivity: 0.5,
+    isLoading: false,
+    isAiReady: false,
+    detectedEventsCount: 0,
+    alarmTriggered: false,
+    snoozeDurationMinutes: 15,
+    isSmartAlarmEnabled: false,
+    smartAlarmWindowMinutes: 30,
+  );
 
   SleepState copyWith({
     bool? isTracking,
@@ -78,9 +77,11 @@ class SleepState extends Equatable {
       isAiReady: isAiReady ?? this.isAiReady,
       detectedEventsCount: detectedEventsCount ?? this.detectedEventsCount,
       alarmTriggered: alarmTriggered ?? this.alarmTriggered,
-      snoozeDurationMinutes: snoozeDurationMinutes ?? this.snoozeDurationMinutes,
+      snoozeDurationMinutes:
+          snoozeDurationMinutes ?? this.snoozeDurationMinutes,
       isSmartAlarmEnabled: isSmartAlarmEnabled ?? this.isSmartAlarmEnabled,
-      smartAlarmWindowMinutes: smartAlarmWindowMinutes ?? this.smartAlarmWindowMinutes,
+      smartAlarmWindowMinutes:
+          smartAlarmWindowMinutes ?? this.smartAlarmWindowMinutes,
     );
   }
 

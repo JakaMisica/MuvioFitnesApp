@@ -14,7 +14,7 @@ class CoachModel {
   late bool isPremium;
   late double price;
   late String avatarUrl;
-  
+
   // For the free "Lazy Coach"
   bool isLazyCoach = false;
 

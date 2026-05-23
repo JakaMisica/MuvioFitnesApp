@@ -45,7 +45,7 @@ class SleepRepository {
     final isar = await _isarService.db;
     final settings = await isar.sleepSettings.where().findFirst();
     if (settings != null) return settings;
-    
+
     // Create and save default if none
     final newSettings = SleepSettings()..id = 0;
     await saveSettings(newSettings);

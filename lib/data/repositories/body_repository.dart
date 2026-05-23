@@ -1,10 +1,10 @@
-import 'package:biofit_pro/data/datasources/isar_service.dart';
-import 'package:biofit_pro/data/models/body_metric.dart';
-import 'package:biofit_pro/data/models/workout_day.dart';
-import 'package:biofit_pro/data/models/exercise.dart';
-import 'package:biofit_pro/data/models/enums.dart';
-import 'package:biofit_pro/data/models/user_settings.dart';
-import 'package:biofit_pro/core/services/analytics_service.dart';
+import 'package:muvio/data/datasources/isar_service.dart';
+import 'package:muvio/data/models/body_metric.dart';
+import 'package:muvio/data/models/workout_day.dart';
+import 'package:muvio/data/models/exercise.dart';
+import 'package:muvio/data/models/enums.dart';
+import 'package:muvio/data/models/user_settings.dart';
+import 'package:muvio/core/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
@@ -182,7 +182,8 @@ class BodyRepository {
         if (subGroupEngagements.isEmpty) {
           // Use the exercise's subGroup field for more precise tracking,
           // fall back to 'General' only if not set.
-          final key = (exercise.subGroup != null && exercise.subGroup!.isNotEmpty)
+          final key =
+              (exercise.subGroup != null && exercise.subGroup!.isNotEmpty)
               ? exercise.subGroup!
               : 'General';
           final current = results[primaryGroupName]![key] ?? 0;
@@ -336,8 +337,9 @@ class BodyRepository {
           final isPrimary =
               muscleGroup == 'All' || exercise.muscleGroup.name == muscleGroup;
           final secEngagements = exercise.secondaryMuscleEngagement;
-          final isSecondary =
-              muscleGroup == 'All' ? false : secEngagements.containsKey(muscleGroup);
+          final isSecondary = muscleGroup == 'All'
+              ? false
+              : secEngagements.containsKey(muscleGroup);
 
           if (!isPrimary && !isSecondary) continue;
 
@@ -413,7 +415,7 @@ class BodyRepository {
         lastWorkoutDate = currentIter;
       } else if (lastWorkoutDate != null) {
         final daysInactive = currentIter.difference(lastWorkoutDate).inDays;
-        
+
         // As requested: first 7 days = no loss, day 8+ = 1% loss per day
         if (daysInactive >= 8) {
           accumulatedGains *= 0.99; // 1% drop per day starting from day 8
@@ -426,7 +428,7 @@ class BodyRepository {
 
       // 4. Save to history if within requested range
       if (!currentIter.isBefore(start)) {
-        // We no longer multiply by a daily performanceScaling to prevent the "zero spikes" 
+        // We no longer multiply by a daily performanceScaling to prevent the "zero spikes"
         // reported by the user when a single session has bad performance data.
         resultHistory.add(MapEntry(currentIter, accumulatedGains));
       }

@@ -12,7 +12,8 @@ class BodyMetricsHistoryDialog extends StatefulWidget {
   const BodyMetricsHistoryDialog({super.key, this.initialField = 'waist'});
 
   @override
-  State<BodyMetricsHistoryDialog> createState() => _BodyMetricsHistoryDialogState();
+  State<BodyMetricsHistoryDialog> createState() =>
+      _BodyMetricsHistoryDialogState();
 }
 
 class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
@@ -46,10 +47,10 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
     final end = DateTime.now();
     final start = _getStartTime(end);
     context.read<EvolutionCubit>().loadMeasurementHistory(
-          start: start,
-          end: end,
-          field: _selectedField,
-        );
+      start: start,
+      end: end,
+      field: _selectedField,
+    );
   }
 
   DateTime _getStartTime(DateTime end) {
@@ -79,7 +80,10 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
       builder: (context, state) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500),
             padding: const EdgeInsets.all(24),
@@ -128,17 +132,32 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                             ),
                             const SizedBox(width: 8),
                             PopupMenuButton<String>(
-                              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.blueAccent),
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.blueAccent,
+                              ),
                               color: const Color(0xFF1A1A1A),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                               onSelected: (val) {
                                 setState(() => _selectedField = val);
                                 _loadHistory();
                               },
-                              itemBuilder: (ctx) => _fields.map((f) => PopupMenuItem(
-                                value: f['key'],
-                                child: Text(f['label']!, style: const TextStyle(color: Colors.white, fontSize: 13)),
-                              )).toList(),
+                              itemBuilder: (ctx) => _fields
+                                  .map(
+                                    (f) => PopupMenuItem(
+                                      value: f['key'],
+                                      child: Text(
+                                        f['label']!,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
                           ],
                         ),
@@ -146,16 +165,22 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: Colors.white24, size: 20),
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white24,
+                        size: 20,
+                      ),
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.white.withOpacity(0.03),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Timeframe Selector
                 Container(
                   padding: const EdgeInsets.all(4),
@@ -176,21 +201,29 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: isSelected ? Colors.blueAccent : Colors.transparent,
+                              color: isSelected
+                                  ? Colors.blueAccent
+                                  : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
-                              boxShadow: isSelected ? [
-                                BoxShadow(
-                                  color: Colors.blueAccent.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                )
-                              ] : null,
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: Colors.blueAccent.withOpacity(
+                                          0.3,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : null,
                             ),
                             child: Text(
                               t.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: isSelected ? Colors.white : Colors.white38,
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.white38,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -201,7 +234,7 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                     }).toList(),
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
 
                 // THE GRAPH
@@ -209,27 +242,41 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                   height: 260,
                   child: state.isLoading
                       ? const Center(
-                          child: CircularProgressIndicator(color: Colors.blueAccent),
+                          child: CircularProgressIndicator(
+                            color: Colors.blueAccent,
+                          ),
                         )
                       : state.measurementChartHistory.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.query_stats, color: Colors.white.withOpacity(0.05), size: 48),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'No data for ${_getFieldLabel(_selectedField)}',
-                                    style: TextStyle(color: Colors.white24, fontSize: 11),
-                                  ),
-                                ],
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.query_stats,
+                                color: Colors.white.withOpacity(0.05),
+                                size: 48,
                               ),
-                            )
-                          : LineChart(_mainData(state.measurementChartHistory, state.isMetricMeasurements)),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No data for ${_getFieldLabel(_selectedField)}',
+                                style: TextStyle(
+                                  color: Colors.white24,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : LineChart(
+                          _mainData(
+                            state.measurementChartHistory,
+                            state.isMetricMeasurements,
+                          ),
+                        ),
                 ),
 
                 const SizedBox(height: 24),
-                
+
                 // Add Metrics Button
                 Row(
                   children: [
@@ -244,10 +291,16 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Colors.white.withOpacity(0.05)),
+                            side: BorderSide(
+                              color: Colors.white.withOpacity(0.05),
+                            ),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 0.5),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 12,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ),
@@ -293,15 +346,23 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
     }
   }
 
-  LineChartData _mainData(List<MapEntry<DateTime, double>> history, bool isMetric) {
+  LineChartData _mainData(
+    List<MapEntry<DateTime, double>> history,
+    bool isMetric,
+  ) {
     if (history.isEmpty) return LineChartData();
-    
+
     // Sort history chronologically
-    final sorted = List<MapEntry<DateTime, double>>.from(history)..sort((a, b) => a.key.compareTo(b.key));
-    
-    double minVal = sorted.map((e) => isMetric ? e.value : e.value / 2.54).reduce(math.min);
-    double maxVal = sorted.map((e) => isMetric ? e.value : e.value / 2.54).reduce(math.max);
-    
+    final sorted = List<MapEntry<DateTime, double>>.from(history)
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    double minVal = sorted
+        .map((e) => isMetric ? e.value : e.value / 2.54)
+        .reduce(math.min);
+    double maxVal = sorted
+        .map((e) => isMetric ? e.value : e.value / 2.54)
+        .reduce(math.max);
+
     double range = maxVal - minVal;
     double padding = range * 0.2;
     if (padding == 0) padding = 1.0;
@@ -318,7 +379,9 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
       ),
       titlesData: FlTitlesData(
         show: true,
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -331,7 +394,11 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
                   padding: const EdgeInsets.only(top: 12.0),
                   child: Text(
                     DateFormat('MM/dd').format(sorted[value.toInt()].key),
-                    style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 9, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.2),
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 );
               }
@@ -346,7 +413,10 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
             getTitlesWidget: (value, meta) {
               return Text(
                 '${value.toStringAsFixed(1)}$unit',
-                style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 8),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.2),
+                  fontSize: 8,
+                ),
               );
             },
             reservedSize: 45,
@@ -363,7 +433,12 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
           spots: sorted
               .asMap()
               .entries
-              .map((e) => FlSpot(e.key.toDouble(), isMetric ? e.value.value : e.value.value / 2.54))
+              .map(
+                (e) => FlSpot(
+                  e.key.toDouble(),
+                  isMetric ? e.value.value : e.value.value / 2.54,
+                ),
+              )
               .toList(),
           isCurved: true,
           curveSmoothness: 0.35,
@@ -372,12 +447,13 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
           isStrokeCapRound: true,
           dotData: FlDotData(
             show: sorted.length < 20,
-            getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-              radius: 5,
-              color: const Color(0xFF101010),
-              strokeWidth: 3,
-              strokeColor: Colors.blueAccent,
-            ),
+            getDotPainter: (spot, percent, barData, index) =>
+                FlDotCirclePainter(
+                  radius: 5,
+                  color: const Color(0xFF101010),
+                  strokeWidth: 3,
+                  strokeColor: Colors.blueAccent,
+                ),
           ),
           belowBarData: BarAreaData(
             show: true,
@@ -399,7 +475,11 @@ class _BodyMetricsHistoryDialogState extends State<BodyMetricsHistoryDialog> {
             return touchedSpots.map((spot) {
               return LineTooltipItem(
                 '${spot.y.toStringAsFixed(1)}$unit',
-                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               );
             }).toList();
           },

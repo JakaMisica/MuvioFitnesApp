@@ -42,7 +42,11 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
 
     final Map<String, List<String>> groups = {
       'Core Performance': AnalyticsMetricType.values
-          .where((e) => !e.name.startsWith('measurement') && e != AnalyticsMetricType.fatigueIndex)
+          .where(
+            (e) =>
+                !e.name.startsWith('measurement') &&
+                e != AnalyticsMetricType.fatigueIndex,
+          )
           .map((e) => e.name)
           .toList(),
       'Physical Measurements': AnalyticsMetricType.values
@@ -74,15 +78,23 @@ class AnalyticsCubit extends Cubit<AnalyticsState> {
     const maxScans = 100; // Reduced for performance
 
     try {
-      for (int i = 0; i < allCandidateKeys.length && scanCount < maxScans; i++) {
+      for (
+        int i = 0;
+        i < allCandidateKeys.length && scanCount < maxScans;
+        i++
+      ) {
         final keyA = allCandidateKeys[i];
         bool isCoreA = coreKeys.contains(keyA);
 
-        for (int j = i + 1; j < allCandidateKeys.length && scanCount < maxScans; j++) {
+        for (
+          int j = i + 1;
+          j < allCandidateKeys.length && scanCount < maxScans;
+          j++
+        ) {
           final keyB = allCandidateKeys[j];
           bool isCoreB = coreKeys.contains(keyB);
-          
-          if (!isCoreA && !isCoreB) continue; 
+
+          if (!isCoreA && !isCoreB) continue;
 
           scanCount++;
           // Only check lag 0 for speed in auto-discovery

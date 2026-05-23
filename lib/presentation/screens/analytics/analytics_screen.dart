@@ -67,20 +67,20 @@ class AnalyticsScreen extends StatelessWidget {
                               data: Theme.of(
                                 context,
                               ).copyWith(dividerColor: Colors.transparent),
-                                child: ExpansionTile(
-                                  leading: Icon(
-                                    group.key.contains('Core')
-                                        ? Icons.bolt
-                                        : group.key.contains('Physical')
-                                            ? Icons.straighten
-                                            : group.key.contains('Behaviors')
-                                                ? Icons.task_alt
-                                                : group.key.contains('Fatigue')
-                                                    ? Icons.battery_alert_rounded
-                                                    : Icons.science,
-                                    color: Colors.white38,
-                                    size: 16,
-                                  ),
+                              child: ExpansionTile(
+                                leading: Icon(
+                                  group.key.contains('Core')
+                                      ? Icons.bolt
+                                      : group.key.contains('Physical')
+                                      ? Icons.straighten
+                                      : group.key.contains('Behaviors')
+                                      ? Icons.task_alt
+                                      : group.key.contains('Fatigue')
+                                      ? Icons.battery_alert_rounded
+                                      : Icons.science,
+                                  color: Colors.white38,
+                                  size: 16,
+                                ),
                                 title: Text(
                                   group.key.toUpperCase(),
                                   style: const TextStyle(

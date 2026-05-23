@@ -421,7 +421,7 @@ class _ExerciseAnalyticsDialogState extends State<ExerciseAnalyticsDialog> {
     double minVal = spots.map((s) => s.y).reduce(math.min);
     double maxVal = spots.map((s) => s.y).reduce(math.max);
     double range = maxVal - minVal;
-    
+
     // Add 10% padding
     double padding = range == 0 ? minVal * 0.1 : range * 0.1;
     if (padding == 0) padding = 1.0; // Fallback for all zeroes
@@ -472,7 +472,9 @@ class _ExerciseAnalyticsDialogState extends State<ExerciseAnalyticsDialog> {
         gridData: FlGridData(
           show: true,
           drawVerticalLine: true,
-          horizontalInterval: range == 0 ? 1 : (range / 5).clamp(0.1, double.infinity),
+          horizontalInterval: range == 0
+              ? 1
+              : (range / 5).clamp(0.1, double.infinity),
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
@@ -511,8 +513,12 @@ class _ExerciseAnalyticsDialogState extends State<ExerciseAnalyticsDialog> {
               },
             ),
           ),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(
           show: true,

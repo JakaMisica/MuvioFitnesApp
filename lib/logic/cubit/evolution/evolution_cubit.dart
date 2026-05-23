@@ -1,8 +1,8 @@
-import 'package:biofit_pro/data/models/body_metric.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/data/repositories/workout_repository.dart';
-import 'package:biofit_pro/data/repositories/analytics_repository.dart';
-import 'package:biofit_pro/locator.dart';
+import 'package:muvio/data/models/body_metric.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/data/repositories/workout_repository.dart';
+import 'package:muvio/data/repositories/analytics_repository.dart';
+import 'package:muvio/locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'evolution_state.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,8 @@ class RewardEvent {
 class EvolutionCubit extends Cubit<EvolutionState> {
   final BodyRepository _repository;
   final WorkoutRepository _workoutRepository = locator<WorkoutRepository>();
-  final AnalyticsRepository _analyticsRepository = locator<AnalyticsRepository>();
+  final AnalyticsRepository _analyticsRepository =
+      locator<AnalyticsRepository>();
   final _rewardController = StreamController<RewardEvent>.broadcast();
 
   Stream<RewardEvent> get rewardStream => _rewardController.stream;
@@ -46,7 +47,8 @@ class EvolutionCubit extends Cubit<EvolutionState> {
         end: DateTime.now(),
       );
 
-      final totalVolume = await _workoutRepository.getTotalVolumeForCurrentWeek();
+      final totalVolume = await _workoutRepository
+          .getTotalVolumeForCurrentWeek();
 
       // Calculate Fatigue Improvements for each muscle group
       final fatigueImproves = await _calculateAllFatigueImprovements();
@@ -91,24 +93,30 @@ class EvolutionCubit extends Cubit<EvolutionState> {
       'fatigue_quads',
       'fatigue_hamstrings',
       'fatigue_glutes',
-      'fatigue_calves'
+      'fatigue_calves',
     ];
 
     final Map<String, double> improvements = {};
 
     for (var key in muscles) {
       final baselineData = await _analyticsRepository.getDynamicMetricData(
-          key, baselineStart, baselineEnd);
-      final experimentData =
-          await _analyticsRepository.getDynamicMetricData(key, start, end);
+        key,
+        baselineStart,
+        baselineEnd,
+      );
+      final experimentData = await _analyticsRepository.getDynamicMetricData(
+        key,
+        start,
+        end,
+      );
 
       if (baselineData.isNotEmpty && experimentData.isNotEmpty) {
         final avgBase =
             baselineData.map((e) => e.value).reduce((a, b) => a + b) /
-                baselineData.length;
+            baselineData.length;
         final avgExp =
             experimentData.map((e) => e.value).reduce((a, b) => a + b) /
-                experimentData.length;
+            experimentData.length;
 
         if (avgBase != 0) {
           // Invert because LOWER fatigue is BETTER (improvement)
@@ -126,46 +134,69 @@ class EvolutionCubit extends Cubit<EvolutionState> {
 
   Map<String, double> _calculateMeasurementChanges(List<BodyMetric> metrics) {
     if (metrics.length < 2) return {};
-    
+
     // Find the latest metric that has at least one measurement
     final latest = metrics.lastWhere((m) {
       return m.waist != null || m.chest != null || m.neck != null;
     }, orElse: () => metrics.last);
-    
+
     // Find the previous metric that has at least one measurement before 'latest'
     BodyMetric? previous;
     try {
-        previous = metrics.reversed.firstWhere((m) {
-          return m.date.isBefore(latest.date) && (m.waist != null || m.chest != null || m.neck != null);
-        });
+      previous = metrics.reversed.firstWhere((m) {
+        return m.date.isBefore(latest.date) &&
+            (m.waist != null || m.chest != null || m.neck != null);
+      });
     } catch (_) {
-        previous = null;
+      previous = null;
     }
 
     if (previous == null) return {};
 
     final changes = <String, double>{};
     final fields = [
-      'neck', 'chest', 'waist', 'hips', 
-      'leftArm', 'rightArm', 'leftForearm', 'rightForearm',
-      'leftThigh', 'rightThigh', 'leftCalf', 'rightCalf'
+      'neck',
+      'chest',
+      'waist',
+      'hips',
+      'leftArm',
+      'rightArm',
+      'leftForearm',
+      'rightForearm',
+      'leftThigh',
+      'rightThigh',
+      'leftCalf',
+      'rightCalf',
     ];
 
     double? getVal(BodyMetric m, String field) {
       switch (field) {
-        case 'neck': return m.neck;
-        case 'chest': return m.chest;
-        case 'waist': return m.waist;
-        case 'hips': return m.hips;
-        case 'leftArm': return m.leftArm;
-        case 'rightArm': return m.rightArm;
-        case 'leftForearm': return m.leftForearm;
-        case 'rightForearm': return m.rightForearm;
-        case 'leftThigh': return m.leftThigh;
-        case 'rightThigh': return m.rightThigh;
-        case 'leftCalf': return m.leftCalf;
-        case 'rightCalf': return m.rightCalf;
-        default: return null;
+        case 'neck':
+          return m.neck;
+        case 'chest':
+          return m.chest;
+        case 'waist':
+          return m.waist;
+        case 'hips':
+          return m.hips;
+        case 'leftArm':
+          return m.leftArm;
+        case 'rightArm':
+          return m.rightArm;
+        case 'leftForearm':
+          return m.leftForearm;
+        case 'rightForearm':
+          return m.rightForearm;
+        case 'leftThigh':
+          return m.leftThigh;
+        case 'rightThigh':
+          return m.rightThigh;
+        case 'leftCalf':
+          return m.leftCalf;
+        case 'rightCalf':
+          return m.rightCalf;
+        default:
+          return null;
       }
     }
 
@@ -580,7 +611,6 @@ class EvolutionCubit extends Cubit<EvolutionState> {
     await _repository.saveUserSettings(settings);
   }
 
-
   Future<void> loadMeasurementHistory({
     required DateTime start,
     required DateTime end,
@@ -623,13 +653,17 @@ class EvolutionCubit extends Cubit<EvolutionState> {
     _rewardController.add(RewardEvent(RewardType.muscle, amount));
   }
 
-  Future<void> addCoins(int amount, {String? taskName, bool isDiet = false}) async {
+  Future<void> addCoins(
+    int amount, {
+    String? taskName,
+    bool isDiet = false,
+  }) async {
     final settings = await _repository.getUserSettings();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
     // Reset daily trackers if it's a new day
-    if (settings.lastRewardResetDate == null || 
+    if (settings.lastRewardResetDate == null ||
         !DateUtils.isSameDay(settings.lastRewardResetDate, today)) {
       settings.lastRewardResetDate = today;
       settings.todayDietCoinsCount = 0;
@@ -662,7 +696,7 @@ class EvolutionCubit extends Cubit<EvolutionState> {
     final settings = await _repository.getUserSettings();
     settings.socialPoints += amount;
     await _repository.saveUserSettings(settings);
-    
+
     _rewardController.add(RewardEvent(RewardType.sunglasses, amount));
     emit(state.copyWith(settings: settings));
   }

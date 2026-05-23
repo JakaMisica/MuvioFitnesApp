@@ -7,7 +7,7 @@ class MeasurementsDialog extends StatefulWidget {
   final bool initialIsMetric;
 
   const MeasurementsDialog({
-    super.key, 
+    super.key,
     required this.initialValues,
     this.changes = const {},
     this.initialIsMetric = true,
@@ -44,7 +44,7 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
     for (var field in _fields) {
       final key = field['key']!;
       final value = widget.initialValues[key];
-      
+
       String text = '';
       if (value != null) {
         if (_isMetric) {
@@ -53,7 +53,7 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
           text = (value / 2.54).toStringAsFixed(1);
         }
       }
-      
+
       _controllers[key] = TextEditingController(text: text);
     }
   }
@@ -109,7 +109,11 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
               padding: const EdgeInsets.all(24),
               child: Row(
                 children: [
-                  const Icon(Icons.straighten, color: Colors.blueAccent, size: 20),
+                  const Icon(
+                    Icons.straighten,
+                    color: Colors.blueAccent,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   const Flexible(
                     child: Text(
@@ -128,11 +132,16 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
                   GestureDetector(
                     onTap: _toggleUnit,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                        ),
                       ),
                       child: Text(
                         _isMetric ? 'CM' : 'IN',
@@ -148,7 +157,11 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white24, size: 20),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white24,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
@@ -181,7 +194,7 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
                 child: ElevatedButton(
                   onPressed: () {
                     final results = <String, double>{};
-                    
+
                     _controllers.forEach((key, controller) {
                       final val = double.tryParse(controller.text);
                       if (val != null) {
@@ -193,7 +206,7 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
                         }
                       }
                     });
-                    
+
                     Navigator.pop(context, {
                       'values': results,
                       'isMetric': _isMetric,
@@ -209,7 +222,10 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
                   ),
                   child: const Text(
                     'SAVE METRICS',
-                    style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
               ),
@@ -223,7 +239,7 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
   Widget _buildInputField(String key, String label) {
     final controller = _controllers[key]!;
     final change = widget.changes[key];
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -262,7 +278,11 @@ class _MeasurementsDialogState extends State<MeasurementsDialog> {
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
           ],
-          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
           decoration: InputDecoration(
             isDense: true,
             suffixText: _isMetric ? 'cm' : 'in',

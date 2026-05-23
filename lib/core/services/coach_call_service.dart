@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:biofit_pro/logic/cubit/workout/workout_cubit.dart';
-import 'package:biofit_pro/logic/cubit/diet/diet_cubit.dart';
-import 'package:biofit_pro/logic/cubit/tasks/task_cubit.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
-import 'package:biofit_pro/core/services/ai_service.dart';
-import 'package:biofit_pro/logic/cubit/evolution/evolution_state.dart';
-import 'package:biofit_pro/data/repositories/coach_repository.dart';
-import 'package:biofit_pro/locator.dart';
+import 'package:muvio/logic/cubit/workout/workout_cubit.dart';
+import 'package:muvio/logic/cubit/diet/diet_cubit.dart';
+import 'package:muvio/logic/cubit/tasks/task_cubit.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
+import 'package:muvio/core/services/ai_service.dart';
+import 'package:muvio/logic/cubit/evolution/evolution_state.dart';
+import 'package:muvio/data/repositories/coach_repository.dart';
+import 'package:muvio/locator.dart';
 import 'package:alarm/alarm.dart';
 
 class CallEvent {
@@ -36,20 +36,23 @@ class CoachCallService {
 
   void onWorkoutUpdate(WorkoutState state) {
     if (state.workoutDay == null) return;
-    
+
     // Check if the last set of the last exercise is completed
     final exercises = state.workoutDay!.exercises.toList();
     exercises.sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
-    
+
     if (exercises.isEmpty) return;
-    
+
     final lastExercise = exercises.last;
-    final allSetsDone = lastExercise.sets.isNotEmpty && 
-                       lastExercise.sets.every((s) => s.isCompleted);
+    final allSetsDone =
+        lastExercise.sets.isNotEmpty &&
+        lastExercise.sets.every((s) => s.isCompleted);
 
     if (allSetsDone) {
       // Automatic post-workout call disabled for now per user request
-      debugPrint("CoachCallService: All sets done, but automatic post-workout call is disabled.");
+      debugPrint(
+        "CoachCallService: All sets done, but automatic post-workout call is disabled.",
+      );
       // _scheduleCall();
     } else {
       _cancelPendingCall();
@@ -65,34 +68,51 @@ class CoachCallService {
 
   void checkInactivity() async {
     final settings = await _bodyRepo.getUserSettings();
-    if (!settings.isAiCallEnabled || settings.isInjured || _isOverlayVisible) return;
-    
-    final lastSet = settings.lastSetCompletedDate ?? DateTime.now().subtract(const Duration(days: 1));
+    if (!settings.isAiCallEnabled || settings.isInjured || _isOverlayVisible)
+      return;
+
+    final lastSet =
+        settings.lastSetCompletedDate ??
+        DateTime.now().subtract(const Duration(days: 1));
     final diff = DateTime.now().difference(lastSet).inDays;
-    
+
     // Smart Inactivity Check (based on their program or default 3 days)
-    final triggerThreshold = settings.isSick ? 7 : settings.workoutFrequencyDays;
-    
+    final triggerThreshold = settings.isSick
+        ? 7
+        : settings.workoutFrequencyDays;
+
     if (diff >= triggerThreshold) {
-      if (settings.nextAiCallAllowedDate != null && settings.nextAiCallAllowedDate!.isAfter(DateTime.now())) return;
-      
-      debugPrint("CoachCallService: User lazy for $diff days. (Automatic intervention disabled per user request).");
+      if (settings.nextAiCallAllowedDate != null &&
+          settings.nextAiCallAllowedDate!.isAfter(DateTime.now()))
+        return;
+
+      debugPrint(
+        "CoachCallService: User lazy for $diff days. (Automatic intervention disabled per user request).",
+      );
       // _triggerCall(isOutbound: false); // AI call disabled for now
     }
   }
 
   void checkLaziness() async {
     final settings = await _bodyRepo.getUserSettings();
-    if (!settings.isAiCallEnabled || settings.isInjured || _isOverlayVisible) return;
-    
+    if (!settings.isAiCallEnabled || settings.isInjured || _isOverlayVisible)
+      return;
+
     // Check if any sets were completed today
     final lastSet = settings.lastSetCompletedDate;
-    final isToday = lastSet != null && DateUtils.isSameDay(lastSet, DateTime.now());
-    
+    final isToday =
+        lastSet != null && DateUtils.isSameDay(lastSet, DateTime.now());
+
     if (!isToday) {
-      final diff = DateTime.now().difference(lastSet ?? DateTime.now().subtract(const Duration(days: 4))).inDays;
+      final diff = DateTime.now()
+          .difference(
+            lastSet ?? DateTime.now().subtract(const Duration(days: 4)),
+          )
+          .inDays;
       if (diff >= 3) {
-        debugPrint("CoachCallService: it has been $diff days since last set. (Trigger logic exists but automatic call is disabled per user request).");
+        debugPrint(
+          "CoachCallService: it has been $diff days since last set. (Trigger logic exists but automatic call is disabled per user request).",
+        );
         // _triggerCall(isOutbound: false); // AI call disabled for now - manual only
       }
     }
@@ -101,7 +121,7 @@ class CoachCallService {
   void _scheduleCall() async {
     final settings = await _bodyRepo.getUserSettings();
     if (!settings.isAiCallEnabled || settings.isInjured) return;
-    
+
     // ... logic remains
     _triggerCall(isOutbound: false);
   }
@@ -109,14 +129,16 @@ class CoachCallService {
   void _triggerCall({bool isOutbound = false}) async {
     if (_isOverlayVisible) return;
     _isOverlayVisible = true;
-    
+
     // Use the 'alarm' package to ensure it wakes the phone and plays at alarm volume
     if (!isOutbound) {
       try {
         final settings = await _bodyRepo.getUserSettings();
         String coachName = "AI Coach";
         if (settings.activeCoachId != null) {
-          final coach = await locator<CoachRepository>().getCoach(settings.activeCoachId!);
+          final coach = await locator<CoachRepository>().getCoach(
+            settings.activeCoachId!,
+          );
           if (coach != null) coachName = coach.name;
         }
 
@@ -140,7 +162,7 @@ class CoachCallService {
       }
     }
 
-    _callStreamController.add(CallEvent(visible: true, isOutbound: isOutbound)); 
+    _callStreamController.add(CallEvent(visible: true, isOutbound: isOutbound));
   }
 
   void triggerManualCall() {
@@ -152,7 +174,7 @@ class CoachCallService {
     _isOverlayVisible = false;
     _callStreamController.add(CallEvent(visible: false));
     await Alarm.stop(42); // Stop any active ringing
-    
+
     final settings = await _bodyRepo.getUserSettings();
     final now = DateTime.now();
 
@@ -164,7 +186,7 @@ class CoachCallService {
         int days = 7; // Escalate 7 -> 21 -> 90
         if (settings.consecutiveGetLostCount == 2) days = 21;
         if (settings.consecutiveGetLostCount >= 3) days = 90;
-        
+
         settings.nextAiCallAllowedDate = now.add(Duration(days: days));
         await _bodyRepo.saveUserSettings(settings);
         break;
@@ -212,10 +234,16 @@ class CoachCallService {
 
     // If it's the very first message, add a greeting trigger if empty
     if (messages.isEmpty && audioPath == null) {
-      fullMessages.add({'role': 'user', 'content': 'Hello coach, I just finished my workout.'});
+      fullMessages.add({
+        'role': 'user',
+        'content': 'Hello coach, I just finished my workout.',
+      });
     }
 
-    final response = await _aiService.getResponse(fullMessages, audioPath: audioPath);
+    final response = await _aiService.getResponse(
+      fullMessages,
+      audioPath: audioPath,
+    );
     return response;
   }
 

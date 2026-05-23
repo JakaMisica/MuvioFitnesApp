@@ -2,16 +2,16 @@ import 'dart:async';
 import 'package:pedometer/pedometer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:biofit_pro/locator.dart';
-import 'package:biofit_pro/data/repositories/workout_repository.dart';
+import 'package:muvio/locator.dart';
+import 'package:muvio/data/repositories/workout_repository.dart';
 import 'package:flutter/foundation.dart';
 
 class StepTrackerService {
   final WorkoutRepository _repository = locator<WorkoutRepository>();
-  
+
   StreamSubscription<StepCount>? _stepCountSubscription;
   StreamSubscription<Position>? _positionSubscription;
-  
+
   int _todayBaseSteps = 0;
   int _lastTotalSteps = 0;
   double _todayDistance = 0.0;
@@ -31,7 +31,7 @@ class StepTrackerService {
   Future<bool> requestPermissions() async {
     final activityStatus = await Permission.activityRecognition.request();
     final locationStatus = await Permission.location.request();
-    
+
     return activityStatus.isGranted && locationStatus.isGranted;
   }
 
@@ -61,11 +61,13 @@ class StepTrackerService {
       accuracy: LocationAccuracy.high,
       distanceFilter: 5, // Update every 5 meters
     );
-    
-    _positionSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
-      _onPositionUpdate,
-      onError: (error) => debugPrint('StepTracker: Geolocator Error: $error'),
-    );
+
+    _positionSubscription =
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+          _onPositionUpdate,
+          onError: (error) =>
+              debugPrint('StepTracker: Geolocator Error: $error'),
+        );
   }
 
   void stopTracking() {
@@ -81,7 +83,7 @@ class StepTrackerService {
       // We need to know how many steps were already recorded in our database for today
       final workout = await _repository.getWorkoutForDate(DateTime.now());
       int dbSteps = workout?.steps ?? 0;
-      
+
       _todayBaseSteps = event.steps - dbSteps;
     }
 
@@ -106,7 +108,7 @@ class StepTrackerService {
         position.latitude,
         position.longitude,
       );
-      
+
       // Filter out GPS jitter
       if (distance > 1.0 && distance < 100.0) {
         _todayDistance += distance;
@@ -126,11 +128,9 @@ class StepTrackerService {
     try {
       final now = DateTime.now();
       // We don't await here to avoid blocking next updates or stream emission
-      _repository.updateStepsAndDistance(
-        now,
-        _lastTotalSteps,
-        _todayDistance,
-      ).catchError((e) => debugPrint('StepTracker: DB Update Error: $e'));
+      _repository
+          .updateStepsAndDistance(now, _lastTotalSteps, _todayDistance)
+          .catchError((e) => debugPrint('StepTracker: DB Update Error: $e'));
     } catch (e) {
       debugPrint('StepTracker: Error: $e');
     }

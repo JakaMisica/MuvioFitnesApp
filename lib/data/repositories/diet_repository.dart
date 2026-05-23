@@ -5353,19 +5353,99 @@ class DietRepository {
     }
 
     // --- ADD REQUESTED COMMON SUPPLEMENTS ---
-    add('Creatine Monohydrate', 'Supplement', 0, 0, 0, 0, unit: 'scoop', base: 5);
+    add(
+      'Creatine Monohydrate',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'scoop',
+      base: 5,
+    );
     add('Melatonin', 'Supplement', 0, 0, 0, 0, unit: 'tab', base: 3);
     add('L-Citrulline', 'Supplement', 0, 0, 0, 0, unit: 'scoop', base: 6);
     add('Tongkat Ali', 'Supplement', 0, 0, 0, 0, unit: 'capsule', base: 1);
-    add('Cod Liver Oil', 'Supplement', 40, 0, 0, 4.5, unit: 'ml', base: 5, vitA: 1350, vitD: 11, omega3: 1.1);
+    add(
+      'Cod Liver Oil',
+      'Supplement',
+      40,
+      0,
+      0,
+      4.5,
+      unit: 'ml',
+      base: 5,
+      vitA: 1350,
+      vitD: 11,
+      omega3: 1.1,
+    );
     add('Beta Alanine', 'Supplement', 0, 0, 0, 0, unit: 'scoop', base: 3.2);
-    add('TMG (Trimethylglycine)', 'Supplement', 0, 0, 0, 0, unit: 'scoop', base: 1);
+    add(
+      'TMG (Trimethylglycine)',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'scoop',
+      base: 1,
+    );
     add('Boron', 'Supplement', 0, 0, 0, 0, unit: 'tab', base: 3);
-    add('Omega 3 Fish Oil', 'Supplement', 10, 0, 0, 1, unit: 'capsule', base: 1, omega3: 0.6);
-    add('Zinc Supplement', 'Supplement', 0, 0, 0, 0, unit: 'tab', base: 1, zinc: 30);
-    add('Magnesium Glycinate', 'Supplement', 0, 0, 0, 0, unit: 'capsule', base: 1, mag: 200);
-    add('Vitamin D3', 'Supplement', 0, 0, 0, 0, unit: 'capsule', base: 1, vitD: 125); // 5000 IU
-    add('Vitamin K2 MK-7', 'Supplement', 0, 0, 0, 0, unit: 'capsule', base: 1, vitK: 100);
+    add(
+      'Omega 3 Fish Oil',
+      'Supplement',
+      10,
+      0,
+      0,
+      1,
+      unit: 'capsule',
+      base: 1,
+      omega3: 0.6,
+    );
+    add(
+      'Zinc Supplement',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'tab',
+      base: 1,
+      zinc: 30,
+    );
+    add(
+      'Magnesium Glycinate',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'capsule',
+      base: 1,
+      mag: 200,
+    );
+    add(
+      'Vitamin D3',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'capsule',
+      base: 1,
+      vitD: 125,
+    ); // 5000 IU
+    add(
+      'Vitamin K2 MK-7',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'capsule',
+      base: 1,
+      vitK: 100,
+    );
 
     // --- COMMON SUPPLEMENTS ---
     add('Creatine Monohydrate', 'Supplement', 0, 0, 0, 0, unit: 'g', base: 5);
@@ -5373,13 +5453,64 @@ class DietRepository {
     add('Beta-Alanine', 'Supplement', 0, 0, 0, 0, unit: 'g', base: 3);
     add('Tongkat Ali Extract', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 400);
     add('Melatonin', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 3);
-    add('Cod Liver Oil', 'Supplement', 40, 0, 0, 4.5, unit: 'tsp', base: 5, vitA: 1350, vitD: 11, omega3: 0.9);
-    add('Omega-3 Fish Oil', 'Supplement', 10, 0, 0, 1, unit: 'capsule', base: 1, omega3: 0.3);
-    add('TMG (Trimethylglycine)', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 1000);
+    add(
+      'Cod Liver Oil',
+      'Supplement',
+      40,
+      0,
+      0,
+      4.5,
+      unit: 'tsp',
+      base: 5,
+      vitA: 1350,
+      vitD: 11,
+      omega3: 0.9,
+    );
+    add(
+      'Omega-3 Fish Oil',
+      'Supplement',
+      10,
+      0,
+      0,
+      1,
+      unit: 'capsule',
+      base: 1,
+      omega3: 0.3,
+    );
+    add(
+      'TMG (Trimethylglycine)',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'mg',
+      base: 1000,
+    );
     add('Boron Glycinate', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 3);
     add('Ashwagandha KSM-66', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 600);
-    add('Magnesium Bisglycinate', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 200, mag: 200);
-    add('Zinc Picolinate', 'Supplement', 0, 0, 0, 0, unit: 'mg', base: 50, zinc: 50);
+    add(
+      'Magnesium Bisglycinate',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'mg',
+      base: 200,
+      mag: 200,
+    );
+    add(
+      'Zinc Picolinate',
+      'Supplement',
+      0,
+      0,
+      0,
+      0,
+      unit: 'mg',
+      base: 50,
+      zinc: 50,
+    );
 
     await isar.writeTxn(() async {
       await isar.foodItems.clear();

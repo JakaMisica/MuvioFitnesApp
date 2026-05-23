@@ -42,21 +42,13 @@ const BodyMetricSchema = CollectionSchema(
       name: r'calfSkinfold',
       type: IsarType.double,
     ),
-    r'chest': PropertySchema(
-      id: 5,
-      name: r'chest',
-      type: IsarType.double,
-    ),
+    r'chest': PropertySchema(id: 5, name: r'chest', type: IsarType.double),
     r'chestSkinfold': PropertySchema(
       id: 6,
       name: r'chestSkinfold',
       type: IsarType.double,
     ),
-    r'date': PropertySchema(
-      id: 7,
-      name: r'date',
-      type: IsarType.dateTime,
-    ),
+    r'date': PropertySchema(id: 7, name: r'date', type: IsarType.dateTime),
     r'estimatedFreeTestosterone': PropertySchema(
       id: 8,
       name: r'estimatedFreeTestosterone',
@@ -72,21 +64,13 @@ const BodyMetricSchema = CollectionSchema(
       name: r'gripStrengthRight',
       type: IsarType.double,
     ),
-    r'hips': PropertySchema(
-      id: 11,
-      name: r'hips',
-      type: IsarType.double,
-    ),
+    r'hips': PropertySchema(id: 11, name: r'hips', type: IsarType.double),
     r'labFreeTestosterone': PropertySchema(
       id: 12,
       name: r'labFreeTestosterone',
       type: IsarType.double,
     ),
-    r'leftArm': PropertySchema(
-      id: 13,
-      name: r'leftArm',
-      type: IsarType.double,
-    ),
+    r'leftArm': PropertySchema(id: 13, name: r'leftArm', type: IsarType.double),
     r'leftCalf': PropertySchema(
       id: 14,
       name: r'leftCalf',
@@ -117,11 +101,7 @@ const BodyMetricSchema = CollectionSchema(
       name: r'muscleMassGains',
       type: IsarType.double,
     ),
-    r'neck': PropertySchema(
-      id: 20,
-      name: r'neck',
-      type: IsarType.double,
-    ),
+    r'neck': PropertySchema(id: 20, name: r'neck', type: IsarType.double),
     r'rightArm': PropertySchema(
       id: 21,
       name: r'rightArm',
@@ -162,16 +142,8 @@ const BodyMetricSchema = CollectionSchema(
       name: r'tricepSkinfold',
       type: IsarType.double,
     ),
-    r'waist': PropertySchema(
-      id: 29,
-      name: r'waist',
-      type: IsarType.double,
-    ),
-    r'weight': PropertySchema(
-      id: 30,
-      name: r'weight',
-      type: IsarType.double,
-    )
+    r'waist': PropertySchema(id: 29, name: r'waist', type: IsarType.double),
+    r'weight': PropertySchema(id: 30, name: r'weight', type: IsarType.double),
   },
   estimateSize: _bodyMetricEstimateSize,
   serialize: _bodyMetricSerialize,
@@ -189,9 +161,9 @@ const BodyMetricSchema = CollectionSchema(
           name: r'date',
           type: IndexType.value,
           caseSensitive: false,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {},
@@ -453,10 +425,7 @@ extension BodyMetricQueryWhere
     on QueryBuilder<BodyMetric, BodyMetric, QWhereClause> {
   QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
@@ -482,8 +451,10 @@ extension BodyMetricQueryWhere
     });
   }
 
-  QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> idGreaterThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -491,8 +462,10 @@ extension BodyMetricQueryWhere
     });
   }
 
-  QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -507,56 +480,67 @@ extension BodyMetricQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> dateEqualTo(
-      DateTime date) {
+    DateTime date,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'date',
-        value: [date],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'date', value: [date]),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterWhereClause> dateNotEqualTo(
-      DateTime date) {
+    DateTime date,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [],
-              upper: [date],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [date],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'date',
+                lower: [],
+                upper: [date],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'date',
+                lower: [date],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [date],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [],
-              upper: [date],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'date',
+                lower: [date],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'date',
+                lower: [],
+                upper: [date],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -566,12 +550,14 @@ extension BodyMetricQueryWhere
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'date',
-        lower: [date],
-        includeLower: include,
-        upper: [],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'date',
+          lower: [date],
+          includeLower: include,
+          upper: [],
+        ),
+      );
     });
   }
 
@@ -580,12 +566,14 @@ extension BodyMetricQueryWhere
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'date',
-        lower: [],
-        upper: [date],
-        includeUpper: include,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'date',
+          lower: [],
+          upper: [date],
+          includeUpper: include,
+        ),
+      );
     });
   }
 
@@ -596,13 +584,15 @@ extension BodyMetricQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'date',
-        lower: [lowerDate],
-        includeLower: includeLower,
-        upper: [upperDate],
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'date',
+          lower: [lowerDate],
+          includeLower: includeLower,
+          upper: [upperDate],
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -610,71 +600,74 @@ extension BodyMetricQueryWhere
 extension BodyMetricQueryFilter
     on QueryBuilder<BodyMetric, BodyMetric, QFilterCondition> {
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      abdominalSkinfoldIsNull() {
+  abdominalSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'abdominalSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'abdominalSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      abdominalSkinfoldIsNotNull() {
+  abdominalSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'abdominalSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'abdominalSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      abdominalSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  abdominalSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'abdominalSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'abdominalSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      abdominalSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'abdominalSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      abdominalSkinfoldLessThan(
+  abdominalSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'abdominalSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'abdominalSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      abdominalSkinfoldBetween(
+  abdominalSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'abdominalSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  abdominalSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -682,83 +675,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'abdominalSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'abdominalSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bicepSkinfoldIsNull() {
+  bicepSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'bicepSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'bicepSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bicepSkinfoldIsNotNull() {
+  bicepSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'bicepSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'bicepSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bicepSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  bicepSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bicepSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'bicepSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bicepSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'bicepSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bicepSkinfoldLessThan(
+  bicepSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'bicepSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'bicepSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bicepSkinfoldBetween(
+  bicepSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'bicepSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  bicepSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -766,157 +764,161 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'bicepSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'bicepSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatMethodIsNull() {
+  bodyFatMethodIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'bodyFatMethod',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'bodyFatMethod'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatMethodIsNotNull() {
+  bodyFatMethodIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'bodyFatMethod',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'bodyFatMethod'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatMethodEqualTo(int? value) {
+  bodyFatMethodEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bodyFatMethod',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'bodyFatMethod', value: value),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatMethodGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  bodyFatMethodGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'bodyFatMethod',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'bodyFatMethod',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatMethodLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  bodyFatMethodLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'bodyFatMethod',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'bodyFatMethod',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatMethodBetween(
+  bodyFatMethodBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'bodyFatMethod',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'bodyFatMethod',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatPercentageIsNull() {
+  bodyFatPercentageIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'bodyFatPercentage',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'bodyFatPercentage'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatPercentageIsNotNull() {
+  bodyFatPercentageIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'bodyFatPercentage',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'bodyFatPercentage'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatPercentageEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  bodyFatPercentageEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bodyFatPercentage',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'bodyFatPercentage',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatPercentageGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'bodyFatPercentage',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatPercentageLessThan(
+  bodyFatPercentageGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'bodyFatPercentage',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'bodyFatPercentage',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      bodyFatPercentageBetween(
+  bodyFatPercentageLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'bodyFatPercentage',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  bodyFatPercentageBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -924,83 +926,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'bodyFatPercentage',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'bodyFatPercentage',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      calfSkinfoldIsNull() {
+  calfSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'calfSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'calfSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      calfSkinfoldIsNotNull() {
+  calfSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'calfSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'calfSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      calfSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  calfSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'calfSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'calfSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      calfSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'calfSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      calfSkinfoldLessThan(
+  calfSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'calfSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'calfSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      calfSkinfoldBetween(
+  calfSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'calfSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  calfSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1008,30 +1015,32 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'calfSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'calfSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> chestIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'chest',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'chest'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> chestIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'chest',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'chest'),
+      );
     });
   }
 
@@ -1040,11 +1049,13 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'chest',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'chest',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1054,12 +1065,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'chest',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'chest',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1069,12 +1082,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'chest',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'chest',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1086,83 +1101,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'chest',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'chest',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      chestSkinfoldIsNull() {
+  chestSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'chestSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'chestSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      chestSkinfoldIsNotNull() {
+  chestSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'chestSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'chestSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      chestSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  chestSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'chestSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'chestSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      chestSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'chestSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      chestSkinfoldLessThan(
+  chestSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'chestSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'chestSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      chestSkinfoldBetween(
+  chestSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'chestSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  chestSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1170,24 +1190,26 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'chestSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'chestSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> dateEqualTo(
-      DateTime value) {
+    DateTime value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'date',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'date', value: value),
+      );
     });
   }
 
@@ -1196,11 +1218,13 @@ extension BodyMetricQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'date',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'date',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1209,11 +1233,13 @@ extension BodyMetricQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'date',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'date',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1224,82 +1250,90 @@ extension BodyMetricQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'date',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'date',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      estimatedFreeTestosteroneIsNull() {
+  estimatedFreeTestosteroneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'estimatedFreeTestosterone',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'estimatedFreeTestosterone'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      estimatedFreeTestosteroneIsNotNull() {
+  estimatedFreeTestosteroneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'estimatedFreeTestosterone',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'estimatedFreeTestosterone'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      estimatedFreeTestosteroneEqualTo(
+  estimatedFreeTestosteroneEqualTo(
     double? value, {
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'estimatedFreeTestosterone',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'estimatedFreeTestosterone',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      estimatedFreeTestosteroneGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'estimatedFreeTestosterone',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      estimatedFreeTestosteroneLessThan(
+  estimatedFreeTestosteroneGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'estimatedFreeTestosterone',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'estimatedFreeTestosterone',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      estimatedFreeTestosteroneBetween(
+  estimatedFreeTestosteroneLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'estimatedFreeTestosterone',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  estimatedFreeTestosteroneBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1307,83 +1341,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'estimatedFreeTestosterone',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'estimatedFreeTestosterone',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthLeftIsNull() {
+  gripStrengthLeftIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'gripStrengthLeft',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'gripStrengthLeft'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthLeftIsNotNull() {
+  gripStrengthLeftIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'gripStrengthLeft',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'gripStrengthLeft'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthLeftEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  gripStrengthLeftEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'gripStrengthLeft',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'gripStrengthLeft',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthLeftGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'gripStrengthLeft',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthLeftLessThan(
+  gripStrengthLeftGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'gripStrengthLeft',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'gripStrengthLeft',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthLeftBetween(
+  gripStrengthLeftLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'gripStrengthLeft',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  gripStrengthLeftBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1391,83 +1430,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'gripStrengthLeft',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'gripStrengthLeft',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthRightIsNull() {
+  gripStrengthRightIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'gripStrengthRight',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'gripStrengthRight'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthRightIsNotNull() {
+  gripStrengthRightIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'gripStrengthRight',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'gripStrengthRight'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthRightEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  gripStrengthRightEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'gripStrengthRight',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'gripStrengthRight',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthRightGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'gripStrengthRight',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthRightLessThan(
+  gripStrengthRightGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'gripStrengthRight',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'gripStrengthRight',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      gripStrengthRightBetween(
+  gripStrengthRightLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'gripStrengthRight',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  gripStrengthRightBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1475,30 +1519,32 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'gripStrengthRight',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'gripStrengthRight',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> hipsIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'hips',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'hips'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> hipsIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'hips',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'hips'),
+      );
     });
   }
 
@@ -1507,11 +1553,13 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'hips',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'hips',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1521,12 +1569,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'hips',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'hips',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1536,12 +1586,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'hips',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'hips',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1553,24 +1605,26 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'hips',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'hips',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -1579,11 +1633,13 @@ extension BodyMetricQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1592,11 +1648,13 @@ extension BodyMetricQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1607,82 +1665,87 @@ extension BodyMetricQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      labFreeTestosteroneIsNull() {
+  labFreeTestosteroneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'labFreeTestosterone',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'labFreeTestosterone'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      labFreeTestosteroneIsNotNull() {
+  labFreeTestosteroneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'labFreeTestosterone',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'labFreeTestosterone'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      labFreeTestosteroneEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  labFreeTestosteroneEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'labFreeTestosterone',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'labFreeTestosterone',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      labFreeTestosteroneGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'labFreeTestosterone',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      labFreeTestosteroneLessThan(
+  labFreeTestosteroneGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'labFreeTestosterone',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'labFreeTestosterone',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      labFreeTestosteroneBetween(
+  labFreeTestosteroneLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'labFreeTestosterone',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  labFreeTestosteroneBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1690,31 +1753,33 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'labFreeTestosterone',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'labFreeTestosterone',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> leftArmIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'leftArm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'leftArm'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftArmIsNotNull() {
+  leftArmIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'leftArm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'leftArm'),
+      );
     });
   }
 
@@ -1723,27 +1788,31 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'leftArm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'leftArm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftArmGreaterThan(
+  leftArmGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'leftArm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'leftArm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1753,12 +1822,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'leftArm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'leftArm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1770,31 +1841,33 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'leftArm',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'leftArm',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> leftCalfIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'leftCalf',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'leftCalf'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftCalfIsNotNull() {
+  leftCalfIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'leftCalf',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'leftCalf'),
+      );
     });
   }
 
@@ -1803,27 +1876,31 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'leftCalf',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'leftCalf',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftCalfGreaterThan(
+  leftCalfGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'leftCalf',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'leftCalf',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1833,12 +1910,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'leftCalf',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'leftCalf',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1850,83 +1929,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'leftCalf',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'leftCalf',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftForearmIsNull() {
+  leftForearmIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'leftForearm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'leftForearm'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftForearmIsNotNull() {
+  leftForearmIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'leftForearm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'leftForearm'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftForearmEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  leftForearmEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'leftForearm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'leftForearm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftForearmGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'leftForearm',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftForearmLessThan(
+  leftForearmGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'leftForearm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'leftForearm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftForearmBetween(
+  leftForearmLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'leftForearm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  leftForearmBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -1934,32 +2018,34 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'leftForearm',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'leftForearm',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftThighIsNull() {
+  leftThighIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'leftThigh',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'leftThigh'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftThighIsNotNull() {
+  leftThighIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'leftThigh',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'leftThigh'),
+      );
     });
   }
 
@@ -1968,27 +2054,31 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'leftThigh',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'leftThigh',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      leftThighGreaterThan(
+  leftThighGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'leftThigh',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'leftThigh',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1998,12 +2088,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'leftThigh',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'leftThigh',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2015,83 +2107,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'leftThigh',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'leftThigh',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      lowerBackSkinfoldIsNull() {
+  lowerBackSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lowerBackSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'lowerBackSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      lowerBackSkinfoldIsNotNull() {
+  lowerBackSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lowerBackSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'lowerBackSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      lowerBackSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  lowerBackSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lowerBackSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'lowerBackSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      lowerBackSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'lowerBackSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      lowerBackSkinfoldLessThan(
+  lowerBackSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'lowerBackSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'lowerBackSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      lowerBackSkinfoldBetween(
+  lowerBackSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'lowerBackSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  lowerBackSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2099,83 +2196,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'lowerBackSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'lowerBackSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      midaxillarySkinfoldIsNull() {
+  midaxillarySkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'midaxillarySkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'midaxillarySkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      midaxillarySkinfoldIsNotNull() {
+  midaxillarySkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'midaxillarySkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'midaxillarySkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      midaxillarySkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  midaxillarySkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'midaxillarySkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'midaxillarySkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      midaxillarySkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'midaxillarySkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      midaxillarySkinfoldLessThan(
+  midaxillarySkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'midaxillarySkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'midaxillarySkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      midaxillarySkinfoldBetween(
+  midaxillarySkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'midaxillarySkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  midaxillarySkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2183,83 +2285,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'midaxillarySkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'midaxillarySkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      muscleMassGainsIsNull() {
+  muscleMassGainsIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'muscleMassGains',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'muscleMassGains'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      muscleMassGainsIsNotNull() {
+  muscleMassGainsIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'muscleMassGains',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'muscleMassGains'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      muscleMassGainsEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  muscleMassGainsEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'muscleMassGains',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'muscleMassGains',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      muscleMassGainsGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'muscleMassGains',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      muscleMassGainsLessThan(
+  muscleMassGainsGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'muscleMassGains',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'muscleMassGains',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      muscleMassGainsBetween(
+  muscleMassGainsLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'muscleMassGains',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  muscleMassGainsBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2267,30 +2374,32 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'muscleMassGains',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'muscleMassGains',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> neckIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'neck',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'neck'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> neckIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'neck',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'neck'),
+      );
     });
   }
 
@@ -2299,11 +2408,13 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'neck',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'neck',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2313,12 +2424,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'neck',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'neck',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2328,12 +2441,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'neck',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'neck',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2345,31 +2460,33 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'neck',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'neck',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> rightArmIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rightArm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rightArm'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightArmIsNotNull() {
+  rightArmIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rightArm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rightArm'),
+      );
     });
   }
 
@@ -2378,27 +2495,31 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rightArm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rightArm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightArmGreaterThan(
+  rightArmGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rightArm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rightArm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2408,12 +2529,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rightArm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rightArm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2425,32 +2548,34 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rightArm',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rightArm',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightCalfIsNull() {
+  rightCalfIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rightCalf',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rightCalf'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightCalfIsNotNull() {
+  rightCalfIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rightCalf',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rightCalf'),
+      );
     });
   }
 
@@ -2459,27 +2584,31 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rightCalf',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rightCalf',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightCalfGreaterThan(
+  rightCalfGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rightCalf',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rightCalf',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2489,12 +2618,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rightCalf',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rightCalf',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2506,83 +2637,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rightCalf',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rightCalf',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightForearmIsNull() {
+  rightForearmIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rightForearm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rightForearm'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightForearmIsNotNull() {
+  rightForearmIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rightForearm',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rightForearm'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightForearmEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  rightForearmEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rightForearm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rightForearm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightForearmGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rightForearm',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightForearmLessThan(
+  rightForearmGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rightForearm',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rightForearm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightForearmBetween(
+  rightForearmLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rightForearm',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  rightForearmBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2590,32 +2726,34 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rightForearm',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rightForearm',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightThighIsNull() {
+  rightThighIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rightThigh',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rightThigh'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightThighIsNotNull() {
+  rightThighIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rightThigh',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rightThigh'),
+      );
     });
   }
 
@@ -2624,43 +2762,49 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rightThigh',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rightThigh',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightThighGreaterThan(
+  rightThighGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rightThigh',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rightThigh',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      rightThighLessThan(
+  rightThighLessThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rightThigh',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rightThigh',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -2672,83 +2816,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rightThigh',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rightThigh',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      subscapularSkinfoldIsNull() {
+  subscapularSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'subscapularSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'subscapularSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      subscapularSkinfoldIsNotNull() {
+  subscapularSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'subscapularSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'subscapularSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      subscapularSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  subscapularSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'subscapularSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'subscapularSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      subscapularSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'subscapularSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      subscapularSkinfoldLessThan(
+  subscapularSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'subscapularSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'subscapularSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      subscapularSkinfoldBetween(
+  subscapularSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'subscapularSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  subscapularSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2756,83 +2905,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'subscapularSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'subscapularSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      suprailiacSkinfoldIsNull() {
+  suprailiacSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'suprailiacSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'suprailiacSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      suprailiacSkinfoldIsNotNull() {
+  suprailiacSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'suprailiacSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'suprailiacSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      suprailiacSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  suprailiacSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'suprailiacSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'suprailiacSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      suprailiacSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'suprailiacSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      suprailiacSkinfoldLessThan(
+  suprailiacSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'suprailiacSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'suprailiacSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      suprailiacSkinfoldBetween(
+  suprailiacSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'suprailiacSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  suprailiacSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2840,83 +2994,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'suprailiacSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'suprailiacSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      thighSkinfoldIsNull() {
+  thighSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'thighSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'thighSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      thighSkinfoldIsNotNull() {
+  thighSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'thighSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'thighSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      thighSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  thighSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'thighSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'thighSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      thighSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'thighSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      thighSkinfoldLessThan(
+  thighSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'thighSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'thighSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      thighSkinfoldBetween(
+  thighSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'thighSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  thighSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -2924,83 +3083,88 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'thighSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'thighSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      tricepSkinfoldIsNull() {
+  tricepSkinfoldIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tricepSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tricepSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      tricepSkinfoldIsNotNull() {
+  tricepSkinfoldIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tricepSkinfold',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tricepSkinfold'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      tricepSkinfoldEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  tricepSkinfoldEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tricepSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tricepSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      tricepSkinfoldGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tricepSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      tricepSkinfoldLessThan(
+  tricepSkinfoldGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tricepSkinfold',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tricepSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      tricepSkinfoldBetween(
+  tricepSkinfoldLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tricepSkinfold',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
+  tricepSkinfoldBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -3008,30 +3172,32 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tricepSkinfold',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tricepSkinfold',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> waistIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'waist',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'waist'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> waistIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'waist',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'waist'),
+      );
     });
   }
 
@@ -3040,11 +3206,13 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'waist',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'waist',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -3054,12 +3222,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'waist',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'waist',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -3069,12 +3239,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'waist',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'waist',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -3086,31 +3258,33 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'waist',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'waist',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition> weightIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'weight',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'weight'),
+      );
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterFilterCondition>
-      weightIsNotNull() {
+  weightIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'weight',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'weight'),
+      );
     });
   }
 
@@ -3119,11 +3293,13 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'weight',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'weight',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -3133,12 +3309,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'weight',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'weight',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -3148,12 +3326,14 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'weight',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'weight',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -3165,14 +3345,16 @@ extension BodyMetricQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'weight',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'weight',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 }
@@ -3192,7 +3374,7 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByAbdominalSkinfoldDesc() {
+  sortByAbdominalSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'abdominalSkinfold', Sort.desc);
     });
@@ -3229,7 +3411,7 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByBodyFatPercentageDesc() {
+  sortByBodyFatPercentageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bodyFatPercentage', Sort.desc);
     });
@@ -3284,14 +3466,14 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByEstimatedFreeTestosterone() {
+  sortByEstimatedFreeTestosterone() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedFreeTestosterone', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByEstimatedFreeTestosteroneDesc() {
+  sortByEstimatedFreeTestosteroneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedFreeTestosterone', Sort.desc);
     });
@@ -3304,7 +3486,7 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByGripStrengthLeftDesc() {
+  sortByGripStrengthLeftDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gripStrengthLeft', Sort.desc);
     });
@@ -3317,7 +3499,7 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByGripStrengthRightDesc() {
+  sortByGripStrengthRightDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gripStrengthRight', Sort.desc);
     });
@@ -3336,14 +3518,14 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByLabFreeTestosterone() {
+  sortByLabFreeTestosterone() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'labFreeTestosterone', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByLabFreeTestosteroneDesc() {
+  sortByLabFreeTestosteroneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'labFreeTestosterone', Sort.desc);
     });
@@ -3404,21 +3586,21 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByLowerBackSkinfoldDesc() {
+  sortByLowerBackSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lowerBackSkinfold', Sort.desc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByMidaxillarySkinfold() {
+  sortByMidaxillarySkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'midaxillarySkinfold', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByMidaxillarySkinfoldDesc() {
+  sortByMidaxillarySkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'midaxillarySkinfold', Sort.desc);
     });
@@ -3431,7 +3613,7 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByMuscleMassGainsDesc() {
+  sortByMuscleMassGainsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'muscleMassGains', Sort.desc);
     });
@@ -3498,28 +3680,28 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortBySubscapularSkinfold() {
+  sortBySubscapularSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subscapularSkinfold', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortBySubscapularSkinfoldDesc() {
+  sortBySubscapularSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subscapularSkinfold', Sort.desc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortBySuprailiacSkinfold() {
+  sortBySuprailiacSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'suprailiacSkinfold', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortBySuprailiacSkinfoldDesc() {
+  sortBySuprailiacSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'suprailiacSkinfold', Sort.desc);
     });
@@ -3544,7 +3726,7 @@ extension BodyMetricQuerySortBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      sortByTricepSkinfoldDesc() {
+  sortByTricepSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tricepSkinfold', Sort.desc);
     });
@@ -3584,7 +3766,7 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByAbdominalSkinfoldDesc() {
+  thenByAbdominalSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'abdominalSkinfold', Sort.desc);
     });
@@ -3621,7 +3803,7 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByBodyFatPercentageDesc() {
+  thenByBodyFatPercentageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bodyFatPercentage', Sort.desc);
     });
@@ -3676,14 +3858,14 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByEstimatedFreeTestosterone() {
+  thenByEstimatedFreeTestosterone() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedFreeTestosterone', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByEstimatedFreeTestosteroneDesc() {
+  thenByEstimatedFreeTestosteroneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedFreeTestosterone', Sort.desc);
     });
@@ -3696,7 +3878,7 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByGripStrengthLeftDesc() {
+  thenByGripStrengthLeftDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gripStrengthLeft', Sort.desc);
     });
@@ -3709,7 +3891,7 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByGripStrengthRightDesc() {
+  thenByGripStrengthRightDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gripStrengthRight', Sort.desc);
     });
@@ -3740,14 +3922,14 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByLabFreeTestosterone() {
+  thenByLabFreeTestosterone() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'labFreeTestosterone', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByLabFreeTestosteroneDesc() {
+  thenByLabFreeTestosteroneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'labFreeTestosterone', Sort.desc);
     });
@@ -3808,21 +3990,21 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByLowerBackSkinfoldDesc() {
+  thenByLowerBackSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lowerBackSkinfold', Sort.desc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByMidaxillarySkinfold() {
+  thenByMidaxillarySkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'midaxillarySkinfold', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByMidaxillarySkinfoldDesc() {
+  thenByMidaxillarySkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'midaxillarySkinfold', Sort.desc);
     });
@@ -3835,7 +4017,7 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByMuscleMassGainsDesc() {
+  thenByMuscleMassGainsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'muscleMassGains', Sort.desc);
     });
@@ -3902,28 +4084,28 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenBySubscapularSkinfold() {
+  thenBySubscapularSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subscapularSkinfold', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenBySubscapularSkinfoldDesc() {
+  thenBySubscapularSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'subscapularSkinfold', Sort.desc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenBySuprailiacSkinfold() {
+  thenBySuprailiacSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'suprailiacSkinfold', Sort.asc);
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenBySuprailiacSkinfoldDesc() {
+  thenBySuprailiacSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'suprailiacSkinfold', Sort.desc);
     });
@@ -3948,7 +4130,7 @@ extension BodyMetricQuerySortThenBy
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QAfterSortBy>
-      thenByTricepSkinfoldDesc() {
+  thenByTricepSkinfoldDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tricepSkinfold', Sort.desc);
     });
@@ -3982,7 +4164,7 @@ extension BodyMetricQuerySortThenBy
 extension BodyMetricQueryWhereDistinct
     on QueryBuilder<BodyMetric, BodyMetric, QDistinct> {
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByAbdominalSkinfold() {
+  distinctByAbdominalSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'abdominalSkinfold');
     });
@@ -4001,7 +4183,7 @@ extension BodyMetricQueryWhereDistinct
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByBodyFatPercentage() {
+  distinctByBodyFatPercentage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bodyFatPercentage');
     });
@@ -4032,7 +4214,7 @@ extension BodyMetricQueryWhereDistinct
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByEstimatedFreeTestosterone() {
+  distinctByEstimatedFreeTestosterone() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'estimatedFreeTestosterone');
     });
@@ -4045,7 +4227,7 @@ extension BodyMetricQueryWhereDistinct
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByGripStrengthRight() {
+  distinctByGripStrengthRight() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'gripStrengthRight');
     });
@@ -4058,7 +4240,7 @@ extension BodyMetricQueryWhereDistinct
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByLabFreeTestosterone() {
+  distinctByLabFreeTestosterone() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'labFreeTestosterone');
     });
@@ -4089,14 +4271,14 @@ extension BodyMetricQueryWhereDistinct
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByLowerBackSkinfold() {
+  distinctByLowerBackSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lowerBackSkinfold');
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctByMidaxillarySkinfold() {
+  distinctByMidaxillarySkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'midaxillarySkinfold');
     });
@@ -4139,14 +4321,14 @@ extension BodyMetricQueryWhereDistinct
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctBySubscapularSkinfold() {
+  distinctBySubscapularSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'subscapularSkinfold');
     });
   }
 
   QueryBuilder<BodyMetric, BodyMetric, QDistinct>
-      distinctBySuprailiacSkinfold() {
+  distinctBySuprailiacSkinfold() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'suprailiacSkinfold');
     });
@@ -4186,7 +4368,7 @@ extension BodyMetricQueryProperty
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      abdominalSkinfoldProperty() {
+  abdominalSkinfoldProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'abdominalSkinfold');
     });
@@ -4205,7 +4387,7 @@ extension BodyMetricQueryProperty
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      bodyFatPercentageProperty() {
+  bodyFatPercentageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bodyFatPercentage');
     });
@@ -4236,21 +4418,21 @@ extension BodyMetricQueryProperty
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      estimatedFreeTestosteroneProperty() {
+  estimatedFreeTestosteroneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'estimatedFreeTestosterone');
     });
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      gripStrengthLeftProperty() {
+  gripStrengthLeftProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'gripStrengthLeft');
     });
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      gripStrengthRightProperty() {
+  gripStrengthRightProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'gripStrengthRight');
     });
@@ -4263,7 +4445,7 @@ extension BodyMetricQueryProperty
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      labFreeTestosteroneProperty() {
+  labFreeTestosteroneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'labFreeTestosterone');
     });
@@ -4294,21 +4476,21 @@ extension BodyMetricQueryProperty
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      lowerBackSkinfoldProperty() {
+  lowerBackSkinfoldProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lowerBackSkinfold');
     });
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      midaxillarySkinfoldProperty() {
+  midaxillarySkinfoldProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'midaxillarySkinfold');
     });
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      muscleMassGainsProperty() {
+  muscleMassGainsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'muscleMassGains');
     });
@@ -4345,14 +4527,14 @@ extension BodyMetricQueryProperty
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      subscapularSkinfoldProperty() {
+  subscapularSkinfoldProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'subscapularSkinfold');
     });
   }
 
   QueryBuilder<BodyMetric, double?, QQueryOperations>
-      suprailiacSkinfoldProperty() {
+  suprailiacSkinfoldProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'suprailiacSkinfold');
     });

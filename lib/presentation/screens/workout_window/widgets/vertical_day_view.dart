@@ -348,7 +348,6 @@ class _DayContentState extends State<_DayContent> {
     */
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<WorkoutCubit, WorkoutState>(
@@ -361,189 +360,194 @@ class _DayContentState extends State<_DayContent> {
         */
       },
       child: StreamBuilder<List<LogViewModel>>(
-      stream: _stream,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        }
+        stream: _stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
 
-        // Wait for data if we don't have local data yet
-        if (!snapshot.hasData && _localExercises == null) {
-          return _buildEmptyState(context);
-        }
+          // Wait for data if we don't have local data yet
+          if (!snapshot.hasData && _localExercises == null) {
+            return _buildEmptyState(context);
+          }
 
-        final remoteExercises = snapshot.data ?? [];
+          final remoteExercises = snapshot.data ?? [];
 
-        // Update local exercises if structurally different or first time
-        if (_localExercises == null ||
-            _localExercises!.length != remoteExercises.length ||
-            !_areIdsMatching(_localExercises!, remoteExercises)) {
-          _localExercises = List.from(remoteExercises);
-        } else {
-          // Sync content (sets, tags, etc.) while keeping the current local order
-          _localExercises = _localExercises!.map((local) {
-            return remoteExercises.firstWhere(
-              (remote) => remote.id == local.id,
-              orElse: () => local,
-            );
-          }).toList();
-        }
+          // Update local exercises if structurally different or first time
+          if (_localExercises == null ||
+              _localExercises!.length != remoteExercises.length ||
+              !_areIdsMatching(_localExercises!, remoteExercises)) {
+            _localExercises = List.from(remoteExercises);
+          } else {
+            // Sync content (sets, tags, etc.) while keeping the current local order
+            _localExercises = _localExercises!.map((local) {
+              return remoteExercises.firstWhere(
+                (remote) => remote.id == local.id,
+                orElse: () => local,
+              );
+            }).toList();
+          }
 
-        if (_localExercises!.isEmpty) {
-          return _buildEmptyState(context);
-        }
+          if (_localExercises!.isEmpty) {
+            return _buildEmptyState(context);
+          }
 
-        // Auto-scroll to the first incomplete exercise on initial load
-        if (!_hasAutoScrolled) {
-          _hasAutoScrolled = true;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_localExercises!.isNotEmpty) {
-              _autoScrollToActiveExercise(_localExercises!);
-            }
-          });
-        }
+          // Auto-scroll to the first incomplete exercise on initial load
+          if (!_hasAutoScrolled) {
+            _hasAutoScrolled = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_localExercises!.isNotEmpty) {
+                _autoScrollToActiveExercise(_localExercises!);
+              }
+            });
+          }
 
-        return ScrollbarTheme(
-          data: ScrollbarThemeData(
-            thumbColor: WidgetStateProperty.all(
-              Colors.cyanAccent.withOpacity(0.55),
+          return ScrollbarTheme(
+            data: ScrollbarThemeData(
+              thumbColor: WidgetStateProperty.all(
+                Colors.cyanAccent.withOpacity(0.55),
+              ),
+              trackColor: WidgetStateProperty.all(
+                Colors.white.withOpacity(0.04),
+              ),
+              trackBorderColor: WidgetStateProperty.all(Colors.transparent),
+              thickness: WidgetStateProperty.all(5),
+              radius: const Radius.circular(10),
+              crossAxisMargin: 4,
+              mainAxisMargin: 80.0,
+              thumbVisibility: WidgetStateProperty.all(true),
+              trackVisibility: WidgetStateProperty.all(true),
             ),
-            trackColor: WidgetStateProperty.all(
-              Colors.white.withOpacity(0.04),
-            ),
-            trackBorderColor: WidgetStateProperty.all(Colors.transparent),
-            thickness: WidgetStateProperty.all(5),
-            radius: const Radius.circular(10),
-            crossAxisMargin: 4,
-            mainAxisMargin: 80.0,
-            thumbVisibility: WidgetStateProperty.all(true),
-            trackVisibility: WidgetStateProperty.all(true),
-          ),
-          child: Scrollbar(
-            controller: _scrollController,
-            thumbVisibility: true,
-            trackVisibility: true,
-            interactive: true,
-            child: CustomScrollView(
+            child: Scrollbar(
               controller: _scrollController,
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.only(bottom: 8),
-              sliver: SliverReorderableList(
-                itemCount: _localExercises!.length,
-                onReorderStart: (index) {
-                  setState(() {
-                    _draggingIndex = index;
-                    // Collapse everything immediately when the drag starts
-                    context.read<WorkoutCubit>().collapseAllExercises();
-                  });
-                },
-                onReorderEnd: (index) {
-                  setState(() {
-                    _draggingIndex = null;
-                  });
-                },
-                onReorder: (oldIndex, newIndex) {
-                  setState(() {
-                    if (newIndex > oldIndex) newIndex--;
-                    final item = _localExercises!.removeAt(oldIndex);
-                    _localExercises!.insert(newIndex, item);
-                    
-                    // After the move, scroll to its new position so the user doesn't lose track
-                    // Simple scroll estimate for collapsed items: ~72px per item (60 height + 12 margin)
-                    final targetOffset = newIndex * 72.0;
-                    _scrollController.animateTo(
-                      targetOffset,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  });
-                  // Persist to DB
-                  context.read<WorkoutCubit>().reorderExercises(
-                    _localExercises!.map((e) => e.id).toList(),
-                  );
-                },
-                proxyDecorator: (child, index, animation) {
-                  final cubit = context.read<WorkoutCubit>();
-                  final vm = _localExercises![index];
-                  return AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, _) => BlocProvider.value(
-                      value: cubit,
-                      child: Material(
-                        elevation: 6,
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(18),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 60),
-                          child: Opacity(
-                            opacity: 0.8,
-                            child: _buildExerciseCard(
+              thumbVisibility: true,
+              trackVisibility: true,
+              interactive: true,
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    sliver: SliverReorderableList(
+                      itemCount: _localExercises!.length,
+                      onReorderStart: (index) {
+                        setState(() {
+                          _draggingIndex = index;
+                          // Collapse everything immediately when the drag starts
+                          context.read<WorkoutCubit>().collapseAllExercises();
+                        });
+                      },
+                      onReorderEnd: (index) {
+                        setState(() {
+                          _draggingIndex = null;
+                        });
+                      },
+                      onReorder: (oldIndex, newIndex) {
+                        setState(() {
+                          if (newIndex > oldIndex) newIndex--;
+                          final item = _localExercises!.removeAt(oldIndex);
+                          _localExercises!.insert(newIndex, item);
+
+                          // After the move, scroll to its new position so the user doesn't lose track
+                          // Simple scroll estimate for collapsed items: ~72px per item (60 height + 12 margin)
+                          final targetOffset = newIndex * 72.0;
+                          _scrollController.animateTo(
+                            targetOffset,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                          );
+                        });
+                        // Persist to DB
+                        context.read<WorkoutCubit>().reorderExercises(
+                          _localExercises!.map((e) => e.id).toList(),
+                        );
+                      },
+                      proxyDecorator: (child, index, animation) {
+                        final cubit = context.read<WorkoutCubit>();
+                        final vm = _localExercises![index];
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, _) => BlocProvider.value(
+                            value: cubit,
+                            child: Material(
+                              elevation: 6,
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(18),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxHeight: 60,
+                                ),
+                                child: Opacity(
+                                  opacity: 0.8,
+                                  child: _buildExerciseCard(
+                                    context,
+                                    vm,
+                                    index: index,
+                                    dragCollapsed: true,
+                                    isProxy: true,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        final vm = _localExercises![index];
+                        return ValueListenableBuilder<bool>(
+                          key: ValueKey(vm.id),
+                          valueListenable: _isPreDragging,
+                          builder: (context, isPreDragging, _) {
+                            return _buildExerciseCard(
                               context,
                               vm,
                               index: index,
-                              dragCollapsed: true,
-                              isProxy: true,
+                              dragCollapsed:
+                                  _draggingIndex != null || isPreDragging,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: _draggingIndex != null
+                            ? 1000
+                            : 120, // Huge padding during drag to prevent viewport size issues
+                        top: 8,
+                      ),
+                      child: Column(
+                        children: [
+                          if (_localExercises != null)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Text(
+                                _calculateTotalWorkoutTime(_localExercises!),
+                                style: TextStyle(
+                                  color: Colors.cyanAccent.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          _buildAddAnotherExerciseButton(context),
+                          const SizedBox(height: 12),
+                          _buildBottomActions(context),
+                        ],
                       ),
                     ),
-                  );
-                },
-                itemBuilder: (context, index) {
-                  final vm = _localExercises![index];
-                  return ValueListenableBuilder<bool>(
-                    key: ValueKey(vm.id),
-                    valueListenable: _isPreDragging,
-                    builder: (context, isPreDragging, _) {
-                      return _buildExerciseCard(
-                        context,
-                        vm,
-                        index: index,
-                        dragCollapsed: _draggingIndex != null || isPreDragging,
-                      );
-                    },
-                  );
-                },
+                  ),
+                ],
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: _draggingIndex != null ? 1000 : 120, // Huge padding during drag to prevent viewport size issues
-                  top: 8,
-                ),
-                child: Column(
-                  children: [
-                    if (_localExercises != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(
-                          _calculateTotalWorkoutTime(_localExercises!),
-                          style: TextStyle(
-                            color: Colors.cyanAccent.withOpacity(0.5),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    _buildAddAnotherExerciseButton(context),
-                    const SizedBox(height: 12),
-                    _buildBottomActions(context),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
-  },
-),
-);
   }
 
   String _calculateTotalExerciseTime(List<WorkoutSet> sets) {
@@ -573,25 +577,30 @@ class _DayContentState extends State<_DayContent> {
 
   String _calculateTotalWorkoutTime(List<LogViewModel> exercises) {
     if (exercises.isEmpty) return "";
-    
+
     DateTime? firstStart;
     DateTime? lastEnd;
 
     for (final vm in exercises) {
-      final completedSets = vm.sets.where((s) => s.timeCompleted != null).toList();
+      final completedSets = vm.sets
+          .where((s) => s.timeCompleted != null)
+          .toList();
       if (completedSets.isEmpty) continue;
-      
-      completedSets.sort((a, b) => a.timeCompleted!.compareTo(b.timeCompleted!));
-      
+
+      completedSets.sort(
+        (a, b) => a.timeCompleted!.compareTo(b.timeCompleted!),
+      );
+
       final firstSet = completedSets.first;
       final lastSet = completedSets.last;
-      
+
       final startTime = firstSet.timeCompleted!.subtract(
         Duration(seconds: (firstSet.tutSeconds ?? 20) + 10),
       );
       final endTime = lastSet.timeCompleted!;
-      
-      if (firstStart == null || startTime.isBefore(firstStart)) firstStart = startTime;
+
+      if (firstStart == null || startTime.isBefore(firstStart))
+        firstStart = startTime;
       if (lastEnd == null || endTime.isAfter(lastEnd)) lastEnd = endTime;
     }
 
@@ -610,16 +619,37 @@ class _DayContentState extends State<_DayContent> {
   void _registerKeys() {
     final service = TutorialService();
     // These keys are persistent as they are assigned to static or first-instance elements
-    service.registerKey(TutorialStep.startWorkout, GlobalKey(debugLabel: 'startWorkout'));
-    service.registerKey(TutorialStep.firstExercise, GlobalKey(debugLabel: 'firstExercise'));
-    service.registerKey(TutorialStep.addExerciseToDay, GlobalKey(debugLabel: 'addExerciseToDay'));
-    service.registerKey(TutorialStep.restTimerTag, GlobalKey(debugLabel: 'restTimerTag'));
+    service.registerKey(
+      TutorialStep.startWorkout,
+      GlobalKey(debugLabel: 'startWorkout'),
+    );
+    service.registerKey(
+      TutorialStep.firstExercise,
+      GlobalKey(debugLabel: 'firstExercise'),
+    );
+    service.registerKey(
+      TutorialStep.addExerciseToDay,
+      GlobalKey(debugLabel: 'addExerciseToDay'),
+    );
+    service.registerKey(
+      TutorialStep.restTimerTag,
+      GlobalKey(debugLabel: 'restTimerTag'),
+    );
     service.registerKey(TutorialStep.tutTag, GlobalKey(debugLabel: 'tutTag'));
-    service.registerKey(TutorialStep.prepTimeTag, GlobalKey(debugLabel: 'prepTimeTag'));
-    service.registerKey(TutorialStep.exerciseOptions, GlobalKey(debugLabel: 'exerciseOptions'));
+    service.registerKey(
+      TutorialStep.prepTimeTag,
+      GlobalKey(debugLabel: 'prepTimeTag'),
+    );
+    service.registerKey(
+      TutorialStep.exerciseOptions,
+      GlobalKey(debugLabel: 'exerciseOptions'),
+    );
     service.registerKey(TutorialStep.addSet, GlobalKey(debugLabel: 'addSet'));
     service.registerKey(TutorialStep.logSet, GlobalKey(debugLabel: 'logSet'));
-    service.registerKey(TutorialStep.exerciseGraph, GlobalKey(debugLabel: 'exerciseGraph'));
+    service.registerKey(
+      TutorialStep.exerciseGraph,
+      GlobalKey(debugLabel: 'exerciseGraph'),
+    );
   }
 
   bool _areIdsMatching(List<LogViewModel> a, List<LogViewModel> b) {
@@ -630,7 +660,12 @@ class _DayContentState extends State<_DayContent> {
     return true;
   }
 
-  Widget _applyKeyIfFirstSet(int exerciseIndex, int setIndex, TutorialStep step, Widget child) {
+  Widget _applyKeyIfFirstSet(
+    int exerciseIndex,
+    int setIndex,
+    TutorialStep step,
+    Widget child,
+  ) {
     if (exerciseIndex == 0 && setIndex == 0) {
       return KeyedSubtree(
         key: TutorialService().getKeyForStep(step),
@@ -659,7 +694,7 @@ class _DayContentState extends State<_DayContent> {
   }) {
     final workoutState = context.watch<WorkoutCubit>().state;
     // An exercise is expanded if its ID matches the expandedExerciseId in state,
-    // OR if no ID is stored (initial/fallback). 
+    // OR if no ID is stored (initial/fallback).
     // BUT the user says: "all of the other ones will colapse".
     // AND "when we add new exercise it will be in default state" (expanded).
     // An exercise is expanded if its ID is in the expandedExerciseIds set
@@ -671,7 +706,9 @@ class _DayContentState extends State<_DayContent> {
         onTap: () =>
             context.read<WorkoutCubit>().toggleExerciseExpansion(vm.id),
         child: Container(
-          height: (dragCollapsed || isProxy) ? 60 : null, // FORCE HEIGHT to fix hitbox
+          height: (dragCollapsed || isProxy)
+              ? 60
+              : null, // FORCE HEIGHT to fix hitbox
           margin: EdgeInsets.symmetric(
             horizontal: 16,
             vertical: (dragCollapsed || isProxy) ? 0 : 6,
@@ -685,74 +722,92 @@ class _DayContentState extends State<_DayContent> {
               width: 1,
             ),
           ),
-          child: _applyKeyIfFirst(index, TutorialStep.firstExercise, Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            child: Row(
-              children: [
-                FastReorderableDelayedDragStartListener(
-                  index: index,
-                  dragDelay: const Duration(milliseconds: 250),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.drag_indicator,
+          child: _applyKeyIfFirst(
+            index,
+            TutorialStep.firstExercise,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Row(
+                children: [
+                  FastReorderableDelayedDragStartListener(
+                    index: index,
+                    dragDelay: const Duration(milliseconds: 250),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.drag_indicator,
+                        color: Colors.white30,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      vm.name,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    key: index == 0
+                        ? TutorialService().getKeyForStep(
+                            TutorialStep.exerciseGraph,
+                          )
+                        : null,
+                    icon: const Icon(
+                      Icons.show_chart,
                       color: Colors.white30,
                       size: 18,
                     ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    vm.name,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  key: index == 0 ? TutorialService().getKeyForStep(TutorialStep.exerciseGraph) : null,
-                  icon: const Icon(Icons.show_chart,
-                      color: Colors.white30, size: 18),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => ExerciseAnalyticsDialog(
-                        exerciseId: vm.originalLog.exercise.value!.id,
-                        exerciseName: vm.name,
-                      ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.white30, size: 16),
-                  onPressed: () {
-                    final cubit = context.read<WorkoutCubit>();
-                    showDialog(
-                      context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: cubit,
-                        child: ExerciseManagementDialog(
-                          exercise: vm.originalLog.exercise.value!,
-                          onAfterDelete: () {
-                            cubit.deleteLog(vm.id);
-                          },
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => ExerciseAnalyticsDialog(
+                          exerciseId: vm.originalLog.exercise.value!.id,
+                          exerciseName: vm.name,
                         ),
-                      ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete_outline,
-                      color: Colors.white30, size: 18),
-                  onPressed: () =>
-                      context.read<WorkoutCubit>().deleteLog(vm.id),
-                ),
-              ],
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.white30,
+                      size: 16,
+                    ),
+                    onPressed: () {
+                      final cubit = context.read<WorkoutCubit>();
+                      showDialog(
+                        context: context,
+                        builder: (_) => BlocProvider.value(
+                          value: cubit,
+                          child: ExerciseManagementDialog(
+                            exercise: vm.originalLog.exercise.value!,
+                            onAfterDelete: () {
+                              cubit.deleteLog(vm.id);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.white30,
+                      size: 18,
+                    ),
+                    onPressed: () =>
+                        context.read<WorkoutCubit>().deleteLog(vm.id),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ),
       );
     }
@@ -841,22 +896,29 @@ class _DayContentState extends State<_DayContent> {
                 children: [
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => context.read<WorkoutCubit>().toggleExerciseExpansion(vm.id),
+                    onTap: () => context
+                        .read<WorkoutCubit>()
+                        .toggleExerciseExpansion(vm.id),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Text(
                             vm.name,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Colors.cyanAccent,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.cyanAccent,
+                                ),
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.show_chart, color: Colors.white70, size: 19),
+                          icon: const Icon(
+                            Icons.show_chart,
+                            color: Colors.white70,
+                            size: 19,
+                          ),
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -869,7 +931,11 @@ class _DayContentState extends State<_DayContent> {
                           tooltip: 'View Analytics',
                         ),
                         IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.white70, size: 16),
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.white70,
+                            size: 16,
+                          ),
                           onPressed: () {
                             final cubit = context.read<WorkoutCubit>();
                             showDialog(
@@ -888,7 +954,11 @@ class _DayContentState extends State<_DayContent> {
                           tooltip: 'Edit Exercise Template',
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.white70, size: 19),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.white70,
+                            size: 19,
+                          ),
                           onPressed: () {
                             context.read<WorkoutCubit>().deleteLog(vm.id);
                           },
@@ -903,13 +973,19 @@ class _DayContentState extends State<_DayContent> {
                         Text(
                           "No sets logged yet.",
                           style: TextStyle(
-                            color: Theme.of(context).primaryColor.withOpacity(0.4),
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withOpacity(0.4),
                           ),
                         ),
                         const SizedBox(height: 8),
                         OutlinedButton(
                           onPressed: () {
-                            context.read<WorkoutCubit>().addSet(vm.id, 20.0, 10);
+                            context.read<WorkoutCubit>().addSet(
+                              vm.id,
+                              20.0,
+                              10,
+                            );
                           },
                           child: const Text("Add Set"),
                         ),
@@ -922,11 +998,13 @@ class _DayContentState extends State<_DayContent> {
 
                       return BlocBuilder<WorkoutCubit, WorkoutState>(
                         builder: (context, state) {
-                          final isHighlighted = state.restTimer != null &&
+                          final isHighlighted =
+                              state.restTimer != null &&
                               state.restTimer!.exerciseLogId == vm.id &&
                               state.restTimer!.setIndex == i;
 
-                          final isTutActive = state.tutTimer != null &&
+                          final isTutActive =
+                              state.tutTimer != null &&
                               state.tutTimer!.exerciseLogId == vm.id &&
                               state.tutTimer!.setIndex == i;
 
@@ -936,15 +1014,21 @@ class _DayContentState extends State<_DayContent> {
                               if (isTutActive) const TutTimerInline(),
                               AnimatedContainer(
                                 duration: const Duration(milliseconds: 300),
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: isHighlighted
-                                      ? Theme.of(context).primaryColor.withOpacity(0.08)
+                                      ? Theme.of(
+                                          context,
+                                        ).primaryColor.withOpacity(0.08)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   border: isHighlighted
                                       ? Border.all(
-                                          color: Theme.of(context).primaryColor.withOpacity(0.3),
+                                          color: Theme.of(
+                                            context,
+                                          ).primaryColor.withOpacity(0.3),
                                           width: 1,
                                         )
                                       : null,
@@ -952,7 +1036,8 @@ class _DayContentState extends State<_DayContent> {
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         // 1. Set Number Box
                                         _buildCutEdgeBox(
@@ -961,22 +1046,48 @@ class _DayContentState extends State<_DayContent> {
                                           height: 38,
                                           color: s.isPr
                                               ? Colors.amber
-                                              : (s.isTodayPr ? Colors.orangeAccent : Colors.white),
+                                              : (s.isTodayPr
+                                                    ? Colors.orangeAccent
+                                                    : Colors.white),
                                           isGrayLabel: !s.isPr && !s.isTodayPr,
                                           topChild: s.isPr
-                                              ? const Icon(Icons.emoji_events, size: 16, color: Colors.amber)
+                                              ? const Icon(
+                                                  Icons.emoji_events,
+                                                  size: 16,
+                                                  color: Colors.amber,
+                                                )
                                               : (s.isTodayPr
-                                                  ? const Icon(Icons.military_tech, size: 16, color: Colors.orangeAccent)
-                                                  : Text("${i + 1}", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12))),
+                                                    ? const Icon(
+                                                        Icons.military_tech,
+                                                        size: 16,
+                                                        color:
+                                                            Colors.orangeAccent,
+                                                      )
+                                                    : Text(
+                                                        "${i + 1}",
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: 12,
+                                                        ),
+                                                      )),
                                           bottomChild: Text(
-                                            s.isPr ? "PR" : (s.isTodayPr ? "BEST" : "SET"),
+                                            s.isPr
+                                                ? "PR"
+                                                : (s.isTodayPr
+                                                      ? "BEST"
+                                                      : "SET"),
                                             style: TextStyle(
                                               fontSize: 6.5,
                                               color: s.isPr
                                                   ? Colors.amber
                                                   : (s.isTodayPr
-                                                      ? Colors.orangeAccent
-                                                      : Theme.of(context).primaryColor.withOpacity(0.5)),
+                                                        ? Colors.orangeAccent
+                                                        : Theme.of(context)
+                                                              .primaryColor
+                                                              .withOpacity(
+                                                                0.5,
+                                                              )),
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -987,39 +1098,72 @@ class _DayContentState extends State<_DayContent> {
                                           flex: 1,
                                           child: _buildBalancedTags([
                                             if (s.isRestTimerEnabled)
-                                              _applyKeyIfFirstSet(index, i, TutorialStep.restTimerTag, _buildTechniqueBadge(
-                                                context,
-                                                s.restDuration.toString(),
-                                                Colors.greenAccent,
-                                                s,
-                                                () async {
-                                                  final result = await showDialog<double>(
-                                                    context: context,
-                                                    builder: (_) => ValueInputDialog(
-                                                      title: 'Rest Duration',
-                                                      initialValue: (s.restDuration ?? 90).toDouble(),
-                                                      unit: 's',
-                                                      defaultIncrement: 15,
-                                                      showDelete: true,
-                                                    ),
-                                                  );
-                                                  if (result != null) {
-                                                    final updated = s.copyWith(
-                                                      isRestTimerEnabled: result != double.infinity,
-                                                      restDuration: result == double.infinity ? null : result.toInt(),
-                                                    );
-                                                    context.read<WorkoutCubit>().updateSet(vm.id, i, updated);
-                                                  }
-                                                },
-                                                Icons.timer,
-                                              )),
+                                              _applyKeyIfFirstSet(
+                                                index,
+                                                i,
+                                                TutorialStep.restTimerTag,
+                                                _buildTechniqueBadge(
+                                                  context,
+                                                  s.restDuration.toString(),
+                                                  Colors.greenAccent,
+                                                  s,
+                                                  () async {
+                                                    final result =
+                                                        await showDialog<
+                                                          double
+                                                        >(
+                                                          context: context,
+                                                          builder: (_) => ValueInputDialog(
+                                                            title:
+                                                                'Rest Duration',
+                                                            initialValue:
+                                                                (s.restDuration ??
+                                                                        90)
+                                                                    .toDouble(),
+                                                            unit: 's',
+                                                            defaultIncrement:
+                                                                15,
+                                                            showDelete: true,
+                                                          ),
+                                                        );
+                                                    if (result != null) {
+                                                      final updated = s.copyWith(
+                                                        isRestTimerEnabled:
+                                                            result !=
+                                                            double.infinity,
+                                                        restDuration:
+                                                            result ==
+                                                                double.infinity
+                                                            ? null
+                                                            : result.toInt(),
+                                                      );
+                                                      context
+                                                          .read<WorkoutCubit>()
+                                                          .updateSet(
+                                                            vm.id,
+                                                            i,
+                                                            updated,
+                                                          );
+                                                    }
+                                                  },
+                                                  Icons.timer,
+                                                ),
+                                              ),
                                             if (s.isWarmUp)
                                               _buildTechniqueBadge(
                                                 context,
                                                 'W',
                                                 const Color(0xFFB0B0B0),
                                                 s,
-                                                () => _showTechniqueEdit(context, vm.id, i, s, 'Warm Up', (set) => set..isWarmUp = false),
+                                                () => _showTechniqueEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Warm Up',
+                                                  (set) =>
+                                                      set..isWarmUp = false,
+                                                ),
                                                 Icons.wb_sunny_outlined,
                                               ),
                                             if (s.isDropSet)
@@ -1028,7 +1172,15 @@ class _DayContentState extends State<_DayContent> {
                                                 'DS',
                                                 Colors.purpleAccent,
                                                 s,
-                                                () => _showTechniqueEdit(context, vm.id, i, s, 'Drop Set', (set) => set..isDropSet = false),
+                                                () => _showTechniqueEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Drop Set',
+                                                  (set) =>
+                                                      set..isDropSet = false,
+                                                ),
                                                 Icons.arrow_downward,
                                               ),
                                             if (s.isFailure)
@@ -1037,7 +1189,15 @@ class _DayContentState extends State<_DayContent> {
                                                 'F',
                                                 Colors.redAccent,
                                                 s,
-                                                () => _showTechniqueEdit(context, vm.id, i, s, 'Failure', (set) => set..isFailure = false),
+                                                () => _showTechniqueEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Failure',
+                                                  (set) =>
+                                                      set..isFailure = false,
+                                                ),
                                                 Icons.dangerous,
                                               ),
                                             if (s.rir != null)
@@ -1046,7 +1206,19 @@ class _DayContentState extends State<_DayContent> {
                                                 s.rir.toString(),
                                                 Colors.blueGrey,
                                                 s,
-                                                () => _showNumericEdit(context, vm.id, i, s, 'RIR', s.rir!.toDouble(), (set, val) => set..rir = val == double.infinity ? null : val.toInt()),
+                                                () => _showNumericEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'RIR',
+                                                  s.rir!.toDouble(),
+                                                  (set, val) => set
+                                                    ..rir =
+                                                        val == double.infinity
+                                                        ? null
+                                                        : val.toInt(),
+                                                ),
                                                 Icons.hourglass_empty,
                                               ),
                                             if (s.myoReps != null)
@@ -1055,7 +1227,19 @@ class _DayContentState extends State<_DayContent> {
                                                 s.myoReps.toString(),
                                                 Colors.deepOrangeAccent,
                                                 s,
-                                                () => _showNumericEdit(context, vm.id, i, s, 'Myo Reps', s.myoReps!.toDouble(), (set, val) => set..myoReps = val == double.infinity ? null : val.toInt()),
+                                                () => _showNumericEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Myo Reps',
+                                                  s.myoReps!.toDouble(),
+                                                  (set, val) => set
+                                                    ..myoReps =
+                                                        val == double.infinity
+                                                        ? null
+                                                        : val.toInt(),
+                                                ),
                                                 Icons.bolt,
                                               ),
                                             if (s.spotReps != null)
@@ -1064,7 +1248,19 @@ class _DayContentState extends State<_DayContent> {
                                                 s.spotReps.toString(),
                                                 const Color(0xFFFF6B6B),
                                                 s,
-                                                () => _showNumericEdit(context, vm.id, i, s, 'Spot Reps', s.spotReps!.toDouble(), (set, val) => set..spotReps = val == double.infinity ? null : val.toInt()),
+                                                () => _showNumericEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Spot Reps',
+                                                  s.spotReps!.toDouble(),
+                                                  (set, val) => set
+                                                    ..spotReps =
+                                                        val == double.infinity
+                                                        ? null
+                                                        : val.toInt(),
+                                                ),
                                                 Icons.people,
                                               ),
                                             if (s.partialReps != null)
@@ -1073,7 +1269,19 @@ class _DayContentState extends State<_DayContent> {
                                                 s.partialReps.toString(),
                                                 const Color(0xFF6FAAFF),
                                                 s,
-                                                () => _showNumericEdit(context, vm.id, i, s, 'Partial Reps', s.partialReps!.toDouble(), (set, val) => set..partialReps = val == double.infinity ? null : val.toInt()),
+                                                () => _showNumericEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Partial Reps',
+                                                  s.partialReps!.toDouble(),
+                                                  (set, val) => set
+                                                    ..partialReps =
+                                                        val == double.infinity
+                                                        ? null
+                                                        : val.toInt(),
+                                                ),
                                                 Icons.straighten,
                                               ),
                                             if (vm.isIsolate)
@@ -1081,34 +1289,83 @@ class _DayContentState extends State<_DayContent> {
                                                 context: context,
                                                 side: s.side ?? "R",
                                                 onTap: () {
-                                                  final updated = s.copyWith(side: s.side == "L" ? "R" : "L");
-                                                  context.read<WorkoutCubit>().updateSet(vm.id, i, updated);
+                                                  final updated = s.copyWith(
+                                                    side: s.side == "L"
+                                                        ? "R"
+                                                        : "L",
+                                                  );
+                                                  context
+                                                      .read<WorkoutCubit>()
+                                                      .updateSet(
+                                                        vm.id,
+                                                        i,
+                                                        updated,
+                                                      );
                                                 },
                                               ),
                                             if (vm.hasCablePosition)
                                               _buildEquipmentBox(
                                                 context: context,
                                                 label: "Cable",
-                                                value: s.cablePosition?.toString() ?? "-",
-                                                icon: Icons.settings_input_component,
-                                                onTap: () => _showNumericEdit(context, vm.id, i, s, 'Cable Position', (s.cablePosition ?? 1).toDouble(), (set, val) => set..cablePosition = val == double.infinity ? null : val.toInt()),
+                                                value:
+                                                    s.cablePosition
+                                                        ?.toString() ??
+                                                    "-",
+                                                icon: Icons
+                                                    .settings_input_component,
+                                                onTap: () => _showNumericEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Cable Position',
+                                                  (s.cablePosition ?? 1)
+                                                      .toDouble(),
+                                                  (set, val) => set
+                                                    ..cablePosition =
+                                                        val == double.infinity
+                                                        ? null
+                                                        : val.toInt(),
+                                                ),
                                               ),
                                             if (vm.hasBenchPosition)
                                               _buildEquipmentBox(
                                                 context: context,
                                                 label: "Bench",
-                                                value: s.benchPosition?.toString() ?? "-",
+                                                value:
+                                                    s.benchPosition
+                                                        ?.toString() ??
+                                                    "-",
                                                 icon: Icons.chair,
-                                                onTap: () => _showNumericEdit(context, vm.id, i, s, 'Bench Position', (s.benchPosition ?? 1).toDouble(), (set, val) => set..benchPosition = val == double.infinity ? null : val.toInt()),
+                                                onTap: () => _showNumericEdit(
+                                                  context,
+                                                  vm.id,
+                                                  i,
+                                                  s,
+                                                  'Bench Position',
+                                                  (s.benchPosition ?? 1)
+                                                      .toDouble(),
+                                                  (set, val) => set
+                                                    ..benchPosition =
+                                                        val == double.infinity
+                                                        ? null
+                                                        : val.toInt(),
+                                                ),
                                               ),
-                                              _applyKeyIfFirstSet(index, i, TutorialStep.tutTag, _buildTechniqueBadge(
+                                            _applyKeyIfFirstSet(
+                                              index,
+                                              i,
+                                              TutorialStep.tutTag,
+                                              _buildTechniqueBadge(
                                                 context,
                                                 s.isTutEnabled
                                                     ? (s.tutSeconds != null
-                                                        ? '${s.tutSeconds}s'
-                                                        : 'TUT·${s.tutPrepSeconds}s')
+                                                          ? '${s.tutSeconds}s'
+                                                          : 'TUT·${s.tutPrepSeconds}s')
                                                     : 'NO TUT',
-                                                s.isTutEnabled ? Colors.blueAccent : Colors.grey,
+                                                s.isTutEnabled
+                                                    ? Colors.blueAccent
+                                                    : Colors.grey,
                                                 s,
                                                 () async {
                                                   if (s.isTutEnabled) {
@@ -1116,40 +1373,115 @@ class _DayContentState extends State<_DayContent> {
                                                     showDialog(
                                                       context: context,
                                                       builder: (ctx) => AlertDialog(
-                                                        backgroundColor: const Color(0xFF1a1a1a),
-                                                        title: const Text('TUT Settings', style: TextStyle(color: Colors.white)),
+                                                        backgroundColor:
+                                                            const Color(
+                                                              0xFF1a1a1a,
+                                                            ),
+                                                        title: const Text(
+                                                          'TUT Settings',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
                                                         content: Column(
-                                                          mainAxisSize: MainAxisSize.min,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
                                                           children: [
                                                             ListTile(
-                                                              leading: const Icon(Icons.timer_outlined, color: Colors.blueAccent),
-                                                              title: const Text('Prep Time', style: TextStyle(color: Colors.white)),
-                                                              key: TutorialService().getKeyForStep(TutorialStep.prepTimeTag),
-                                                              subtitle: Text('${s.tutPrepSeconds} seconds', style: const TextStyle(color: Colors.white70)),
+                                                              leading: const Icon(
+                                                                Icons
+                                                                    .timer_outlined,
+                                                                color: Colors
+                                                                    .blueAccent,
+                                                              ),
+                                                              title: const Text(
+                                                                'Prep Time',
+                                                                style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
+                                                              key: TutorialService()
+                                                                  .getKeyForStep(
+                                                                    TutorialStep
+                                                                        .prepTimeTag,
+                                                                  ),
+                                                              subtitle: Text(
+                                                                '${s.tutPrepSeconds} seconds',
+                                                                style: const TextStyle(
+                                                                  color: Colors
+                                                                      .white70,
+                                                                ),
+                                                              ),
                                                               onTap: () async {
-                                                                Navigator.pop(ctx);
+                                                                Navigator.pop(
+                                                                  ctx,
+                                                                );
                                                                 final result = await showDialog<double>(
-                                                                  context: context,
+                                                                  context:
+                                                                      context,
                                                                   builder: (_) => ValueInputDialog(
-                                                                    title: 'Preparation Time',
-                                                                    initialValue: s.tutPrepSeconds.toDouble(),
+                                                                    title:
+                                                                        'Preparation Time',
+                                                                    initialValue: s
+                                                                        .tutPrepSeconds
+                                                                        .toDouble(),
                                                                     unit: 's',
-                                                                    defaultIncrement: 1,
+                                                                    defaultIncrement:
+                                                                        1,
                                                                   ),
                                                                 );
-                                                                if (result != null) {
-                                                                  final updated = s.copyWith(tutPrepSeconds: result.toInt());
-                                                                  context.read<WorkoutCubit>().updateSet(vm.id, i, updated);
+                                                                if (result !=
+                                                                    null) {
+                                                                  final updated =
+                                                                      s.copyWith(
+                                                                        tutPrepSeconds:
+                                                                            result.toInt(),
+                                                                      );
+                                                                  context
+                                                                      .read<
+                                                                        WorkoutCubit
+                                                                      >()
+                                                                      .updateSet(
+                                                                        vm.id,
+                                                                        i,
+                                                                        updated,
+                                                                      );
                                                                 }
                                                               },
                                                             ),
                                                             ListTile(
-                                                              leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                                                              title: const Text('Remove TUT Tag', style: TextStyle(color: Colors.white)),
+                                                              leading: const Icon(
+                                                                Icons
+                                                                    .delete_outline,
+                                                                color: Colors
+                                                                    .redAccent,
+                                                              ),
+                                                              title: const Text(
+                                                                'Remove TUT Tag',
+                                                                style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
                                                               onTap: () {
-                                                                final updated = s.copyWith(isTutEnabled: false);
-                                                                context.read<WorkoutCubit>().updateSet(vm.id, i, updated);
-                                                                Navigator.pop(ctx);
+                                                                final updated =
+                                                                    s.copyWith(
+                                                                      isTutEnabled:
+                                                                          false,
+                                                                    );
+                                                                context
+                                                                    .read<
+                                                                      WorkoutCubit
+                                                                    >()
+                                                                    .updateSet(
+                                                                      vm.id,
+                                                                      i,
+                                                                      updated,
+                                                                    );
+                                                                Navigator.pop(
+                                                                  ctx,
+                                                                );
                                                               },
                                                             ),
                                                           ],
@@ -1158,12 +1490,21 @@ class _DayContentState extends State<_DayContent> {
                                                     );
                                                   } else {
                                                     // Enable it
-                                                    final updated = s.copyWith(isTutEnabled: true);
-                                                    context.read<WorkoutCubit>().updateSet(vm.id, i, updated);
+                                                    final updated = s.copyWith(
+                                                      isTutEnabled: true,
+                                                    );
+                                                    context
+                                                        .read<WorkoutCubit>()
+                                                        .updateSet(
+                                                          vm.id,
+                                                          i,
+                                                          updated,
+                                                        );
                                                   }
                                                 },
                                                 Icons.av_timer,
-                                              )),
+                                              ),
+                                            ),
                                           ]),
                                         ),
                                         const SizedBox(width: 4),
@@ -1173,30 +1514,136 @@ class _DayContentState extends State<_DayContent> {
                                           children: [
                                             if (vm.trackWeightReps) ...[
                                               _buildValueBox(
-                                                context, vm.id, i, s, vm.originalLog.exercise.value?.id ?? 0,
-                                                'Weight', s.weight ?? 0.0, vm.defaultUnit == WeightUnit.lbs ? 'lbs' : 'kg',
-                                                vm.weightIncrement, 40, (val) => val, (set, val) => set..weight = val,
-                                                onIncrementUpdate: (newVal) => context.read<WorkoutCubit>().updateExerciseIncrement(logId: vm.id, weightIncrement: newVal),
+                                                context,
+                                                vm.id,
+                                                i,
+                                                s,
+                                                vm
+                                                        .originalLog
+                                                        .exercise
+                                                        .value
+                                                        ?.id ??
+                                                    0,
+                                                'Weight',
+                                                s.weight ?? 0.0,
+                                                vm.defaultUnit == WeightUnit.lbs
+                                                    ? 'lbs'
+                                                    : 'kg',
+                                                vm.weightIncrement,
+                                                40,
+                                                (val) => val,
+                                                (set, val) => set..weight = val,
+                                                onIncrementUpdate: (newVal) =>
+                                                    context
+                                                        .read<WorkoutCubit>()
+                                                        .updateExerciseIncrement(
+                                                          logId: vm.id,
+                                                          weightIncrement:
+                                                              newVal,
+                                                        ),
                                               ),
                                               const SizedBox(height: 4),
                                               _buildValueBox(
-                                                context, vm.id, i, s, vm.originalLog.exercise.value?.id ?? 0,
-                                                'Reps', (s.reps ?? 0).toDouble(), 'rps',
-                                                vm.repsIncrement, 40, (val) => val.toInt(), (set, val) => set..reps = val.toInt(),
-                                                onIncrementUpdate: (newVal) => context.read<WorkoutCubit>().updateExerciseIncrement(logId: vm.id, repsIncrement: newVal),
+                                                context,
+                                                vm.id,
+                                                i,
+                                                s,
+                                                vm
+                                                        .originalLog
+                                                        .exercise
+                                                        .value
+                                                        ?.id ??
+                                                    0,
+                                                'Reps',
+                                                (s.reps ?? 0).toDouble(),
+                                                'rps',
+                                                vm.repsIncrement,
+                                                40,
+                                                (val) => val.toInt(),
+                                                (set, val) =>
+                                                    set..reps = val.toInt(),
+                                                onIncrementUpdate: (newVal) =>
+                                                    context
+                                                        .read<WorkoutCubit>()
+                                                        .updateExerciseIncrement(
+                                                          logId: vm.id,
+                                                          repsIncrement: newVal,
+                                                        ),
                                               ),
                                             ],
                                             if (vm.trackDistance) ...[
-                                              if (vm.trackWeightReps) const SizedBox(height: 4),
-                                              _buildValueBox(context, vm.id, i, s, vm.originalLog.exercise.value?.id ?? 0, 'Distance', s.distance ?? 0.0, vm.distanceUnit ?? 'km', 1.0, 40, (val) => val, (set, val) => set..distance = val),
+                                              if (vm.trackWeightReps)
+                                                const SizedBox(height: 4),
+                                              _buildValueBox(
+                                                context,
+                                                vm.id,
+                                                i,
+                                                s,
+                                                vm
+                                                        .originalLog
+                                                        .exercise
+                                                        .value
+                                                        ?.id ??
+                                                    0,
+                                                'Distance',
+                                                s.distance ?? 0.0,
+                                                vm.distanceUnit ?? 'km',
+                                                1.0,
+                                                40,
+                                                (val) => val,
+                                                (set, val) =>
+                                                    set..distance = val,
+                                              ),
                                             ],
                                             if (vm.trackSpeed) ...[
-                                              if (vm.trackWeightReps || vm.trackDistance) const SizedBox(height: 4),
-                                              _buildValueBox(context, vm.id, i, s, vm.originalLog.exercise.value?.id ?? 0, 'Speed', s.speed ?? 0.0, vm.speedUnit ?? 'km/h', 0.5, 40, (val) => val, (set, val) => set..speed = val),
+                                              if (vm.trackWeightReps ||
+                                                  vm.trackDistance)
+                                                const SizedBox(height: 4),
+                                              _buildValueBox(
+                                                context,
+                                                vm.id,
+                                                i,
+                                                s,
+                                                vm
+                                                        .originalLog
+                                                        .exercise
+                                                        .value
+                                                        ?.id ??
+                                                    0,
+                                                'Speed',
+                                                s.speed ?? 0.0,
+                                                vm.speedUnit ?? 'km/h',
+                                                0.5,
+                                                40,
+                                                (val) => val,
+                                                (set, val) => set..speed = val,
+                                              ),
                                             ],
                                             if (vm.trackCalories) ...[
-                                              if (vm.trackWeightReps || vm.trackDistance || vm.trackSpeed) const SizedBox(height: 4),
-                                              _buildValueBox(context, vm.id, i, s, vm.originalLog.exercise.value?.id ?? 0, 'Calories', s.calories ?? 0.0, vm.caloriesUnit ?? 'kcal', 10.0, 40, (val) => val, (set, val) => set..calories = val),
+                                              if (vm.trackWeightReps ||
+                                                  vm.trackDistance ||
+                                                  vm.trackSpeed)
+                                                const SizedBox(height: 4),
+                                              _buildValueBox(
+                                                context,
+                                                vm.id,
+                                                i,
+                                                s,
+                                                vm
+                                                        .originalLog
+                                                        .exercise
+                                                        .value
+                                                        ?.id ??
+                                                    0,
+                                                'Calories',
+                                                s.calories ?? 0.0,
+                                                vm.caloriesUnit ?? 'kcal',
+                                                10.0,
+                                                40,
+                                                (val) => val,
+                                                (set, val) =>
+                                                    set..calories = val,
+                                              ),
                                             ],
                                           ],
                                         ),
@@ -1208,26 +1655,76 @@ class _DayContentState extends State<_DayContent> {
                                             SizedBox(
                                               height: 40,
                                               child: Padding(
-                                                padding: const EdgeInsets.only(bottom: 8),
+                                                padding: const EdgeInsets.only(
+                                                  bottom: 8,
+                                                ),
                                                 child: Builder(
                                                   builder: (btnContext) {
-                                                    return _applyKeyIfFirstSet(index, i, TutorialStep.logSet, IconButton(
-                                                      icon: Icon(
-                                                        s.isCompleted ? Icons.check_circle : (isTutActive ? Icons.play_circle : Icons.circle_outlined),
-                                                        size: 20,
-                                                        color: s.isCompleted ? const Color(0xFF00E676) : (isTutActive ? Colors.blue : Colors.grey),
+                                                    return _applyKeyIfFirstSet(
+                                                      index,
+                                                      i,
+                                                      TutorialStep.logSet,
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          s.isCompleted
+                                                              ? Icons
+                                                                    .check_circle
+                                                              : (isTutActive
+                                                                    ? Icons
+                                                                          .play_circle
+                                                                    : Icons
+                                                                          .circle_outlined),
+                                                          size: 20,
+                                                          color: s.isCompleted
+                                                              ? const Color(
+                                                                  0xFF00E676,
+                                                                )
+                                                              : (isTutActive
+                                                                    ? Colors
+                                                                          .blue
+                                                                    : Colors
+                                                                          .grey),
+                                                        ),
+                                                        onPressed: () {
+                                                          final wasAlreadyCompleted =
+                                                              s.isCompleted;
+                                                          context
+                                                              .read<
+                                                                WorkoutCubit
+                                                              >()
+                                                              .toggleSetCompletion(
+                                                                vm.id,
+                                                                i,
+                                                                s,
+                                                              );
+                                                          if (!wasAlreadyCompleted) {
+                                                            final box =
+                                                                btnContext
+                                                                        .findRenderObject()
+                                                                    as RenderBox;
+                                                            celebrationKey
+                                                                .currentState
+                                                                ?.popCheckmark(
+                                                                  box.localToGlobal(
+                                                                    Offset(
+                                                                      box.size.width /
+                                                                          2,
+                                                                      box.size.height /
+                                                                          2,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                          }
+                                                        },
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        constraints:
+                                                            const BoxConstraints(
+                                                              minWidth: 28,
+                                                              minHeight: 28,
+                                                            ),
                                                       ),
-                                                      onPressed: () {
-                                                        final wasAlreadyCompleted = s.isCompleted;
-                                                        context.read<WorkoutCubit>().toggleSetCompletion(vm.id, i, s);
-                                                        if (!wasAlreadyCompleted) {
-                                                          final box = btnContext.findRenderObject() as RenderBox;
-                                                          celebrationKey.currentState?.popCheckmark(box.localToGlobal(Offset(box.size.width / 2, box.size.height / 2)));
-                                                        }
-                                                      },
-                                                      padding: EdgeInsets.zero,
-                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                                    ));
+                                                    );
                                                   },
                                                 ),
                                               ),
@@ -1236,12 +1733,47 @@ class _DayContentState extends State<_DayContent> {
                                             SizedBox(
                                               height: 40,
                                               child: Padding(
-                                                padding: const EdgeInsets.only(bottom: 8),
+                                                padding: const EdgeInsets.only(
+                                                  bottom: 8,
+                                                ),
                                                 child: IconButton(
-                                                  icon: const Icon(Icons.more_vert, size: 20, color: Colors.grey),
-                                                  onPressed: () => showDialog(context: context, builder: (_) => TechniqueSelectionDialog(currentSet: s, onSave: (updated) => context.read<WorkoutCubit>().updateSet(vm.id, i, updated), onDelete: () => context.read<WorkoutCubit>().deleteSet(vm.id, i))),
+                                                  icon: const Icon(
+                                                    Icons.more_vert,
+                                                    size: 20,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  onPressed: () => showDialog(
+                                                    context: context,
+                                                    builder: (_) =>
+                                                        TechniqueSelectionDialog(
+                                                          currentSet: s,
+                                                          onSave: (updated) =>
+                                                              context
+                                                                  .read<
+                                                                    WorkoutCubit
+                                                                  >()
+                                                                  .updateSet(
+                                                                    vm.id,
+                                                                    i,
+                                                                    updated,
+                                                                  ),
+                                                          onDelete: () =>
+                                                              context
+                                                                  .read<
+                                                                    WorkoutCubit
+                                                                  >()
+                                                                  .deleteSet(
+                                                                    vm.id,
+                                                                    i,
+                                                                  ),
+                                                        ),
+                                                  ),
                                                   padding: EdgeInsets.zero,
-                                                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                        minWidth: 28,
+                                                        minHeight: 28,
+                                                      ),
                                                 ),
                                               ),
                                             ),
@@ -1249,7 +1781,8 @@ class _DayContentState extends State<_DayContent> {
                                         ),
                                       ],
                                     ),
-                                    if (s.isDropSet) _buildDropSetSection(context, vm, i, s),
+                                    if (s.isDropSet)
+                                      _buildDropSetSection(context, vm, i, s),
                                   ],
                                 ),
                               ),
@@ -1261,35 +1794,54 @@ class _DayContentState extends State<_DayContent> {
                   ],
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => context.read<WorkoutCubit>().toggleExerciseExpansion(vm.id),
+                    onTap: () => context
+                        .read<WorkoutCubit>()
+                        .toggleExerciseExpansion(vm.id),
                     child: Column(
                       children: [
                         const SizedBox(height: 16),
                         Center(
                           child: Text(
                             _calculateTotalExerciseTime(vm.sets),
-                            style: const TextStyle(color: Colors.white24, fontSize: 11, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                              color: Colors.white24,
+                              fontSize: 11,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Center(
                           child: GestureDetector(
-                            onTap: () {}, // Consume tap to prevent accidental collapse
+                            onTap:
+                                () {}, // Consume tap to prevent accidental collapse
                             behavior: HitTestBehavior.opaque,
                             child: Padding(
                               padding: const EdgeInsets.all(20),
                               child: OutlinedButton.icon(
                                 onPressed: () {
-                                  final lastSet = vm.sets.isNotEmpty ? vm.sets.last : null;
-                                  context.read<WorkoutCubit>().addSet(vm.id, lastSet?.weight ?? 20.0, lastSet?.reps ?? 10);
+                                  final lastSet = vm.sets.isNotEmpty
+                                      ? vm.sets.last
+                                      : null;
+                                  context.read<WorkoutCubit>().addSet(
+                                    vm.id,
+                                    lastSet?.weight ?? 20.0,
+                                    lastSet?.reps ?? 10,
+                                  );
                                 },
                                 icon: const Icon(Icons.add, size: 18),
                                 label: const Text("Add Set"),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white70,
                                   side: const BorderSide(color: Colors.white24),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
                                 ),
                               ),
                             ),
@@ -2120,14 +2672,18 @@ class _DayContentState extends State<_DayContent> {
 
             double weightDropPercent = 0;
             if (baseWeight > 0 && ds.weight != null) {
-              weightDropPercent = ((baseWeight - ds.weight!) / baseWeight) * 100;
+              weightDropPercent =
+                  ((baseWeight - ds.weight!) / baseWeight) * 100;
             }
 
             // Calculate 1RM Drop
             // Epley: weight * (1 + 0.0333 * reps)
-            double baseReps = (dropIndex == 0) ? (set.reps?.toDouble() ?? 0) : (set.dropSetItems[dropIndex - 1].reps?.toDouble() ?? 0);
+            double baseReps = (dropIndex == 0)
+                ? (set.reps?.toDouble() ?? 0)
+                : (set.dropSetItems[dropIndex - 1].reps?.toDouble() ?? 0);
             double base1RM = baseWeight * (1 + 0.0333 * baseReps);
-            double current1RM = (ds.weight ?? 0) * (1 + 0.0333 * (ds.reps ?? 0));
+            double current1RM =
+                (ds.weight ?? 0) * (1 + 0.0333 * (ds.reps ?? 0));
             double oneRmDropPercent = 0;
             if (base1RM > 0) {
               oneRmDropPercent = ((base1RM - current1RM) / base1RM) * 100;
@@ -2137,7 +2693,7 @@ class _DayContentState extends State<_DayContent> {
               padding: const EdgeInsets.only(bottom: 6),
               child: Row(
                 children: [
-                   // Efficiency Column
+                  // Efficiency Column
                   Container(
                     width: 45,
                     alignment: Alignment.centerLeft,

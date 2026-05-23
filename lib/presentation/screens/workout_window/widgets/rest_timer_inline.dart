@@ -16,7 +16,8 @@ class RestTimerInline extends StatelessWidget {
         return BlocBuilder<WorkoutCubit, WorkoutState>(
           builder: (context, state) {
             final timer = state.restTimer;
-            if (timer == null || !timer.isActive) return const SizedBox.shrink();
+            if (timer == null || !timer.isActive)
+              return const SizedBox.shrink();
 
             final progress = timer.remainingSeconds / timer.durationSeconds;
             final color = _getTimerColor(progress);
@@ -86,7 +87,9 @@ class RestTimerInline extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          key: TutorialService().getKeyForStep(TutorialStep.increaseRestTime),
+                          key: TutorialService().getKeyForStep(
+                            TutorialStep.increaseRestTime,
+                          ),
                         ),
                       ),
                       const Spacer(flex: 1),
@@ -114,7 +117,9 @@ class RestTimerInline extends StatelessWidget {
                               letterSpacing: 0.5,
                             ),
                           ),
-                          key: TutorialService().getKeyForStep(TutorialStep.skipRestTimer),
+                          key: TutorialService().getKeyForStep(
+                            TutorialStep.skipRestTimer,
+                          ),
                         ),
                       ),
                       const Spacer(flex: 2),
@@ -165,7 +170,8 @@ class RestTimerInline extends StatelessWidget {
                     const SizedBox(height: 16),
                     Center(
                       child: _BreathingGuideView(
-                        currentElapsed: timer.durationSeconds - timer.remainingSeconds,
+                        currentElapsed:
+                            timer.durationSeconds - timer.remainingSeconds,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -195,9 +201,7 @@ class RestTimerInline extends StatelessWidget {
 class _BreathingGuideView extends StatefulWidget {
   final int currentElapsed;
 
-  const _BreathingGuideView({
-    required this.currentElapsed,
-  });
+  const _BreathingGuideView({required this.currentElapsed});
 
   @override
   State<_BreathingGuideView> createState() => _BreathingGuideViewState();
@@ -215,7 +219,8 @@ class _BreathingGuideViewState extends State<_BreathingGuideView> {
   @override
   Widget build(BuildContext context) {
     // If the widget is rebuilt, we keep the same initial offset for this session
-    final elapsed = widget.currentElapsed - (_initialElapsed ?? widget.currentElapsed);
+    final elapsed =
+        widget.currentElapsed - (_initialElapsed ?? widget.currentElapsed);
     final cycleTime = elapsed % 19;
 
     String instruction;
@@ -258,7 +263,11 @@ class _BreathingGuideViewState extends State<_BreathingGuideView> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.timer_outlined, size: 10, color: color.withOpacity(0.5)),
+              Icon(
+                Icons.timer_outlined,
+                size: 10,
+                color: color.withOpacity(0.5),
+              ),
               const SizedBox(width: 4),
               Text(
                 "${phaseRemaining}s",

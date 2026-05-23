@@ -135,7 +135,9 @@ class _TechniqueSelectionDialogState extends State<TechniqueSelectionDialog> {
                         max: 10,
                       ),
                       value: _set.rir?.toString(),
-                      key: TutorialService().getKeyForStep(TutorialStep.rirOption),
+                      key: TutorialService().getKeyForStep(
+                        TutorialStep.rirOption,
+                      ),
                     ),
                     _buildToggleRow(
                       'Failure',

@@ -11,18 +11,19 @@ class SocialConversation {
 
   late String name;
   bool isGroup = false;
-  
+
   List<String> participantIds = [];
   String? lastMessage;
   late DateTime lastActive;
-  
+
   bool isMuted = false;
   bool isBlocked = false;
 
   // Friend request fields
-  bool isPendingFriendRequest = false; // true = waiting for the other side to accept
-  String? peerName;  // Display name of the other person
-  String? peerId;    // UID of the other person
+  bool isPendingFriendRequest =
+      false; // true = waiting for the other side to accept
+  String? peerName; // Display name of the other person
+  String? peerId; // UID of the other person
   int peerSocialPoints = 0;
 
   SocialConversation copyWith({
@@ -46,7 +47,8 @@ class SocialConversation {
       ..lastActive = lastActive ?? this.lastActive
       ..isMuted = isMuted ?? this.isMuted
       ..isBlocked = isBlocked ?? this.isBlocked
-      ..isPendingFriendRequest = isPendingFriendRequest ?? this.isPendingFriendRequest
+      ..isPendingFriendRequest =
+          isPendingFriendRequest ?? this.isPendingFriendRequest
       ..peerName = peerName ?? this.peerName
       ..peerId = peerId ?? this.peerId
       ..peerSocialPoints = peerSocialPoints ?? this.peerSocialPoints;
@@ -70,16 +72,16 @@ class SocialMessage {
 
   String? sharedContentJson;
   String? sharedType;
-  
+
   bool isImported = false;
   bool isProfane = false;
   bool isBlurred = false;
 
-  bool isPending = false; 
+  bool isPending = false;
   bool isEdited = false;
   bool isDeleted = false;
 
-  bool isSnap = false;    // If true, it is an ephemeral image
+  bool isSnap = false; // If true, it is an ephemeral image
   bool snapViewed = false; // Flag to trigger deletion after viewing
 
   SocialMessage copyWith({

@@ -2,12 +2,14 @@ import 'dart:io' show Platform;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_state.dart';
-import 'package:biofit_pro/locator.dart';
-import 'package:biofit_pro/data/repositories/body_repository.dart';
+import 'package:muvio/locator.dart';
+import 'package:muvio/data/repositories/body_repository.dart';
 import 'google_auth_service.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final FirebaseAuth? _auth = (Platform.isAndroid || Platform.isIOS) ? FirebaseAuth.instance : null;
+  final FirebaseAuth? _auth = (Platform.isAndroid || Platform.isIOS)
+      ? FirebaseAuth.instance
+      : null;
   static late GoogleAuthService googleService;
 
   AuthCubit() : super(AuthInitial()) {
@@ -15,7 +17,8 @@ class AuthCubit extends Cubit<AuthState> {
     if (_auth != null) {
       _auth!.authStateChanges().listen((User? user) {
         if (user != null) {
-          if (user.emailVerified || user.providerData.any((p) => p.providerId == 'google.com')) {
+          if (user.emailVerified ||
+              user.providerData.any((p) => p.providerId == 'google.com')) {
             emit(AuthSuccess(user: user));
           } else {
             emit(AuthNeedsVerification(user.email ?? ""));
@@ -30,7 +33,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signInWithGoogle() async {
     try {
       emit(AuthLoading());
-      
+
       // FALLBACK FOR WINDOWS DEV
       if (_auth == null) {
         await Future.delayed(const Duration(seconds: 1));
@@ -45,7 +48,9 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
 
-      final userCredential = await _auth?.signInWithCredential(credential as AuthCredential);
+      final userCredential = await _auth?.signInWithCredential(
+        credential as AuthCredential,
+      );
       emit(AuthSuccess(user: userCredential?.user));
     } catch (e) {
       emit(AuthFailure(e.toString()));
@@ -140,7 +145,7 @@ class AuthCubit extends Cubit<AuthState> {
       final settings = await locator<BodyRepository>().getUserSettings();
       settings.devPersistLogin = false;
       await locator<BodyRepository>().saveUserSettings(settings);
-      
+
       await googleService.signOut();
       await _auth?.signOut();
     } catch (_) {}

@@ -113,13 +113,17 @@ class DietCubit extends Cubit<DietState> {
         diet = await _repository.getDietForDate(startOfDay);
       }
 
-      final burnedCalories = await _workoutRepository.getCaloriesBurnedForDate(startOfDay);
+      final burnedCalories = await _workoutRepository.getCaloriesBurnedForDate(
+        startOfDay,
+      );
 
-      emit(state.copyWith(
-        isLoading: false,
-        currentDiet: diet,
-        burnedCalories: burnedCalories,
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          currentDiet: diet,
+          burnedCalories: burnedCalories,
+        ),
+      );
     } catch (e) {
       debugPrint("Error loading diet: $e");
       emit(state.copyWith(isLoading: false));
@@ -226,7 +230,11 @@ class DietCubit extends Cubit<DietState> {
     emit(state.copyWith(currentDiet: newDiet));
   }
 
-  Future<void> addSupplement(FoodItem food, double amount, [String? unit]) async {
+  Future<void> addSupplement(
+    FoodItem food,
+    double amount, [
+    String? unit,
+  ]) async {
     if (state.currentDiet == null) return;
 
     // Save sticky settings

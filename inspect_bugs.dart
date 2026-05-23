@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:isar/isar.dart';
-import 'package:biofit_pro/data/models/social_models.dart';
+import 'package:muvio/data/models/social_models.dart';
 import 'package:path/path.dart' as p;
 
 void main() async {
@@ -10,16 +10,16 @@ void main() async {
   final appData = Platform.environment['APPDATA'] ?? '';
   
   final possiblePaths = [
-    p.join(appData, 'biofit_pro_app', 'biofit_pro_db'),
-    p.join(localAppData, 'biofit_pro_app', 'biofit_pro_db'),
-    p.join(userProfile, 'Documents', 'biofit_pro_db'),
+    p.join(appData, 'muvio_app', 'muvio_db'),
+    p.join(localAppData, 'muvio_app', 'muvio_db'),
+    p.join(userProfile, 'Documents', 'muvio_db'),
     // These are common for Flutter Windows apps
-    p.join(localAppData, 'com.example', 'biofit_pro', 'biofit_pro_db'),
-    p.join(appData, 'com.example', 'biofit_pro', 'biofit_pro_db'),
-    p.join(localAppData, 'biofit_pro', 'biofit_pro_db'),
-    p.join(appData, 'biofit_pro', 'biofit_pro_db'),
+    p.join(localAppData, 'com.example', 'muvio', 'muvio_db'),
+    p.join(appData, 'com.example', 'muvio', 'muvio_db'),
+    p.join(localAppData, 'muvio', 'muvio_db'),
+    p.join(appData, 'muvio', 'muvio_db'),
     // Relative to execution if needed
-    'biofit_pro_db',
+    'muvio_db',
   ];
 
   for (var path in possiblePaths) {

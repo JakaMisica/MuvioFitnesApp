@@ -59,7 +59,7 @@ class _GuidedBreathingOverlayState extends State<GuidedBreathingOverlay>
             }
 
             final rawElapsed = timer.durationSeconds - timer.remainingSeconds;
-            
+
             // Capture offset when first enabled to always start with INHALE (phase 0)
             if (!_wasEnabled) {
               _offset = rawElapsed;
